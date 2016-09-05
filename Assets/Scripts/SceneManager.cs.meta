@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: bff55a0bbb021c1409003d7a736922e9
+timeCreated: 1434754551
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - playerShuffleCard: {instanceID: 0}
+  - enemyShuffleCard: {instanceID: 0}
+  - playerHandObj: {instanceID: 0}
+  - handCardPrefab: {fileID: 175888, guid: 6abc3d716ba4d3f4fba1c9d83cb19af0, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
