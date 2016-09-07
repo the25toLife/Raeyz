@@ -22,7 +22,7 @@ public class CardMenuElement : MonoBehaviour, IPointerDownHandler {
 
 		switch (itemType) {
 
-		case MenuItem.AWAKEN:
+		case MenuItem.Awaken:
 //			foreach(CardMenuElement cme in lcMenu.GetComponentsInChildren<CardMenuElement>(true)) {
 //
 //				if (cme.itemType == MenuItem.CANCEL)
@@ -33,29 +33,29 @@ public class CardMenuElement : MonoBehaviour, IPointerDownHandler {
 			GameObject.FindObjectOfType<ClientGame>().openAwakenCardMenu(this.GetComponentInParent<CardMonster>());
 			lcMenu.SetActive(false);
 			break;
-		case MenuItem.DISCARD:
+		case MenuItem.Discard:
 			foreach(CardMenuElement cme in lcMenu.GetComponentsInChildren<CardMenuElement>(true)) {
 
-				if (cme.itemType == MenuItem.CONFIRM)
+				if (cme.itemType == MenuItem.Confirm)
 					cme.gameObject.SetActive(true);
 			}
 			this.gameObject.SetActive(false);
 			break;
-		case MenuItem.CONFIRM:
-			GameObject.FindObjectOfType<ClientGame>().game.sendCardToGraveyard(this.GetComponentInParent<Card> ());
+		case MenuItem.Confirm:
+			GameObject.FindObjectOfType<ClientGame>().game.SendCardToGraveyard(this.GetComponentInParent<Card> ());
 			break;
 		}
 	}
 
 	public void OnDisable() {
 
-		if (itemType != MenuItem.CONFIRM)
+		if (itemType != MenuItem.Confirm)
 			return;
 		foreach(CardMenuElement cme in lcMenu.GetComponentsInChildren<CardMenuElement>(true)) {
 			
-			if (cme.itemType == MenuItem.CONFIRM)
+			if (cme.itemType == MenuItem.Confirm)
 				cme.gameObject.SetActive(false);
-			else if (cme.itemType == MenuItem.DISCARD)
+			else if (cme.itemType == MenuItem.Discard)
 				cme.gameObject.SetActive(true);
 		}
 	}

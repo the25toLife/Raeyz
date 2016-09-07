@@ -19,7 +19,7 @@ public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 	// Update is called once per frame
 	void Update () {
 
-		if (itemType == MenuItem.CARDUNLOCK) {
+		if (itemType == MenuItem.CardUnlock) {
 			this.GetComponentInChildren<Image>().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", client.getSacrPower()), typeof(Sprite)) as Sprite;
 		}
 	}
@@ -40,7 +40,7 @@ public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 
 			switch (itemType) {
 
-			case (MenuItem.CARDSELECT):
+			case (MenuItem.CardSelect):
 				if (!representedCard)
 					return;
 				if (!client.isCardSelected(representedCard)) {
@@ -51,7 +51,7 @@ public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 					this.GetComponent<Image>().color = new Color(0.06f, 0.06f, 0.06f, 0.46f);
 				}
 				break;
-			case (MenuItem.CARDUNLOCK):
+			case (MenuItem.CardUnlock):
 				client.awakenCard();
 				break;
 			}
@@ -61,7 +61,7 @@ public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 	
 	public void OnDisable() {
 		
-		if (itemType == MenuItem.CARDSELECT)
+		if (itemType == MenuItem.CardSelect)
 			GameObject.Destroy(this.gameObject);
 	}
 }

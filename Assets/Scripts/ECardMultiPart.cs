@@ -15,7 +15,7 @@ public class ECardMultiPart : ECardMonster {
 	
 	private void setFullInfoAnimation() {
 		Animation a = this.fullInfoCanvas.GetComponentsInChildren<Animation>(true)[0];
-		switch (this.CardI.ID) {
+		switch (this.CardI.GetId()) {
 			
 		case 284:
 		case 285:
@@ -28,7 +28,7 @@ public class ECardMultiPart : ECardMonster {
 		
 		CardI = mi as MonsterInfo;
 		if (CardI != null) {
-			Sprite s = Resources.Load ("Cards/MultiPart/"+CardI.ID, typeof(Sprite)) as Sprite;
+			Sprite s = Resources.Load ("Cards/MultiPart/"+CardI.GetId(), typeof(Sprite)) as Sprite;
 			if (s != null)
 				this.GetComponent<SpriteRenderer> ().sprite = s;
 		}

@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using System;
 
 public class CardSpecial : Card {
@@ -29,4 +29,4 @@ public class CardSpecial : Card {
 	public override void assignTarget (Card target) {
 
 	}
-}
+}*/

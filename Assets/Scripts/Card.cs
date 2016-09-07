@@ -91,9 +91,11 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		Debug.Log (string.Format("Card assigned UID: {0}", UID));
 	}
 
-	public virtual void sendCardToGraveyard () {
+	public virtual void sendCardToGraveyard ()
+	{
 
-		if (State == States.INHAND && State != States.EXPANDINHAND) {
+	    FindObjectOfType<FieldManager>().RemoveCardFromField(this);
+	    if (State == States.INHAND && State != States.EXPANDINHAND) {
 			Vector3 pos = this.transform.localPosition;
 			pos.y += 2.28f;
 			this.transform.localPosition = pos;

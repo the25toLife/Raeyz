@@ -29,11 +29,11 @@ public class Slot : MonoBehaviour, IDropHandler {
 			return false;
 		else {
 
-			if (c == null || c.CardI.Type != slotType || !c.dragPass ())
+			if (c == null || c.CardI.GetCardType() != slotType || !c.dragPass ())
 				return false;
 
 			switch (slotType) {
-			case CardInfo.CardType.AUXILIARY:
+			case CardInfo.CardType.Auxiliary:
 				foreach (Slot s in GameObject.FindObjectsOfType<Slot>()) {
 					if (s.SlotID == this.SlotID - 5 && s.card == null)
 						return false;
@@ -51,7 +51,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 		if (!canDrop (c))
 			return;
 		if (c is CardMonster && (c as CardMonster).hasPair())
-			setMultiCard(c as CardMonster, (c.CardI.AssoCardInfo.ContainsKey (CardRelation.LPAIR) ? -1 : 1));
+			setMultiCard(c as CardMonster, (c.CardI.AssoCardInfo.ContainsKey (CardRelation.PairL) ? -1 : 1));
 		else
 			setCard (c);
 	}	

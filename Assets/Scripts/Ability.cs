@@ -57,7 +57,7 @@ public abstract class StatEffect : Effect {
 	}
 
 	public override bool canActivate(Card target) {
-		if (target.CardI.Type != CardInfo.CardType.MONSTER)
+		if (target.CardI.GetCardType() != CardInfo.CardType.Monster)
 			return false;
 		return true;
 	}
@@ -72,7 +72,7 @@ public class Effect402 : StatEffect {
 	public override bool activate (Card target) {
 		if (!canActivate (target))
 			return false;
-		if ((target.CardI as MonsterInfo).Affinity == CardInfo.CardAffinity.LIGHT)
+		if ((target.CardI as MonsterInfo).GetAffinity() == CardInfo.CardAffinity.Light)
 			AttackEff = 2;
 		else
 			AttackEff = 1;

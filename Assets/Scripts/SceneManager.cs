@@ -23,9 +23,11 @@ public enum Actions {
 	PLAY, DISCARD, ATTACK, AWAKEN, MENU, DEFEND
 }
 
-public class SceneManager : LoadBalancingClient {
+public class SceneManager : LoadBalancingClient
+{
+    public FieldManager FieldManager { get; set; }
 
-	private Deck playerDeck, playerGrave, enemyDeck;
+    private Deck playerDeck, playerGrave, enemyDeck;
 	private ClientGame clientGame;
 	private ArrayList playerHand, playerActions;
 	private bool running, firstMove, isTurn, oppReady;
@@ -35,8 +37,8 @@ public class SceneManager : LoadBalancingClient {
 
 	public RaeyzPlayer clientPlayer, enemyPlayer;
 	public float turnNumber;
-	
-	public const byte EvCreateDeck = 1;
+
+    public const byte EvCreateDeck = 1;
 	public const byte EvDealCard = 2;
 	public const byte EvStageChanged = 3;
 	public const byte EvGraveCard = 4;
@@ -122,7 +124,7 @@ public class SceneManager : LoadBalancingClient {
 	{
 		Hashtable content = new Hashtable();
 		content[(byte)1] = c.UID;
-		content[(byte)2] = c.CardI.ID;
+		content[(byte)2] = c.CardI.GetId();
 		this.loadBalancingPeer.OpRaiseEvent(EvDealCard, content, true, new RaiseEventOptions() { CachingOption = EventCaching.AddToRoomCache });
 	}
 
@@ -205,7 +207,7 @@ public class SceneManager : LoadBalancingClient {
 				CardInfo c = CardPool.Cards[(int)cardInfo[(byte)2]-1];
 
 				clientGame.dealCardToEnemy(uid, c);
-				Debug.Log(string.Format("The enemy was dealt a card with UID: {0} and name: {1}.", uid, c.Name));
+				Debug.Log(string.Format("The enemy was dealt a card with UID: {0} and name: {1}.", uid, c.GetName()));
 			}
 			break;
 		case (byte)EvCreateDeck:
@@ -416,7 +418,7 @@ public class SceneManager : LoadBalancingClient {
 		dealCardToPlayer (CardPool.Cards [1]);
 		dealCardToPlayer (CardPool.Cards [2]);
 		dealCardToPlayer (CardPool.Cards [3]);
-		dealCardToPlayer (CardPool.Cards [401]);
+		dealCardToPlayer (CardPool.Cards [4]);
 
 		stage = GameStage.PREP;
 	}
@@ -475,7 +477,8 @@ public class SceneManager : LoadBalancingClient {
 			firstMove = true;
 		if (playerHand.Contains(c))
 			playerHand.Remove (c);
-		SendPlayCardEv (c.UID, slot);
+	    FieldManager.AddCardToField(c);
+	    SendPlayCardEv (c.UID, slot);
 	}
 
 
@@ -483,7 +486,7 @@ public class SceneManager : LoadBalancingClient {
 	/// Sends the specified card to the graveyard.
 	/// </summary>
 	/// <param name="c">The card to send to the graveyard.</param>
-	public void sendCardToGraveyard(Card c) {
+	public void SendCardToGraveyard(Card c) {
 
 		c.sendCardToGraveyard ();
 		SendGraveCardEv (c.UID);
@@ -496,18 +499,18 @@ public class SceneManager : LoadBalancingClient {
 	//goodbye.
 	//
 	//
-	public bool scheduleAction(GameAction a) {
+	public bool ScheduleAction(GameAction a) {
 
 		if (!canTakeAction (a.A))
 			return false;
 
 		playerActions.Add (a);
 		foreach (GameAction ga in playerActions)
-			Debug.Log (string.Format ("{0} scheduled targeting: {1}", ga.A, ga.getTarget().CardI.Name));
+			Debug.Log (string.Format ("{0} scheduled targeting: {1}", ga.A, ga.getTarget().CardI.GetName()));
 		return true;
 	}
 
-	public bool unscheduleAction(GameAction a) {
+	public bool UnscheduleAction(GameAction a) {
 		
 //		if (!canTakeAction (a.A))
 //			return false;
@@ -644,7 +647,7 @@ public class SceneManager : LoadBalancingClient {
 		foreach (Card c in cards) {
 
 			if (c.CardI is MonsterInfo)
-				total += (c.CardI as MonsterInfo).Level;
+				total += (c.CardI as MonsterInfo).GetLevel();
 		}
 		return total;
 	}
@@ -659,7 +662,7 @@ public class SceneManager : LoadBalancingClient {
 
 		if (!(c.CardI is MonsterInfo))
 			return false;
-		if (totalCardPower (sacr) >= (c.CardI as MonsterInfo).Level)
+		if (totalCardPower (sacr) >= (c.CardI as MonsterInfo).GetLevel())
 			return true;
 		return false;
 	}
@@ -762,7 +765,7 @@ public class Deck {
 	public void printDeck() {
 
 		foreach (CardInfo i in cards) {
-			Debug.Log(i.Name);
+			Debug.Log(i.GetName());
 		}
 	}
 
@@ -771,7 +774,7 @@ public class Deck {
 		int[] deckToSend = new int[cards.Count];
 		for (int i = 0; i < cards.Count; i++) {
 			CardInfo c = (CardInfo)cards [i];
-			deckToSend [i] = c.ID;
+			deckToSend [i] = c.GetId();
 		}
 		return deckToSend;
 	}

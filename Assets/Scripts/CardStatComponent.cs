@@ -30,7 +30,7 @@ public class CardStatComponent : MonoBehaviour {
 			if (c is MonsterInfo) {
 
 				MonsterInfo m = (MonsterInfo)c;
-				this.GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", m.Level), typeof(Sprite)) as Sprite;
+				this.GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", m.GetLevel()), typeof(Sprite)) as Sprite;
 			}
 			break;
 		case (StatType.ATTACK):
@@ -51,18 +51,18 @@ public class CardStatComponent : MonoBehaviour {
 			break;
 		case (StatType.NAME):
 		
-			this.GetComponent<Text>().text = c.Name;
+			this.GetComponent<Text>().text = c.GetName();
 			break;
 		case (StatType.TYPE):
 			
-			this.GetComponent<Text>().text = c.Type.ToString();
+			this.GetComponent<Text>().text = c.GetType().ToString();
 			break;
 		case (StatType.AFFINITY):
 
 			if (c is MonsterInfo) {
 				
 				MonsterInfo m = (MonsterInfo)c;
-				this.GetComponent<Text>().text = m.Affinity.ToString().ToLower();
+				this.GetComponent<Text>().text = m.GetAffinity().ToString().ToLower();
 			}
 			break;
 		case (StatType.AFFICO):
@@ -70,16 +70,16 @@ public class CardStatComponent : MonoBehaviour {
 			if (c is MonsterInfo) {
 				
 				MonsterInfo m = (MonsterInfo)c;
-				this.GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/Stats/{0}", m.Affinity.ToString().ToLower()), typeof(Sprite)) as Sprite;
+				this.GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/Stats/{0}", m.GetAffinity().ToString().ToLower()), typeof(Sprite)) as Sprite;
 			}
 			break;
 		case (StatType.DESC):
 
-			this.GetComponent<Text>().text = c.Desc;
+			this.GetComponent<Text>().text = c.GetDesc();
 			break;
 		case (StatType.IMAGE):
 
-			this.GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/{0}", c.ID), typeof(Sprite)) as Sprite;
+			this.GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/{0}", c.GetId()), typeof(Sprite)) as Sprite;
 			break;
 		}
 	}

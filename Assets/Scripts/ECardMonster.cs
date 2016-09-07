@@ -43,12 +43,12 @@ public class ECardMonster : Card {
 	}
 
 	public void informDefenseToggle() {
-		client.game.SendDefenseToggleEv (CardI.ID, isDefending ());
+		client.game.SendDefenseToggleEv (CardI.GetId(), isDefending ());
 	}	
 
 	public bool hasPair() {
 		
-		return (this.CardI.AssoCardInfo.ContainsKey (CardRelation.LPAIR) || this.CardI.AssoCardInfo.ContainsKey (CardRelation.RPAIR));
+		return (this.CardI.AssoCardInfo.ContainsKey (CardRelation.PairL) || this.CardI.AssoCardInfo.ContainsKey (CardRelation.PairR));
 	}
 
 	public bool isDefending() {
@@ -62,7 +62,8 @@ public class ECardMonster : Card {
 
 	public override void sendCardToGraveyard () {
 
-		if (defending)
+	    FindObjectOfType<FieldManager>().RemoveCardFromField(this);
+	    if (defending)
 			setDefending (false);
 		if (State == States.INPLAY)
 			this.transform.SetParent (null);
@@ -79,7 +80,7 @@ public class ECardMonster : Card {
 			if (!fow) {
 				
 				statOverlay.SetActive (true);
-				Sprite s = Resources.Load ("Cards/"+CardI.ID, typeof(Sprite)) as Sprite;
+				Sprite s = Resources.Load ("Cards/"+CardI.GetId(), typeof(Sprite)) as Sprite;
 				if (s != null)
 					this.GetComponent<SpriteRenderer> ().sprite = s;
 				else
