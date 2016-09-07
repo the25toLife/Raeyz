@@ -304,7 +304,7 @@ public class SceneManager : LoadBalancingClient
 			{
 				int uid = (int)defInfo[(byte)1];
 				bool state = (bool)defInfo[(byte)2];
-				ECardMonster c = clientGame.getCard<ECardMonster>(uid);
+				CardMonster c = clientGame.getCard<CardMonster>(uid);
 				c.setDefending(state);
 				
 				Debug.Log(string.Format("Card with UID: {0} is {1}", uid, (state ? "now defending." : "no longer defending.")));
@@ -627,7 +627,7 @@ public class SceneManager : LoadBalancingClient
 		if (!isTurn)
 			return;
 		int playerDmg = clientGame.getDamageToLife ();
-		//Debug.LogError (playerDmg);
+		Debug.LogError (playerDmg);
 		if (playerDmg > 0) {
 			enemyPlayer.damagePlayer(playerDmg);
 //			SendDamagePlayerEv (playerDmg);

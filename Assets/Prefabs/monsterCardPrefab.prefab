@@ -1854,10 +1854,10 @@ MonoBehaviour:
   selectedIndicator: {fileID: 144698}
   client: {fileID: 0}
   State: 0
-  locked: {fileID: 148662}
-  awakenMenuItem: {fileID: 154406}
-  attackInfo: {fileID: 188292}
-  shield: {fileID: 182170}
+  Locked: {fileID: 148662}
+  AwakenMenuItem: {fileID: 154406}
+  AttackInfo: {fileID: 188292}
+  Shield: {fileID: 182170}
 --- !u!114 &11455346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4064,7 +4064,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 7.75, y: 2.20000005}
+  m_AnchoredPosition: {x: -2.25999999, y: .660000026}
   m_SizeDelta: {x: 2.22000003, y: 3.00999999}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22423238

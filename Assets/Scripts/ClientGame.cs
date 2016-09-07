@@ -136,7 +136,7 @@ public class ClientGame : MonoBehaviour
 		_selectedCards.Add (c);
 	}
 
-	public void selectEnemyCard(ECardMonster ec) {
+	public void selectEnemyCard(CardMonster ec) {
 
 		Card sCard = _selectedCards [0] as Card;
 		if (sCard.canTarget (ec)) {
@@ -202,7 +202,6 @@ public class ClientGame : MonoBehaviour
 
 		case (CardInfo.CardType.Monster):
 			cards.AddRange( getCardsByObjType<CardMonster>().Cast<Card>().ToList() );
-			cards.AddRange(getCardsByObjType<ECardMonster>().Cast<Card>().ToList() );
 			break;
 		}
 		return cards;
@@ -215,7 +214,9 @@ public class ClientGame : MonoBehaviour
 	public List<Card> getEnemyCards() {
 		
 		List<Card> cards = new List<Card>();
-		cards.AddRange(getCardsByObjType<ECardMonster>().Cast<Card>().ToList() );
+		var allMonsterCards = getCardsByObjType<CardMonster>().ToList();
+	    foreach (var monsterCard in allMonsterCards)
+	        if (monsterCard.IsEnemyCard) cards.Add(monsterCard);
 		return cards;
 	}
 
@@ -233,8 +234,8 @@ public class ClientGame : MonoBehaviour
 				switch (c.CardI.GetCardType()) {
 
 				case (CardInfo.CardType.Monster):
-					ECardMonster ecm = c as ECardMonster;
-					if (ecm.CardI.AssoCardInfo.ContainsKey (CardRelation.PairR)) {
+					CardMonster cm = c as CardMonster;
+					if (cm.CardI.AssoCardInfo.ContainsKey (CardRelation.PairR)) {
 
 						Transform pairDropSlot = this.transform.parent.FindChild(string.Format("enemyMonster{0}", slotID + 1));
 						//		foreach (SlotMonster sm in this.transform.parent.GetComponentsInChildren<SlotMonster>()) {
@@ -253,7 +254,7 @@ public class ClientGame : MonoBehaviour
 //						}
 //						if (pairDropSlot == null)
 //							break;
-						ECardMonster ecmPair = pdsm.GetComponentInChildren<ECardMonster>();
+						CardMonster ecmPair = pdsm.GetComponentInChildren<CardMonster>();
 						GameObject o = GameObject.Instantiate(eMultiCardPrefab);
 						
 						CardMultiPart mpc = o.GetComponent<CardMultiPart>();
@@ -394,18 +395,19 @@ public class ClientGame : MonoBehaviour
 		switch (cInfo.GetCardType()) {
 			
 		case (CardInfo.CardType.Monster):
-			GameObject c = Instantiate(eMonsterCardPrefab);
+			GameObject c = Instantiate(monsterCardPrefab);
 			c.transform.SetParent(enemyHandObj.transform);
-			cardDealt = c.GetComponent<ECardMonster>();
-			(cardDealt as ECardMonster).changeCard(cInfo as MonsterInfo);
-			(cardDealt as ECardMonster).setCardFOW(true);
+			cardDealt = c.GetComponent<CardMonster>();
+			(cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
+		        (cardDealt as CardMonster).IsEnemyCard = true;
+		        (cardDealt as CardMonster).setCardFOW(true);
 			break;
 		case (CardInfo.CardType.Auxiliary):
 			break;
 		}
 		
 		if (cardDealt != null) {
-			cardDealt.changeReturnParent (playerHandObj.transform);
+			cardDealt.changeReturnParent (enemyHandObj.transform);
 			cardDealt.State = Card.States.DISABLED;
 			cardDealt.createUID (uid);
 		}
@@ -448,8 +450,8 @@ public class ClientGame : MonoBehaviour
 
 		foreach (CardMonster c in playerMonsters.GetComponentsInChildren<CardMonster>()) {
 			if (c.Target != null) {
-				game.SendAttackEv(c.UID, c.Target.UID, (c.Target as ECardMonster).isDefending());
-				ActionQueue.calcAttack(c, c.Target, (c.Target as ECardMonster).isDefending());
+				game.SendAttackEv(c.UID, c.Target.UID, (c.Target as CardMonster).isDefending());
+				ActionQueue.calcAttack(c, c.Target, (c.Target as CardMonster).isDefending());
 				c.clearTarget();
 			} else {
 				c.setDefending(true);
@@ -461,6 +463,7 @@ public class ClientGame : MonoBehaviour
 //			if (c.isDefending())
 //				total += (c.CardI as MonsterInfo).Attack;
 //		}
+	    Debug.LogError(enemyMonsters.GetComponentsInChildren<Card>().Length);
 		if (enemyMonsters.GetComponentsInChildren<Card> ().Length < 1) return total;
 		return -1;
 	}

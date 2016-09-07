@@ -137,7 +137,7 @@ public class ECardMonster : Card {
 
 			if (State == States.INPLAY && client.isACardSelected()) {
 
-				client.selectEnemyCard(this);
+				//client.selectEnemyCard(this);
 			}		
 			
 			break;

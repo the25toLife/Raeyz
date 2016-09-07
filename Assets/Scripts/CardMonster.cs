@@ -5,28 +5,28 @@ using UnityEngine.EventSystems;
 
 public class CardMonster : Card {
 
-	public GameObject locked, awakenMenuItem, attackInfo, shield;
-	protected bool cardLocked;
-	protected bool defending;
+	public GameObject Locked, AwakenMenuItem, AttackInfo, Shield;
+
+	private bool _defending, _cardLocked;
 	public CardMonster PairCard { get; private set; }
 	public Card Target { get; private set; }
 
 	public override void Start() {
 		base.Start ();
 
-		attackInfo.SetActive (false);
+		AttackInfo.SetActive (false);
 	}
 
 	public override void Update() {
 
-		if (Input.GetKeyDown(KeyCode.Escape) && this.State == States.INFO)
-			shield.SetActive (defending);
+		if (Input.GetKeyDown(KeyCode.Escape) && State == States.INFO)
+			Shield.SetActive (_defending);
 
 		base.Update ();
 	}
 
 	public override bool canTarget(Card target) {
-		return (target is ECardMonster);
+		return (target is CardMonster && target.IsEnemyCard);
 	}
 
 	public override void assignTarget(Card target) {
@@ -34,8 +34,8 @@ public class CardMonster : Card {
 		this.Target = target;
 		this.attackMonster (this.Target);
 	}
-	
-	public override void changeCard(CardInfo c) {
+
+    public override void changeCard(CardInfo c) {
 
 		CardI = c as MonsterInfo;
 		if (CardI != null) {
@@ -44,10 +44,10 @@ public class CardMonster : Card {
 				this.GetComponent<SpriteRenderer> ().sprite = s;
 
 			if ((CardI as MonsterInfo).GetLevel() < 5) {
-				locked.SetActive(false);
-				awakenMenuItem.SetActive(false);
+				Locked.SetActive(false);
+				AwakenMenuItem.SetActive(false);
 			} else
-				cardLocked = true;
+				_cardLocked = true;
 		}
 		
 		foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
@@ -58,18 +58,18 @@ public class CardMonster : Card {
 
 		if (target != null) {
 			this.setDefending (false);
-			this.attackInfo.SetActive (true);
-			this.attackInfo.GetComponentInChildren<CardStatComponent> ().changeStat (target.CardI as MonsterInfo);
+			this.AttackInfo.SetActive (true);
+			this.AttackInfo.GetComponentInChildren<CardStatComponent> ().changeStat (target.CardI as MonsterInfo);
 		} else {
 //			this.setDefending(true);
-			this.attackInfo.SetActive(false);
+			this.AttackInfo.SetActive(false);
 		}
 	}
 
 	public override void sendCardToGraveyard() {
 		base.sendCardToGraveyard ();
 
-		if (defending)
+		if (_defending)
 			setDefending (false);
 		if (this.Target != null)
 			this.clearTarget ();
@@ -81,28 +81,28 @@ public class CardMonster : Card {
 		if (leviathan && (CardI as MonsterInfo).GetLevel() < 5)
 			return false;
 		
-		return !(cardLocked || client.cardAwakening == this);
+		return !(_cardLocked || client.cardAwakening == this);
 	}	
 
 	public bool isLocked() {
-		return cardLocked;
+		return _cardLocked;
 	}
 	
 	public bool isDefending() {
-		return defending;
+		return _defending;
 	}
 	
 	public void setDefending(bool b) {
-		defending = b;
-		shield.SetActive (defending);
-		client.game.SendDefenseToggleEv (this.UID, this.isDefending ());
+		_defending = b;
+		Shield.SetActive (_defending);
+		if (!IsEnemyCard) client.game.SendDefenseToggleEv (this.UID, this.isDefending ());
 	}
 	
 	public bool awakenCard() {
 		
-		this.cardLocked = false;
-		locked.SetActive(false);
-		awakenMenuItem.SetActive(false);
+		this._cardLocked = false;
+		Locked.SetActive(false);
+		AwakenMenuItem.SetActive(false);
 		return true;
 	}
 
@@ -162,18 +162,27 @@ public class CardMonster : Card {
 			PairCard.endDrag();
 	}
 
-	public override void OnPointerClick(PointerEventData eventData) {
+	public override void OnPointerClick(PointerEventData eventData)
+	{
 		base.OnPointerClick (eventData);
 
 		switch (eventData.button) {
 
 		case (PointerEventData.InputButton.Right):
-			shield.SetActive(false);
+			Shield.SetActive(false);
 			break;
 		case (PointerEventData.InputButton.Left):
+		        if (IsEnemyCard)
+		        {
+		            if (State == States.INPLAY && client.isACardSelected())
+		            {
+
+		                client.selectEnemyCard(this);
+		            }
+		        }
 			if (!client.game.canTakeAction(Actions.MENU))
 				break;
-			awakenMenuItem.SetActive (client.game.canTakeAction (Actions.AWAKEN) && cardLocked == true);
+			AwakenMenuItem.SetActive (client.game.canTakeAction (Actions.AWAKEN) && _cardLocked);
 			break;
 		}
 	}

@@ -46,7 +46,7 @@ public class CardMultiPart : CardMonster {
 				client.deselectCard(this);
 			
 			lcMenu.SetActive(false);
-			shield.SetActive(false);
+			Shield.SetActive(false);
 			
 			this.transform.localScale = new Vector3(2.8f, 2.8f, 1.0f);
 			this.transform.SetParent(null);

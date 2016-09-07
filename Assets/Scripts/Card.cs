@@ -13,16 +13,20 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		INHAND, INPLAY, INFO, EXPANDINHAND, DISABLED
 	};
 
-	protected Transform parentToReturnTo;
+    public bool IsEnemyCard { get; set; }
+
+    public bool FowActive { get; private set; }
+
+    protected Transform parentToReturnTo;
 	protected States stateToReturnTo;
-	
+
 	public GameObject fullInfoCanvas, statOverlay, lcMenu, deathHandler, selectedIndicator;
 	public ClientGame client;
-	
+
 	public int UID { get; set; }
 	public CardInfo CardI { get; set; }
 	public States State;// { get; set; }
-	
+
 	public virtual void Start () {
 
 		client = GameObject.FindObjectOfType<ClientGame> ();
@@ -41,31 +45,33 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	public virtual void Update () {
 
-		this.GetComponentInChildren<Canvas> ().sortingOrder = this.GetComponent<SpriteRenderer> ().sortingOrder + 1;
+	    Canvas canvas = GetComponentInChildren<Canvas>();
+	    if (canvas != null) canvas.sortingOrder = GetComponent<SpriteRenderer> ().sortingOrder + 1;
 
+	    if (IsEnemyCard && (client.game.CurrentStage == GameStage.SETUP ||
+	                        (State != States.INPLAY && State != States.INFO)))
+	        setCardFOW(true);
+	    else
+	        setCardFOW(false);
 
-		if (Input.GetKeyDown (KeyCode.Escape)) {	//Handles closing menus
+	    if (Input.GetKeyDown (KeyCode.Escape)) {	//Handles closing menus
 
-			if (this.State == States.INFO) {	//Close full info menu
-				this.transform.localScale = Vector3.one;
+			if (State == States.INFO) {	//Close full info menu
+				transform.localScale = Vector3.one;
 				fullInfoCanvas.SetActive (false);
 				statOverlay.SetActive (true);
-				this.GetComponent<SpriteRenderer> ().sortingOrder -= 100;
-				this.returnToParent();
+				GetComponent<SpriteRenderer> ().sortingOrder -= 100;
+				returnToParent();
 
-
-				this.State = (stateToReturnTo == States.EXPANDINHAND ? States.INHAND : stateToReturnTo);
+				State = stateToReturnTo == States.EXPANDINHAND ? States.INHAND : stateToReturnTo;
 
 				GameObject.FindGameObjectWithTag("blockRays").GetComponent<BoxCollider2D>().enabled = false;
-			} else if (this.State == States.INPLAY && client.isCardSelected(this)) {	//deselects this card
+			} else if (State == States.INPLAY && client.isCardSelected(this)) {	//deselects this card
 				client.deselectCard(this);
 			}
 		}
 
-		if (client.isCardSelected(this)) {		//activates the selected indicator
-			selectedIndicator.SetActive(true);
-		} else
-			selectedIndicator.SetActive(false);
+	    selectedIndicator.SetActive(client.isCardSelected(this));
 	}
 
 	public abstract void changeCard (CardInfo c);
@@ -103,7 +109,9 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		}
 		if (lcMenu.activeSelf)
 			lcMenu.SetActive (false);
-		deathHandler.SetActive (true);
+
+	    transform.SetParent(null);
+	    deathHandler.SetActive (true);
 	}
 
 	public void returnToParent() {
@@ -111,10 +119,34 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		this.transform.localPosition = Vector3.zero;
 	}
 
+    public void setCardFOW(bool fow)
+    {
+        if (CardI == null || FowActive == fow) return;
+        FowActive = fow;
+        if (FowActive)
+        {
+            gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            GetComponent<SpriteRenderer>().sprite =
+                Resources.Load(IsEnemyCard ? "Cards/cardBackRed" : "Cards/cardBackBlue", typeof(Sprite)) as Sprite;
+        }
+        else
+        {
+            gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            Sprite s = Resources.Load("Cards/" + CardI.GetId(), typeof(Sprite)) as Sprite;
+            if (s != null)
+                GetComponent<SpriteRenderer>().sprite = s;
+            else
+                GetComponent<SpriteRenderer>().sprite = Resources.Load("Cards/_empty", typeof(Sprite)) as Sprite;
+        }
+    }
 
-	public virtual bool dragPass() {
 
-		if (!client.game.canTakeAction (Actions.PLAY) && this.GetComponent<BoxCollider2D>().enabled)
+    public virtual bool dragPass()
+	{
+
+	    if (IsEnemyCard) return false;
+
+		if (!client.game.canTakeAction (Actions.PLAY) && GetComponent<BoxCollider2D>().enabled)
 			return false;
 
 		if (deathHandler.activeSelf)
@@ -122,7 +154,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 		if (State != States.INHAND && State != States.EXPANDINHAND) {
 			
-			if (State == States.INPLAY && this.GetComponent<BoxCollider2D>().enabled)
+			if (State == States.INPLAY && GetComponent<BoxCollider2D>().enabled)
 				return false;
 		}
 
@@ -180,15 +212,15 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	public virtual void OnPointerClick(PointerEventData eventData) {
 
-		if (client.dragging || deathHandler.activeSelf)
+		if (client.dragging || deathHandler.activeSelf || FowActive)
 			return;
 
 		switch (eventData.button) {
 
-		case (PointerEventData.InputButton.Right):
+		case PointerEventData.InputButton.Right:
 
-			if (client.isCardSelected(this))
-			    client.deselectCard(this);
+		        if (client.isCardSelected(this))
+		            client.deselectCard(this);
 
 			lcMenu.SetActive(false);
 
@@ -205,7 +237,9 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 			GameObject.FindGameObjectWithTag("blockRays").GetComponent<BoxCollider2D>().enabled = true;
 
 			break;
-		case (PointerEventData.InputButton.Left):
+		case PointerEventData.InputButton.Left:
+
+		        if (IsEnemyCard) break;
 
 			if (!client.game.canTakeAction(Actions.MENU))
 				break;
