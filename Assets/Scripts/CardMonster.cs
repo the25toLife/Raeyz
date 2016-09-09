@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 public class CardMonster : Card {
 
+    // Game object references set in Unity's inspector; must remain public
 	public GameObject Locked, AwakenMenuItem, AttackInfo, Shield;
 
 	private bool _defending, _cardLocked;
@@ -43,7 +42,7 @@ public class CardMonster : Card {
 			if (s != null)
 				this.GetComponent<SpriteRenderer> ().sprite = s;
 
-			if ((CardI as MonsterInfo).GetLevel() < 5) {
+			if ((CardI as MonsterInfo).GetLevel() < 15) {
 				Locked.SetActive(false);
 				AwakenMenuItem.SetActive(false);
 			} else

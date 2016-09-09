@@ -55,7 +55,7 @@ public class CardStatComponent : MonoBehaviour {
 			break;
 		case (StatType.TYPE):
 			
-			this.GetComponent<Text>().text = c.GetType().ToString();
+			this.GetComponent<Text>().text = c.GetCardType().ToString();
 			break;
 		case (StatType.AFFINITY):
 

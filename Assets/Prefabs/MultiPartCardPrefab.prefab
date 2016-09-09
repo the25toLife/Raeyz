@@ -395,6 +395,7 @@ GameObject:
   - 212: {fileID: 21241438}
   - 114: {fileID: 11478176}
   - 114: {fileID: 11476404}
+  - 82: {fileID: 8235934}
   m_Layer: 0
   m_Name: MultiPartCardPrefab
   m_TagString: Untagged
@@ -832,6 +833,75 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 474, y: 30}
+--- !u!82 &8235934
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 152292}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 3e16cdfe1afcf5b41b115cf696a53f28, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
 --- !u!111 &11121968
 Animation:
   m_ObjectHideFlags: 1
@@ -2120,11 +2190,10 @@ MonoBehaviour:
   deathHandler: {fileID: 165652}
   selectedIndicator: {fileID: 173194}
   client: {fileID: 0}
-  State: 0
-  locked: {fileID: 190342}
-  awakenMenuItem: {fileID: 125700}
-  attackInfo: {fileID: 156940}
-  shield: {fileID: 131132}
+  Locked: {fileID: 190342}
+  AwakenMenuItem: {fileID: 125700}
+  AttackInfo: {fileID: 156940}
+  Shield: {fileID: 131132}
 --- !u!114 &11478176
 MonoBehaviour:
   m_ObjectHideFlags: 1

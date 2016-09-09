@@ -639,8 +639,8 @@ public static class CardPool {
 		Cards [25].associateCardInfo (Cards [26], CardRelation.PairL);
 		Cards [26].associateCardInfo (Cards [25], CardRelation.PairR);
 		//Earth Elemental
-		Cards [90].associateCardInfo (Cards [91], CardRelation.PairL);
-		Cards [91].associateCardInfo (Cards [90], CardRelation.PairR);
+		Cards [91].associateCardInfo (Cards [90], CardRelation.PairL);
+		Cards [90].associateCardInfo (Cards [91], CardRelation.PairR);
 		//El'zorn
 		Cards [95].associateCardInfo (Cards [96], CardRelation.PairR);
 		Cards [96].associateCardInfo (Cards [95], CardRelation.PairL);
@@ -648,22 +648,22 @@ public static class CardPool {
 		Cards [102].associateCardInfo (Cards [103], CardRelation.PairL);
 		Cards [103].associateCardInfo (Cards [102], CardRelation.PairR);
 		//Fire Elemental
-		Cards [118].associateCardInfo (Cards [119], CardRelation.PairR);
-		Cards [119].associateCardInfo (Cards [118], CardRelation.PairL);
+		Cards [119].associateCardInfo (Cards [118], CardRelation.PairR);
+		Cards [118].associateCardInfo (Cards [119], CardRelation.PairL);
 		//Gruneath
-		Cards [143].associateCardInfo (Cards [144], CardRelation.PairL);
-		Cards [144].associateCardInfo (Cards [143], CardRelation.PairR);
+		Cards [144].associateCardInfo (Cards [143], CardRelation.PairL);
+		Cards [143].associateCardInfo (Cards [144], CardRelation.PairR);
 		//Rudraskha
 		Cards [283].associateCardInfo (Cards [284], CardRelation.PairL);
 		Cards [284].associateCardInfo (Cards [283], CardRelation.PairR);
 		//The Carrier
-		Cards [329].associateCardInfo (Cards [330], CardRelation.PairL);
-		Cards [330].associateCardInfo (Cards [329], CardRelation.PairR);
+		Cards [330].associateCardInfo (Cards [329], CardRelation.PairL);
+		Cards [329].associateCardInfo (Cards [330], CardRelation.PairR);
 		//The Desecrator
-		Cards [334].associateCardInfo (Cards [334], CardRelation.PairR);
-		Cards [335].associateCardInfo (Cards [335], CardRelation.PairL);
+		Cards [335].associateCardInfo (Cards [334], CardRelation.PairR);
+		Cards [334].associateCardInfo (Cards [335], CardRelation.PairL);
 		//Water Elemental
-		Cards [377].associateCardInfo (Cards [378], CardRelation.PairR);
-		Cards [378].associateCardInfo (Cards [377], CardRelation.PairL);
+		Cards [378].associateCardInfo (Cards [377], CardRelation.PairR);
+		Cards [377].associateCardInfo (Cards [378], CardRelation.PairL);
 	}
 }

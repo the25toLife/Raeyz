@@ -16,7 +16,7 @@ public enum GameStage {
 }
 
 /// <summary>
-/// Represents possible actions of any type of card.
+/// Represents possible actions of any type of CurrentCard.
 /// </summary>
 public enum Actions {
 	
@@ -108,7 +108,7 @@ public class SceneManager : LoadBalancingClient
 	/// <summary>
 	/// Informs other players that a deck was created for this client.
 	/// </summary>
-	/// <param name="d">int[] of card IDs in the deck.</param>
+	/// <param name="d">int[] of CurrentCard IDs in the deck.</param>
 	public void SendCreateDeckEv(int[] d)
 	{
 		Hashtable content = new Hashtable();
@@ -117,9 +117,9 @@ public class SceneManager : LoadBalancingClient
 	}
 
 	/// <summary>
-	/// Informs other players that a card has been dealt to this client.
+	/// Informs other players that a CurrentCard has been dealt to this client.
 	/// </summary>
-	/// <param name="c">The card dealt.</param>
+	/// <param name="c">The CurrentCard dealt.</param>
 	public void SendDealCardEv(Card c)
 	{
 		Hashtable content = new Hashtable();
@@ -142,7 +142,7 @@ public class SceneManager : LoadBalancingClient
 	/// <summary>
 	/// Informs other players that one of this clients cards has been sent to graveyard.  Do not call for other player's cards.
 	/// </summary>
-	/// <param name="id">The unique card ID that has been sent to the graveyard.</param>
+	/// <param name="id">The unique CurrentCard ID that has been sent to the graveyard.</param>
 	public void SendGraveCardEv(int uid) {
 		
 		Hashtable content = new Hashtable();
@@ -151,10 +151,10 @@ public class SceneManager : LoadBalancingClient
 	}
 
 	/// <summary>
-	/// Informs other players that this client has played a card.
+	/// Informs other players that this client has played a CurrentCard.
 	/// </summary>
-	/// <param name="cid">The unique card ID of the card played.</param>
-	/// <param name="slotid">The slot that the card has been played in.</param>
+	/// <param name="cid">The unique CurrentCard ID of the CurrentCard played.</param>
+	/// <param name="slotid">The slot that the CurrentCard has been played in.</param>
 	public void SendPlayCardEv(int uid, int slotid) {
 		
 		Hashtable content = new Hashtable();
@@ -164,10 +164,10 @@ public class SceneManager : LoadBalancingClient
 	}
 
 	/// <summary>
-	/// Informs the other players this client has toggled the defense state of a card.
+	/// Informs the other players this client has toggled the defense state of a CurrentCard.
 	/// </summary>
-	/// <param name="cid">The unique card ID of the card.</param>
-	/// <param name="state">The new defense state of the card.</param>
+	/// <param name="cid">The unique CurrentCard ID of the CurrentCard.</param>
+	/// <param name="state">The new defense state of the CurrentCard.</param>
 	public void SendDefenseToggleEv(int uid, bool state) {
 		
 		Hashtable content = new Hashtable();
@@ -179,8 +179,8 @@ public class SceneManager : LoadBalancingClient
 	/// <summary>
 	/// Informs the other players that this client has issued an attack.
 	/// </summary>
-	/// <param name="auid">Attacking card's unique ID.</param>
-	/// <param name="tuid">Target card's unique ID.</param>
+	/// <param name="auid">Attacking CurrentCard's unique ID.</param>
+	/// <param name="tuid">Target CurrentCard's unique ID.</param>
 	/// <param name="defend">If set to <c>true</c>, the target's defense stat will be used instead of the attack stat.</param>
 	public void SendAttackEv(int auid, int tuid, bool defend) {
 		
@@ -207,7 +207,7 @@ public class SceneManager : LoadBalancingClient
 				CardInfo c = CardPool.Cards[(int)cardInfo[(byte)2]-1];
 
 				clientGame.dealCardToEnemy(uid, c);
-				Debug.Log(string.Format("The enemy was dealt a card with UID: {0} and name: {1}.", uid, c.GetName()));
+				Debug.Log(string.Format("The enemy was dealt a CurrentCard with UID: {0} and name: {1}.", uid, c.GetName()));
 			}
 			break;
 		case (byte)EvCreateDeck:
@@ -256,7 +256,7 @@ public class SceneManager : LoadBalancingClient
 		case (byte)EvGraveCard:
 
 			//Probably gonna see a lot of these...
-			//Implement unique card ID
+			//Implement unique CurrentCard ID
 			//
 			//
 			content = photonEvent.Parameters[ParameterCode.CustomEventContent];
@@ -266,7 +266,7 @@ public class SceneManager : LoadBalancingClient
 				int uid = (int)graveInfo[(byte)1];
 				clientGame.removeCard(uid);
 				
-				Debug.Log(string.Format("Removing card with ID {0}", uid));
+				Debug.Log(string.Format("Removing CurrentCard with ID {0}", uid));
 			}
 			break;
 			//
@@ -342,7 +342,7 @@ public class SceneManager : LoadBalancingClient
 //				GameAction action = new GameAction(a, clientGame.getCard(CardPool.Cards[actionCardID-1], CardInfo.CardType.MONSTER, true), clientGame.getCard(CardPool.Cards[targetCardID-1]));
 //				action.executeAction();
 //				
-//				Debug.Log(string.Format("Card with ID {0} is performing action: {1} on card with ID {2}", actionCardID, a, targetCardID));
+//				Debug.Log(string.Format("Card with ID {0} is performing action: {1} on CurrentCard with ID {2}", actionCardID, a, targetCardID));
 //			}
 //			break;
 			//
@@ -409,15 +409,15 @@ public class SceneManager : LoadBalancingClient
 		playerActions = new ArrayList ();
 
 //		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
-//		while ((c as MonsterInfo).Level > 4)	//Guarentees a basic card in the initial hand.
+//		while ((c as MonsterInfo).Level > 4)	//Guarentees a basic CurrentCard in the initial hand.
 //			c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];
 //		dealCardToPlayer (c);
 //		for (int i = 0; i < 4; i++)
 //			dealCardToPlayer ();
-		dealCardToPlayer (CardPool.Cards [0]);
-		dealCardToPlayer (CardPool.Cards [1]);
-		dealCardToPlayer (CardPool.Cards [2]);
-		dealCardToPlayer (CardPool.Cards [3]);
+		dealCardToPlayer (CardPool.Cards [334]);
+		dealCardToPlayer (CardPool.Cards [335]);
+		dealCardToPlayer (CardPool.Cards [377]);
+		dealCardToPlayer (CardPool.Cards [378]);
 		dealCardToPlayer (CardPool.Cards [4]);
 
 		stage = GameStage.PREP;
@@ -431,7 +431,7 @@ public class SceneManager : LoadBalancingClient
 
 		ArrayList cardsInPool = new ArrayList ();
 		foreach (CardInfo c in CardPool.Cards) {
-			// run if checks here to exclude card IDs
+			// run if checks here to exclude CurrentCard IDs
 			cardsInPool.Add(c);
 		}
 		
@@ -441,9 +441,9 @@ public class SceneManager : LoadBalancingClient
 	}
 
 	/// <summary>
-	/// Deals a card to the player, either the next card in the deck or one specified in the arguments.
+	/// Deals a CurrentCard to the player, either the next CurrentCard in the deck or one specified in the arguments.
 	/// </summary>
-	/// <param name="c">The specific card to deal to the player (optional).</param>
+	/// <param name="c">The specific CurrentCard to deal to the player (optional).</param>
 	private void dealCardToPlayer(CardInfo c = null) {
 
 		if (playerHand.Count > 4) return;
@@ -467,25 +467,24 @@ public class SceneManager : LoadBalancingClient
 	}
 
 	/// <summary>
-	/// Plays a card on the field.	
+	/// Plays a CurrentCard on the field.
 	/// </summary>
-	/// <param name="c">The card to play.</param>
-	/// <param name="slot">The slot ID to play the card in.</param>
+	/// <param name="c">The CurrentCard to play.</param>
+	/// <param name="slot">The slot ID to play the CurrentCard in.</param>
 	public void playCard(Card c, int slot) {
 
 		if (!firstMove)
 			firstMove = true;
 		if (playerHand.Contains(c))
 			playerHand.Remove (c);
-	    FieldManager.AddCardToField(c);
 	    SendPlayCardEv (c.UID, slot);
 	}
 
 
 	/// <summary>
-	/// Sends the specified card to the graveyard.
+	/// Sends the specified CurrentCard to the graveyard.
 	/// </summary>
-	/// <param name="c">The card to send to the graveyard.</param>
+	/// <param name="c">The CurrentCard to send to the graveyard.</param>
 	public void SendCardToGraveyard(Card c) {
 
 		c.sendCardToGraveyard ();
@@ -653,10 +652,10 @@ public class SceneManager : LoadBalancingClient
 	}
 
 	/// <summary>
-	/// Checks whether or not a card can be awakened by sacrificing the given cards.
+	/// Checks whether or not a CurrentCard can be awakened by sacrificing the given cards.
 	/// </summary>
-	/// <returns><c>true</c> if the card can be awakened, <c>false</c> otherwise.</returns>
-	/// <param name="c">The card to check.</param>
+	/// <returns><c>true</c> if the CurrentCard can be awakened, <c>false</c> otherwise.</returns>
+	/// <param name="c">The CurrentCard to check.</param>
 	/// <param name="sacr">An ArrayList of cards to sacrifice.</param>
 	public bool canAwaken(Card c, ArrayList sacr) {
 

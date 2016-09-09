@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using JetBrains.Annotations;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 //theredhex FFBDBD
@@ -11,10 +10,12 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	public enum States {
 
 		INHAND, INPLAY, INFO, EXPANDINHAND, DISABLED
-	};
+	}
 
+    // Differentiates player and enemy cards
     public bool IsEnemyCard { get; set; }
 
+    // Determines whether or not the player can see the CurrentCard's information or only the CurrentCard's back
     public bool FowActive { get; private set; }
 
     protected Transform parentToReturnTo;
@@ -25,7 +26,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	public int UID { get; set; }
 	public CardInfo CardI { get; set; }
-	public States State;// { get; set; }
+	public States State { get; set; }
 
 	public virtual void Start () {
 
@@ -66,7 +67,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 				State = stateToReturnTo == States.EXPANDINHAND ? States.INHAND : stateToReturnTo;
 
 				GameObject.FindGameObjectWithTag("blockRays").GetComponent<BoxCollider2D>().enabled = false;
-			} else if (State == States.INPLAY && client.isCardSelected(this)) {	//deselects this card
+			} else if (State == States.INPLAY && client.isCardSelected(this)) {	//deselects this CurrentCard
 				client.deselectCard(this);
 			}
 		}
@@ -89,7 +90,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	}
 
 	/// <summary>
-	/// Assigns a unique ID to the card.
+	/// Assigns a unique ID to the CurrentCard.
 	/// </summary>
 	/// <param name="uid">The unique ID to assign.</param>
 	public void createUID(int uid) {
@@ -97,10 +98,15 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		Debug.Log (string.Format("Card assigned UID: {0}", UID));
 	}
 
-	public virtual void sendCardToGraveyard ()
+    [UsedImplicitly]
+    private void OnDestroy()
+    {
+        FindObjectOfType<FieldManager>().RemoveCardFromField(this);
+    }
+
+    public virtual void sendCardToGraveyard ()
 	{
 
-	    FindObjectOfType<FieldManager>().RemoveCardFromField(this);
 	    if (State == States.INHAND && State != States.EXPANDINHAND) {
 			Vector3 pos = this.transform.localPosition;
 			pos.y += 2.28f;
@@ -163,8 +169,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	public void prepareDrag() {
 
-		GameObject.FindObjectOfType<ClientGame> ().dragging = true;
-		client.cardDragged = this;
+		client.dragging = true;
 		
 		if (lcMenu.activeSelf)
 			lcMenu.SetActive (false);
@@ -176,7 +181,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	public void endDrag() {
 		
-		GameObject.FindObjectOfType<ClientGame> ().dragging = false;
+		client.dragging = false;
 		client.cardDragged = null;
 
 		this.returnToParent ();
@@ -194,6 +199,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		if (eventData.button != PointerEventData.InputButton.Left || !dragPass())
 			return;
 		prepareDrag ();
+	    client.cardDragged = this;
 	}
 
 	public virtual void OnDrag(PointerEventData eventData) {

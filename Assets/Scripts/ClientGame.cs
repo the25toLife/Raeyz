@@ -26,7 +26,7 @@ public class ClientGame : MonoBehaviour
 	public Card cardDragged;
 	public CardMonster cardAwakening;
 
-	public GameObject playerHandObj, enemyHandObj, playerMonsters, enemyMonsters, monsterCardPrefab, auxCardPrefab, eMonsterCardPrefab, eMultiCardPrefab, cardMenu, cardMenuItem;
+	public GameObject playerHandObj, enemyHandObj, playerMonsters, enemyMonsters, monsterCardPrefab, auxCardPrefab, MultiCardPrefab, cardMenu, cardMenuItem;
 
     [UsedImplicitly]
     private void Start () {
@@ -62,15 +62,15 @@ public class ClientGame : MonoBehaviour
 		Style.fontSize = (int)(30.0f * scale);
 	    if (game.clientPlayer != null)
 	    {
-	        GUI.Box(new Rect(118.0f * scale, (Screen.height / 2.0f) + (70.0f * scale), 155.4f * scale, 60.0f * scale),
+	        GUI.Box(new Rect(118.0f * scale, Screen.height / 2.0f + 70.0f * scale, 155.4f * scale, 60.0f * scale),
 	            string.Format("{0} LP", game.clientPlayer.CustomProperties["l"]), Style);
 	    }
 	    if (game.enemyPlayer != null)
 	    {
-	        GUI.Box(new Rect(118.0f * scale, (Screen.height / 2.0f) - (130.0f * scale), 155.4f * scale, 60.0f * scale),
+	        GUI.Box(new Rect(118.0f * scale, Screen.height / 2.0f - 130.0f * scale, 155.4f * scale, 60.0f * scale),
 	            string.Format("{0} LP", game.enemyPlayer.CustomProperties["l"]), Style);
 	    }
-	    GUI.Box(new Rect(118.0f * scale, (Screen.height / 2.0f) - (30.0f * scale), 155.4f * scale, 60.0f * scale), game.CurrentStage.ToString (), Style);
+	    GUI.Box(new Rect(118.0f * scale, Screen.height / 2.0f - 30.0f * scale, 155.4f * scale, 60.0f * scale), game.CurrentStage.ToString (), Style);
 		if ((game.clientPlayer != null && game.clientPlayer.isReady ()) || game.CurrentStage == GameStage.WAITING)
 			GUI.Box (new Rect (Screen.width - (271.0f * scale), (Screen.height / 2.0f) - (30.0f * scale), 217.0f * scale, 60.0f * scale), "...", Style);
 		else {
@@ -161,11 +161,11 @@ public class ClientGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Finds a card based on a unique card ID.
+	/// Finds a CurrentCard based on a unique CurrentCard ID.
 	/// </summary>
-	/// <returns>The card matching the UID, or null if no matches were found.</returns>
-	/// <param name="uid">The unique card ID to look for.</param>
-	/// <typeparam name="T">The type of card to iterate through (CardMonster, ECardMonster, etc).</typeparam>
+	/// <returns>The CurrentCard matching the UID, or null if no matches were found.</returns>
+	/// <param name="uid">The unique CurrentCard ID to look for.</param>
+	/// <typeparam name="T">The type of CurrentCard to iterate through (CardMonster, ECardMonster, etc).</typeparam>
 	public T getCard<T>(int uid) where T : Card {
 
 		foreach (T c in GameObject.FindObjectsOfType<T>()) {
@@ -180,7 +180,7 @@ public class ClientGame : MonoBehaviour
 	/// Finds all cards that match the specified type (CardMonster, ECardMonster, etc).
 	/// </summary>
 	/// <returns>A list containing all the cards found.</returns>
-	/// <typeparam name="T">The type of card to iterate through (CardMonster, ECardMonster, etc).</typeparam>
+	/// <typeparam name="T">The type of CurrentCard to iterate through (CardMonster, ECardMonster, etc).</typeparam>
 	public List<T> getCardsByObjType<T>() where T : Card {
 
 		List<T> cards = new List<T>();
@@ -191,10 +191,10 @@ public class ClientGame : MonoBehaviour
 	}	
 
 	/// <summary>
-	/// Finds all cards that match the specified card type (Monster, Auxiliary, etc).
+	/// Finds all cards that match the specified CurrentCard type (Monster, Auxiliary, etc).
 	/// </summary>
 	/// <returns>A list containing all the cards found.</returns>
-	/// <param name="cType">The card type to look for.</param>
+	/// <param name="cType">The CurrentCard type to look for.</param>
 	public List<Card> getCardsByCardType(CardInfo.CardType cType) {
 		
 		List<Card> cards = new List<Card>();
@@ -221,23 +221,24 @@ public class ClientGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Plays an enemy card of the specified unique ID in the specified slot.
+	/// Plays an enemy CurrentCard of the specified unique ID in the specified slot.
 	/// </summary>
-	/// <param name="uid">The unique ID of the card to be played.</param>
-	/// <param name="slotID">The slot to play the card in.</param>
+	/// <param name="uid">The unique ID of the CurrentCard to be played.</param>
+	/// <param name="slotID">The slot to play the CurrentCard in.</param>
 	public void playEnemyCard(int uid, int slotID) {
 
 		foreach (Slot slot in GameObject.FindObjectsOfType<Slot>()) {
 			if (slot.SlotID == slotID + 12) {
 
 				Card c = getCard<Card>(uid);
-				switch (c.CardI.GetCardType()) {
+
+			    switch (c.CardI.GetCardType()) {
 
 				case (CardInfo.CardType.Monster):
 					CardMonster cm = c as CardMonster;
 					if (cm.CardI.AssoCardInfo.ContainsKey (CardRelation.PairR)) {
 
-						Transform pairDropSlot = this.transform.parent.FindChild(string.Format("enemyMonster{0}", slotID + 1));
+						Transform pairDropSlot = enemyMonsters.transform.FindChild(string.Format("enemyMonster{0}", slotID + 1));
 						//		foreach (SlotMonster sm in this.transform.parent.GetComponentsInChildren<SlotMonster>()) {
 						//			if (sm.gameObject.name.Equals(string.Format("playerMonster{0}", SlotID + dir)))
 						//				pairDropSlot = sm;
@@ -255,9 +256,10 @@ public class ClientGame : MonoBehaviour
 //						if (pairDropSlot == null)
 //							break;
 						CardMonster ecmPair = pdsm.GetComponentInChildren<CardMonster>();
-						GameObject o = GameObject.Instantiate(eMultiCardPrefab);
+						GameObject o = GameObject.Instantiate(MultiCardPrefab);
 						
 						CardMultiPart mpc = o.GetComponent<CardMultiPart>();
+					    mpc.IsEnemyCard = true;
 						mpc.changeCard((c.CardI as MonsterInfo) + (ecmPair.CardI as MonsterInfo));
 						mpc.createUID(uid);
 						mpc.GetComponent<SpriteRenderer> ().sortingOrder = pdsm.GetComponent<SpriteRenderer> ().sortingOrder + 1;
@@ -265,28 +267,29 @@ public class ClientGame : MonoBehaviour
 						mpc.changeReturnParent(pdsm.transform);
 						mpc.returnToParent();
 
-						GameObject.Destroy(c.gameObject);
-						GameObject.Destroy(ecmPair.gameObject);
+					    FindObjectOfType<FieldManager>().AddCardToField(mpc);
+
+					    Destroy(c.gameObject);
+						Destroy(ecmPair.gameObject);
+
+					    return;
 					}
 					break;
 				}
 
-				if (c != null) {
-
-				    FindObjectOfType<FieldManager>().AddCardToField(c);
-				    c.GetComponent<SpriteRenderer> ().sortingOrder = slot.GetComponent<SpriteRenderer> ().sortingOrder + 1;
-					c.State = Card.States.INPLAY;
-					c.changeReturnParent(slot.transform);
-					c.returnToParent();
-				}
+			    FindObjectOfType<FieldManager>().AddCardToField(c);
+			    c.GetComponent<SpriteRenderer> ().sortingOrder = slot.GetComponent<SpriteRenderer> ().sortingOrder + 1;
+			    c.State = Card.States.INPLAY;
+			    c.changeReturnParent(slot.transform);
+			    c.returnToParent();
 			}
 		}
 	}
 
 	/// <summary>
-	/// Provides a unique card ID for updates the current room UID to ensure no duplicates.
+	/// Provides a unique CurrentCard ID for updates the current room UID to ensure no duplicates.
 	/// </summary>
-	/// <returns>The unique card ID.</returns>
+	/// <returns>The unique CurrentCard ID.</returns>
 	public int getUID() {
 
 		int currentUID = (int)game.CurrentRoom.CustomProperties ["u"];
@@ -295,9 +298,9 @@ public class ClientGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Sends a specified card to the graveyard.
+	/// Sends a specified CurrentCard to the graveyard.
 	/// </summary>
-	/// <param name="uid">The unique ID of the card to remove.</param>
+	/// <param name="uid">The unique ID of the CurrentCard to remove.</param>
 	public void removeCard(int uid) {
 		Card c = getCard<Card>(uid);
 		if (c != null)
@@ -305,10 +308,10 @@ public class ClientGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Checks whether a card is in the player's hand based on card info.
+	/// Checks whether a CurrentCard is in the player's hand based on CurrentCard info.
 	/// </summary>
-	/// <returns><c>true</c>, if the card info was found in the hand, <c>false</c> otherwise.</returns>
-	/// <param name="ci">The card info to search for.</param>
+	/// <returns><c>true</c>, if the CurrentCard info was found in the hand, <c>false</c> otherwise.</returns>
+	/// <param name="ci">The CurrentCard info to search for.</param>
 	public bool isCardInHand(CardInfo ci, out Card cardFound) {
 		cardFound = null;
 		foreach (Card c in playerHandObj.GetComponentsInChildren<Card>()) {
@@ -321,10 +324,10 @@ public class ClientGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Checks whether a specific card is in the player's hand based on its UID.
+	/// Checks whether a specific CurrentCard is in the player's hand based on its UID.
 	/// </summary>
-	/// <returns><c>true</c>, if the card info was found in the hand, <c>false</c> otherwise.</returns>
-	/// <param name="uid">The unique card ID to search for.</param>
+	/// <returns><c>true</c>, if the CurrentCard info was found in the hand, <c>false</c> otherwise.</returns>
+	/// <param name="uid">The unique CurrentCard ID to search for.</param>
 	public bool isCardInHand(int uid, out Card cardFound) {
 		cardFound = null;
 		foreach (Card c in playerHandObj.GetComponentsInChildren<Card>()) {
@@ -352,10 +355,10 @@ public class ClientGame : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Deals a card to the players hand and instantiates the appropriate prefab.
+	/// Deals a CurrentCard to the players hand and instantiates the appropriate prefab.
 	/// </summary>
-	/// <returns>The card dealt to player.</returns>
-	/// <param name="cInfo">The info of the card to be dealt.</param>
+	/// <returns>The CurrentCard dealt to player.</returns>
+	/// <param name="cInfo">The info of the CurrentCard to be dealt.</param>
 	public Card dealCardToPlayer(CardInfo cInfo) {
 
 		Card cardDealt = null;
@@ -385,10 +388,10 @@ public class ClientGame : MonoBehaviour
 	}	
 
 	/// <summary>
-	/// Deals a card to the enemy with the specified UID.
+	/// Deals a CurrentCard to the enemy with the specified UID.
 	/// </summary>
-	/// <param name="uid">The unique card ID to assign to the new card.</param>
-	/// <param name="cInfo">The card info of the new card.</param>
+	/// <param name="uid">The unique CurrentCard ID to assign to the new CurrentCard.</param>
+	/// <param name="cInfo">The CurrentCard info of the new CurrentCard.</param>
 	public void dealCardToEnemy(int uid, CardInfo cInfo) {
 
 		Card cardDealt = null;
