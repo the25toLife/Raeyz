@@ -403,7 +403,8 @@ public class SceneManager : LoadBalancingClient {
 		
 		clientGame = GameObject.FindObjectOfType<ClientGame> ();
 		playerDeck = createDeck ();
-		playerHand = new ArrayList ();
+        playerGrave = new Deck();
+        playerHand = new ArrayList ();
 		playerActions = new ArrayList ();
 
 //		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
@@ -663,6 +664,17 @@ public class SceneManager : LoadBalancingClient {
 			return true;
 		return false;
 	}
+
+    public Deck getPlayerDeck()
+    {
+        return playerDeck;
+    }
+
+    public Deck getPlayerGrave()
+    {
+        return playerGrave;
+    }
+
 }
 
 
@@ -727,8 +739,15 @@ public class Deck {
 	
 	private ArrayList cards;
 	private int maxSize;
-	
-	public Deck(ArrayList pool, int size) {
+
+    public Deck()
+    {
+
+        maxSize = 200;
+        cards = new ArrayList();
+    }
+
+    public Deck(ArrayList pool, int size) {
 
 		maxSize = size;
 		cards = new ArrayList (maxSize);
@@ -739,9 +758,9 @@ public class Deck {
 			pool.RemoveAt (val);
 			cards.Add(c);
 		}
-	}	
+	}
 
-	public Deck(int[] deckInfo) {
+    public Deck(int[] deckInfo) {
 
 		maxSize = deckInfo.Length;
 		cards = new ArrayList (maxSize);
@@ -751,6 +770,11 @@ public class Deck {
 			cards.Add(c);
 		}
 	}
+
+    public int getDeckSize()
+    {
+        return cards.Count;
+    }
 
 	public CardInfo drawCard() {
 

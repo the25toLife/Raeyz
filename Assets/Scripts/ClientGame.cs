@@ -15,7 +15,7 @@ public enum MenuItem {
 public class ClientGame : MonoBehaviour {
 
 	public SceneManager game;
-	public GUIStyle style, lifeStyle;
+	public GUIStyle style, styleNoBack, lifeStyle;
 	private Deck playerDeck;
 
 	public bool dragging, awakening, playersTurn, confirmCheck;
@@ -55,11 +55,17 @@ public class ClientGame : MonoBehaviour {
 		float scale = Screen.width / 1840.0f;
 		lifeStyle.fontSize = (int)(40.0f * scale);
 		style.fontSize = (int)(30.0f * scale);
-		if (game.clientPlayer != null)
-			GUI.Box(new Rect(118.0f * scale, (Screen.height / 2.0f) + (70.0f * scale), 155.4f * scale, 60.0f * scale), string.Format("{0} LP", game.clientPlayer.CustomProperties["l"].ToString()), style);
-			//GUI.Box(new Rect(Screen.width - (246.0f * scale), Screen.height - (80.0f * scale), 216.0f * scale, 60.0f * scale), string.Format("me: {0} turn: {1}", game.clientPlayer.ID, game.CurrentRoom.CustomProperties["tp"]), lifeStyle);
-			//GUI.Box(new Rect(Screen.width - 246.0f, Screen.height - 80.0f, 215f, 60.0f), game.clientPlayer.Life.ToString(), lifeStyle);
-		if (game.enemyPlayer != null)
+        styleNoBack.fontSize = (int)(30.0f * scale);
+        if (game.clientPlayer != null)
+        {
+            GUI.Box(new Rect(118.0f * scale, (Screen.height / 2.0f) + (70.0f * scale), 155.4f * scale, 60.0f * scale), string.Format("{0} LP", game.clientPlayer.CustomProperties["l"].ToString()), style);
+            GUI.Box(new Rect((Screen.width - (60.0f * scale)) , (Screen.height - (70.0f * scale)), 65.4f * scale, 60.0f * scale), string.Format("{0}", game.getPlayerDeck().getDeckSize().ToString()), styleNoBack);
+            GUI.Box(new Rect(-5.4f * scale, (Screen.height) - 70.0f * scale, 65.4f * scale, 60.0f * scale), string.Format("{0}", game.getPlayerGrave().getDeckSize().ToString()), styleNoBack);
+        }
+
+        //GUI.Box(new Rect(Screen.width - (246.0f * scale), Screen.height - (80.0f * scale), 216.0f * scale, 60.0f * scale), string.Format("me: {0} turn: {1}", game.clientPlayer.ID, game.CurrentRoom.CustomProperties["tp"]), lifeStyle);
+        //GUI.Box(new Rect(Screen.width - 246.0f, Screen.height - 80.0f, 215f, 60.0f), game.clientPlayer.Life.ToString(), lifeStyle);
+        if (game.enemyPlayer != null)
 			GUI.Box(new Rect(118.0f * scale, (Screen.height / 2.0f) - (130.0f * scale), 155.4f * scale, 60.0f * scale), string.Format ("{0} LP",game.enemyPlayer.CustomProperties["l"].ToString()), style);
 			//GUI.Box(new Rect(28.5f * scale, 20.0f * scale, 216.0f * scale, 60.0f * scale), game.CurrentRoom.CustomProperties["t#"].ToString(), lifeStyle);
 			//GUI.Box(new Rect(31.0f, 20.0f, 215.0f, 60.0f), (game.enemyPlayer).CustomProperties["l"].ToString(), lifeStyle);
@@ -193,7 +199,7 @@ public class ClientGame : MonoBehaviour {
 		List<Card> cards = new List<Card>();
 		switch (cType) {
 
-		case (CardInfo.CardType.Monster):
+		case (CardInfo.CardType.MONSTER):
 			cards.AddRange( getCardsByObjType<CardMonster>().Cast<Card>().ToList() );
 			cards.AddRange(getCardsByObjType<ECardMonster>().Cast<Card>().ToList() );
 			break;
@@ -225,7 +231,7 @@ public class ClientGame : MonoBehaviour {
 				Card c = getCard<Card>(uid);
 				switch (c.CardI.Type) {
 
-				case (CardInfo.CardType.Monster):
+				case (CardInfo.CardType.MONSTER):
 					ECardMonster ecm = c as ECardMonster;
 					if (ecm.CardI.AssoCardInfo.ContainsKey (CardRelation.RPAIR)) {
 
@@ -351,7 +357,7 @@ public class ClientGame : MonoBehaviour {
 		Card cardDealt = null;
 		switch (cInfo.Type) {
 		
-		case (CardInfo.CardType.Monster):
+		case (CardInfo.CardType.MONSTER):
 			GameObject m = Instantiate(monsterCardPrefab);
 			m.transform.SetParent(playerHandObj.transform);
 			cardDealt = m.GetComponent<CardMonster>();
@@ -384,7 +390,7 @@ public class ClientGame : MonoBehaviour {
 		Card cardDealt = null;
 		switch (cInfo.Type) {
 			
-		case (CardInfo.CardType.Monster):
+		case (CardInfo.CardType.MONSTER):
 			GameObject c = Instantiate(eMonsterCardPrefab);
 			c.transform.SetParent(enemyHandObj.transform);
 			cardDealt = c.GetComponent<ECardMonster>();
