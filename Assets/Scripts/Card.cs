@@ -30,18 +30,18 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	public virtual void Start () {
 
-		client = GameObject.FindObjectOfType<ClientGame> ();
+		client = FindObjectOfType<ClientGame> ();
 
 		fullInfoCanvas.SetActive (false);
 
 		if (lcMenu != null)
 			lcMenu.SetActive (false);
 
-		float width = this.GetComponent<SpriteRenderer>().sprite.bounds.size.x;
+		float width = GetComponent<SpriteRenderer>().sprite.bounds.size.x;
 		width = 2.22f / width;		
-		float height = this.GetComponent<SpriteRenderer>().sprite.bounds.size.y;
+		float height = GetComponent<SpriteRenderer>().sprite.bounds.size.y;
 		height = 3.01f / height;
-		this.transform.localScale = new Vector2 (width, height);
+		transform.localScale = new Vector3 (width, height, 1);
 	}
 
 	public virtual void Update () {
