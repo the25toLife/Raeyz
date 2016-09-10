@@ -27,16 +27,16 @@ public class SceneManager : LoadBalancingClient
 {
     public FieldManager FieldManager { get; set; }
 
-    private Deck playerDeck, playerGrave, enemyDeck;
-	private ClientGame clientGame;
-	private ArrayList playerHand, playerActions;
-	private bool running, firstMove, isTurn, oppReady;
-	private GameStage stage, nextStage;
-	public GameStage CurrentStage { get { return stage; } }
-	public GameObject playerShuffleCard, enemyShuffleCard, playerHandObj, handCardPrefab;
+    private Deck _playerDeck, _playerGrave, _enemyDeck;
+	private ClientGame _clientGame;
+	private ArrayList _playerHand, _playerActions;
+	private bool _running, _firstMove, _isTurn, _oppReady;
+	private GameStage _stage, _nextStage;
+	public GameStage CurrentStage { get { return _stage; } }
+	public GameObject PlayerShuffleCard, EnemyShuffleCard, PlayerHandObj, HandCardPrefab;
 
-	public RaeyzPlayer clientPlayer, enemyPlayer;
-	public float turnNumber;
+	public RaeyzPlayer ClientPlayer, EnemyPlayer;
+	public float TurnNumber;
 
     public const byte EvCreateDeck = 1;
 	public const byte EvDealCard = 2;
@@ -206,7 +206,7 @@ public class SceneManager : LoadBalancingClient
 				int uid = (int)cardInfo[(byte)1];
 				CardInfo c = CardPool.Cards[(int)cardInfo[(byte)2]-1];
 
-				clientGame.dealCardToEnemy(uid, c);
+				_clientGame.dealCardToEnemy(uid, c);
 				Debug.Log(string.Format("The enemy was dealt a CurrentCard with UID: {0} and name: {1}.", uid, c.GetName()));
 			}
 			break;
@@ -215,7 +215,7 @@ public class SceneManager : LoadBalancingClient
 			Hashtable deckSent = content as Hashtable;
 			if (deckSent != null)
 			{
-				enemyDeck = new Deck((int[])deckSent[(byte)1]);
+				_enemyDeck = new Deck((int[])deckSent[(byte)1]);
 
 				Debug.Log("The other player has created a deck.");
 			}
@@ -229,28 +229,28 @@ public class SceneManager : LoadBalancingClient
 
 				if (stageTemp != GameStage.SETUP) {		//If the next stage is SETUP, start the game.  The stage changes in startGame().
 
-					if (clientPlayer.isReady()) {	//Both players are ready at this point so change stages.  This should always be true or we have problems.
+					if (ClientPlayer.isReady()) {	//Both players are ready at this point so change stages.  This should always be true or we have problems.
 						
-						if(stage == GameStage.SETUP && !isTurn)		//Set initial monster to defend if the client isn't going first.
-							clientGame.setRemainingMonstersToDefend();
+						if(_stage == GameStage.SETUP && !_isTurn)		//Set initial monster to defend if the client isn't going first.
+							_clientGame.setRemainingMonstersToDefend();
 
-						stage = nextStage;
-						if (stage == GameStage.BATTLE)
+						_stage = _nextStage;
+						if (_stage == GameStage.BATTLE)
 							startBattleStage();
-						if (stage == GameStage.PREP) 
+						if (_stage == GameStage.PREP) 
 							startPrepStage();
 						else
-							oppReady = false;
-						if (stage == GameStage.WAITING)		//If the next stage is WAITING, keep the client in the ready state.
+							_oppReady = false;
+						if (_stage == GameStage.WAITING)		//If the next stage is WAITING, keep the client in the ready state.
 							advanceStage();
 						else 
-							clientPlayer.changeStatus(false);
+							ClientPlayer.changeStatus(false);
 					} else
-						oppReady = true;
+						_oppReady = true;
 				} else
 					startGame ();
 
-				Debug.Log(string.Format("Other player ready. Game entering {0} stage.", stage));
+				Debug.Log(string.Format("Other player ready. Game entering {0} stage.", _stage));
 			}
 			break;
 		case (byte)EvGraveCard:
@@ -264,7 +264,7 @@ public class SceneManager : LoadBalancingClient
 			if (graveInfo != null)
 			{
 				int uid = (int)graveInfo[(byte)1];
-				clientGame.removeCard(uid);
+				_clientGame.removeCard(uid);
 				
 				Debug.Log(string.Format("Removing CurrentCard with ID {0}", uid));
 			}
@@ -284,7 +284,7 @@ public class SceneManager : LoadBalancingClient
 			{
 				int uid = (int)playInfo[(byte)1];
 				int slotid = (int)playInfo[(byte)2];
-				clientGame.playEnemyCard(uid, slotid);
+				_clientGame.playEnemyCard(uid, slotid);
 				
 				Debug.Log(string.Format("Playing card with ID {0} in slot {1}", uid, slotid));
 			}
@@ -304,7 +304,7 @@ public class SceneManager : LoadBalancingClient
 			{
 				int uid = (int)defInfo[(byte)1];
 				bool state = (bool)defInfo[(byte)2];
-				CardMonster c = clientGame.getCard<CardMonster>(uid);
+				CardMonster c = _clientGame.getCard<CardMonster>(uid);
 				c.setDefending(state);
 				
 				Debug.Log(string.Format("Card with UID: {0} is {1}", uid, (state ? "now defending." : "no longer defending.")));
@@ -319,7 +319,7 @@ public class SceneManager : LoadBalancingClient
 				int tuid = (int)attackInfo[(byte)2];
 				bool defend = (bool)attackInfo[(byte)3];
 
-				ActionQueue.calcAttack(clientGame.getCard<Card>(auid), clientGame.getCard<Card>(tuid), defend);
+				ActionQueue.calcAttack(_clientGame.getCard<Card>(auid), _clientGame.getCard<Card>(tuid), defend);
 				
 				Debug.Log(string.Format("{0} attacked {1} who {2} defending.", auid, tuid, defend ? "is" : "is not"));
 			}
@@ -349,10 +349,10 @@ public class SceneManager : LoadBalancingClient
 			//end
 			
 		case EventCode.PropertiesChanged:
-			if (clientPlayer != null && enemyPlayer != null) {
-				turnNumber = (float)this.CurrentRoom.CustomProperties["t#"];
-				isTurn = ((int)this.CurrentRoom.CustomProperties["tp"] == this.LocalPlayer.ID);
-				Debug.Log(string.Format("Other player updated room properties. Turn #: {0}, Client's Turn: {1}", turnNumber, isTurn));
+			if (ClientPlayer != null && EnemyPlayer != null) {
+				TurnNumber = (float)this.CurrentRoom.CustomProperties["t#"];
+				_isTurn = ((int)this.CurrentRoom.CustomProperties["tp"] == this.LocalPlayer.ID);
+				Debug.Log(string.Format("Other player updated room properties. Turn #: {0}, Client's Turn: {1}", TurnNumber, _isTurn));
 			}
 			break;
 		}
@@ -363,19 +363,19 @@ public class SceneManager : LoadBalancingClient
 	/// </summary>
 	/// <returns><c>true</c> if the game is running, <c>false</c> otherwise.</returns>
 	public bool isGameRunning() {
-		return running;
+		return _running;
 	}
 
 	/// <summary>
 	/// Advances the game to the next turn.  Increases turn number and adjusts who's turn it currently is.
 	/// </summary>
 	public void nextTurn() {
-		turnNumber += 0.5f;
-		if (isTurn)
-			this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"t#", turnNumber}, {"tp", enemyPlayer.ID}});
+		TurnNumber += 0.5f;
+		if (_isTurn)
+			this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"t#", TurnNumber}, {"tp", EnemyPlayer.ID}});
 		else
-			this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"t#", turnNumber}, {"tp", clientPlayer.ID}});
-		isTurn = !isTurn;
+			this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"t#", TurnNumber}, {"tp", ClientPlayer.ID}});
+		_isTurn = !_isTurn;
 	}
 
 	/// <summary>
@@ -385,17 +385,17 @@ public class SceneManager : LoadBalancingClient
 
 		if (isGameRunning ())
 			return;
-		running = true;
+		_running = true;
 
 		foreach (KeyValuePair<int, Player> kvp in this.CurrentRoom.Players) {
 			if (kvp.Value.ID == this.LocalPlayer.ID)
-				clientPlayer = kvp.Value as RaeyzPlayer;
+				ClientPlayer = kvp.Value as RaeyzPlayer;
 			else
-				enemyPlayer = kvp.Value as RaeyzPlayer;
+				EnemyPlayer = kvp.Value as RaeyzPlayer;
 		}
 
-		stage = GameStage.SETUP;
-		SendStageChangedEv (stage);
+		_stage = GameStage.SETUP;
+		SendStageChangedEv (_stage);
 	}
 
 	/// <summary>
@@ -403,10 +403,10 @@ public class SceneManager : LoadBalancingClient
 	/// </summary>
 	private void setupPlayer() {
 		
-		clientGame = GameObject.FindObjectOfType<ClientGame> ();
-		playerDeck = createDeck ();
-		playerHand = new ArrayList ();
-		playerActions = new ArrayList ();
+		_clientGame = GameObject.FindObjectOfType<ClientGame> ();
+		_playerDeck = createDeck ();
+		_playerHand = new ArrayList ();
+		_playerActions = new ArrayList ();
 
 //		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
 //		while ((c as MonsterInfo).Level > 4)	//Guarentees a basic CurrentCard in the initial hand.
@@ -420,7 +420,7 @@ public class SceneManager : LoadBalancingClient
 		dealCardToPlayer (CardPool.Cards [1]);
 		dealCardToPlayer (CardPool.Cards [401]);
 
-		stage = GameStage.PREP;
+		_stage = GameStage.PREP;
 	}
 
 	/// <summary>
@@ -446,14 +446,14 @@ public class SceneManager : LoadBalancingClient
 	/// <param name="c">The specific CurrentCard to deal to the player (optional).</param>
 	private void dealCardToPlayer(CardInfo c = null) {
 
-		if (playerHand.Count > 4) return;
+		if (_playerHand.Count > 4) return;
 
-		CardInfo cardInfo = playerDeck.drawCard();
+		CardInfo cardInfo = _playerDeck.drawCard();
 		if (c != null)
 			cardInfo = c;
 
-		Card cardDrawn = clientGame.dealCardToPlayer (cardInfo);
-		playerHand.Add (cardDrawn);
+		Card cardDrawn = _clientGame.dealCardToPlayer (cardInfo);
+		_playerHand.Add (cardDrawn);
 		SendDealCardEv(cardDrawn);
 	}
 
@@ -462,7 +462,7 @@ public class SceneManager : LoadBalancingClient
 	/// </summary>
 	private void dealFullHandToPlayer() {
 
-		while (playerHand.Count < 5) 
+		while (_playerHand.Count < 5) 
 			dealCardToPlayer();
 	}
 
@@ -473,10 +473,10 @@ public class SceneManager : LoadBalancingClient
 	/// <param name="slot">The slot ID to play the CurrentCard in.</param>
 	public void playCard(Card c, int slot) {
 
-		if (!firstMove)
-			firstMove = true;
-		if (playerHand.Contains(c))
-			playerHand.Remove (c);
+		if (!_firstMove)
+			_firstMove = true;
+		if (_playerHand.Contains(c))
+			_playerHand.Remove (c);
 	    SendPlayCardEv (c.UID, slot);
 	}
 
@@ -489,8 +489,8 @@ public class SceneManager : LoadBalancingClient
 
 		c.sendCardToGraveyard ();
 		SendGraveCardEv (c.UID);
-		if (playerHand.Contains(c))
-			playerHand.Remove (c);
+		if (_playerHand.Contains(c))
+			_playerHand.Remove (c);
 	}
 
 	//hahahahahahaha
@@ -503,8 +503,8 @@ public class SceneManager : LoadBalancingClient
 		if (!canTakeAction (a.A))
 			return false;
 
-		playerActions.Add (a);
-		foreach (GameAction ga in playerActions)
+		_playerActions.Add (a);
+		foreach (GameAction ga in _playerActions)
 			Debug.Log (string.Format ("{0} scheduled targeting: {1}", ga.A, ga.getTarget().CardInfo.GetName()));
 		return true;
 	}
@@ -514,12 +514,12 @@ public class SceneManager : LoadBalancingClient
 //		if (!canTakeAction (a.A))
 //			return false;
 		
-		playerActions.Remove (a);
+		_playerActions.Remove (a);
 		return true;
 	}
 
 	public void takeFirstAction() {
-		firstMove = true;
+		_firstMove = true;
 	}
 
 	public bool canTakeAction(Actions a) {
@@ -528,19 +528,19 @@ public class SceneManager : LoadBalancingClient
 		switch (a) {
 
 		case (Actions.PLAY):
-			flag = (stage == GameStage.SETUP && !firstMove) || (stage == GameStage.PREP);
+			flag = (_stage == GameStage.SETUP && !_firstMove) || (_stage == GameStage.PREP);
 			break;
 		case (Actions.ATTACK):
-			flag = (stage == GameStage.PREP);
+			flag = (_stage == GameStage.PREP);
 			break;
 		case (Actions.MENU):
-			flag = (stage != GameStage.WAITING && stage != GameStage.BATTLE);
+			flag = (_stage != GameStage.WAITING && _stage != GameStage.BATTLE);
 			break;
 		case (Actions.AWAKEN):
-			flag = (stage == GameStage.PREP);
+			flag = (_stage == GameStage.PREP);
 			break;
 		case (Actions.DISCARD):
-			flag = (stage == GameStage.SETUP) || (stage == GameStage.PREP);
+			flag = (_stage == GameStage.SETUP) || (_stage == GameStage.PREP);
 			break;
 		default:
 			flag = false;
@@ -558,54 +558,54 @@ public class SceneManager : LoadBalancingClient
 	/// <param name="wait">If set to <c>true</c>, waits for other player to send a stage change event regardless of any checks.</param>
 	public void advanceStage() {
 
-		Debug.Log (oppReady);
-		if (oppReady) {		//If the other player is ready, change stage.
+		Debug.Log (_oppReady);
+		if (_oppReady) {		//If the other player is ready, change stage.
 
-			if(stage == GameStage.SETUP && !isTurn)		//Set initial monster to defend if the client isn't going first.
-				clientGame.setRemainingMonstersToDefend();
+			if(_stage == GameStage.SETUP && !_isTurn)		//Set initial monster to defend if the client isn't going first.
+				_clientGame.setRemainingMonstersToDefend();
 
-			if (stage == GameStage.SETUP)
-				stage = (isTurn) ? GameStage.PREP : GameStage.WAITING;
-			else if (stage == GameStage.PREP)
-				stage = GameStage.BATTLE;
-			else if (stage == GameStage.WAITING)
-				stage = GameStage.BATTLE;
-			else if (stage == GameStage.BATTLE)
-				stage = (isTurn) ? GameStage.PREP : GameStage.WAITING;
+			if (_stage == GameStage.SETUP)
+				_stage = (_isTurn) ? GameStage.PREP : GameStage.WAITING;
+			else if (_stage == GameStage.PREP)
+				_stage = GameStage.BATTLE;
+			else if (_stage == GameStage.WAITING)
+				_stage = GameStage.BATTLE;
+			else if (_stage == GameStage.BATTLE)
+				_stage = (_isTurn) ? GameStage.PREP : GameStage.WAITING;
 
-			SendStageChangedEv (stage);		//Inform the other player that this client is now ready.
-			if (stage == GameStage.BATTLE)
+			SendStageChangedEv (_stage);		//Inform the other player that this client is now ready.
+			if (_stage == GameStage.BATTLE)
 				startBattleStage();
-			if (stage == GameStage.PREP)
+			if (_stage == GameStage.PREP)
 				startPrepStage();
 			else
-				oppReady = false;
-			if (stage == GameStage.WAITING)		//If the next stage is WAITING, keep the client in the ready state.
+				_oppReady = false;
+			if (_stage == GameStage.WAITING)		//If the next stage is WAITING, keep the client in the ready state.
 				advanceStage();
 			else 
-				clientPlayer.changeStatus(false);
+				ClientPlayer.changeStatus(false);
 
 		} else {	//If the other player isn't ready yet or wait is true, prepare to change stage.
 
-			if (stage == GameStage.SETUP) {		//Determine which player is first if it is the first turn.
+			if (_stage == GameStage.SETUP) {		//Determine which player is first if it is the first turn.
 				if (UnityEngine.Random.Range (1, 2) > 1) {
-					this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"tp", clientPlayer.ID}});
-					isTurn = true;
+					this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"tp", ClientPlayer.ID}});
+					_isTurn = true;
 				} else
-					this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"tp", enemyPlayer.ID}});
+					this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"tp", EnemyPlayer.ID}});
 			}
 
-			if (stage == GameStage.SETUP)
-				nextStage = (isTurn) ? GameStage.PREP : GameStage.WAITING;
-			else if (stage == GameStage.PREP)
-				nextStage = GameStage.BATTLE;
-			else if (stage == GameStage.WAITING)
-				nextStage = GameStage.BATTLE;
-			else if (stage == GameStage.BATTLE) {
+			if (_stage == GameStage.SETUP)
+				_nextStage = (_isTurn) ? GameStage.PREP : GameStage.WAITING;
+			else if (_stage == GameStage.PREP)
+				_nextStage = GameStage.BATTLE;
+			else if (_stage == GameStage.WAITING)
+				_nextStage = GameStage.BATTLE;
+			else if (_stage == GameStage.BATTLE) {
 				nextTurn();		//The first player to ready up during the BATTLE stage advances the room's turn.
-				nextStage = isTurn ? GameStage.PREP : GameStage.WAITING;
+				_nextStage = _isTurn ? GameStage.PREP : GameStage.WAITING;
 			}
-			SendStageChangedEv (nextStage);
+			SendStageChangedEv (_nextStage);
 		}
 	}
 
@@ -623,12 +623,12 @@ public class SceneManager : LoadBalancingClient
 	//
 	private void startBattleStage() {
 
-		if (!isTurn)
+		if (!_isTurn)
 			return;
-		int playerDmg = clientGame.getDamageToLife ();
+		int playerDmg = _clientGame.getDamageToLife ();
 		Debug.LogError (playerDmg);
 		if (playerDmg > 0) {
-			enemyPlayer.damagePlayer(playerDmg);
+			EnemyPlayer.damagePlayer(playerDmg);
 //			SendDamagePlayerEv (playerDmg);
 		}
 	}

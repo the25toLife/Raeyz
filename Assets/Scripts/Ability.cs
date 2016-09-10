@@ -13,11 +13,11 @@ public abstract class Effect {
 	/// <summary>
 	/// The max number of turns the effect can last.
 	/// </summary>
-	public int timeLimit = 1;
+	public int TimeLimit = 1;
 	/// <summary>
 	/// The current number of turns the effect has been in play.
 	/// </summary>
-	public int lifeTime = 0;
+	public int LifeTime = 0;
 
 	public Effect (EffectTrigger t) {
 		Trigger = t;
@@ -28,15 +28,15 @@ public abstract class Effect {
 
 	public bool incrementLifeTime() {
 
-		lifeTime++;
-		if (lifeTime >= timeLimit)
+		LifeTime++;
+		if (LifeTime >= TimeLimit)
 			return true;
 		return false;
 	}
 
 	public void resetLifeTime() {
 
-		lifeTime = 0;
+		LifeTime = 0;
 	}
 
 	public Effect clone() {

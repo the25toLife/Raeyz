@@ -80,7 +80,7 @@ public class CardMonster : Card {
 		if (leviathan && (CardInfo as MonsterInfo).GetLevel() < 5)
 			return false;
 		
-		return !(_cardLocked || client.cardAwakening == this);
+		return !(_cardLocked || Client.CardAwakening == this);
 	}	
 
 	public bool isLocked() {
@@ -94,7 +94,7 @@ public class CardMonster : Card {
 	public void setDefending(bool b) {
 		_defending = b;
 		Shield.SetActive (_defending);
-		if (!IsEnemyCard) client.game.SendDefenseToggleEv (this.UID, this.isDefending ());
+		if (!IsEnemyCard) Client.Game.SendDefenseToggleEv (this.UID, this.isDefending ());
 	}
 	
 	public bool awakenCard() {
@@ -126,9 +126,9 @@ public class CardMonster : Card {
 		if (this.isLocked())
 			return false;
 
-		if (this.hasPair () && !client.dragging) {
+		if (this.hasPair () && !Client.Dragging) {
 			Card cCheck;
-			if (!client.isCardInHand(this.getPair (), out cCheck)) {
+			if (!Client.isCardInHand(this.getPair (), out cCheck)) {
 				this.PairCard = null;
 				return false;
 			} else if (this.PairCard == null)
@@ -173,15 +173,15 @@ public class CardMonster : Card {
 		case (PointerEventData.InputButton.Left):
 		        if (IsEnemyCard)
 		        {
-		            if (State == States.INPLAY && client.isACardSelected())
+		            if (State == States.INPLAY && Client.isACardSelected())
 		            {
 
-		                client.selectEnemyCard(this);
+		                Client.selectEnemyCard(this);
 		            }
 		        }
-			if (!client.game.canTakeAction(Actions.MENU))
+			if (!Client.Game.canTakeAction(Actions.MENU))
 				break;
-			AwakenMenuItem.SetActive (client.game.canTakeAction (Actions.AWAKEN) && _cardLocked);
+			AwakenMenuItem.SetActive (Client.Game.canTakeAction (Actions.AWAKEN) && _cardLocked);
 			break;
 		}
 	}

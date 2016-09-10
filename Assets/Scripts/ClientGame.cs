@@ -18,15 +18,15 @@ public class ClientGame : MonoBehaviour
 
     public GUIStyle Style;
 
-    public SceneManager game;
+    public SceneManager Game;
 	private Deck _playerDeck;
     private ArrayList _selectedCards;
 
-    public bool dragging, awakening, playersTurn, confirmCheck;
-	public Card cardDragged;
-	public CardMonster cardAwakening;
+    public bool Dragging, Awakening, PlayersTurn, ConfirmCheck;
+	public Card CardDragged;
+	public CardMonster CardAwakening;
 
-	public GameObject playerHandObj, enemyHandObj, playerMonsters, enemyMonsters, monsterCardPrefab, auxCardPrefab, MultiCardPrefab, cardMenu, cardMenuItem;
+	public GameObject PlayerHandObj, EnemyHandObj, PlayerMonsters, EnemyMonsters, MonsterCardPrefab, AuxCardPrefab, MultiCardPrefab, CardMenu, CardMenuItem;
 
     [UsedImplicitly]
     private void Start () {
@@ -34,12 +34,12 @@ public class ClientGame : MonoBehaviour
 		Application.runInBackground = true;
 		CardPool.associateCards ();
 
-	    game = new SceneManager {
+	    Game = new SceneManager {
 	        AppId = "d5b703ed-840c-4cc1-8771-ffa8f9a6b49c",
 	        FieldManager = FindObjectOfType<FieldManager>()
 	    };
-        game.OnStateChangeAction += OnStateChanged;
-		game.ConnectToRegionMaster ("us");
+        Game.OnStateChangeAction += OnStateChanged;
+		Game.ConnectToRegionMaster ("us");
 
         _selectedCards = new ArrayList ();
 	}
@@ -47,11 +47,11 @@ public class ClientGame : MonoBehaviour
 	[UsedImplicitly]
 	private void Update () {
 
-		game.Service ();
+		Game.Service ();
 		if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetKeyDown(KeyCode.Q))
 			Application.Quit();
 
-		if (awakening && Input.GetKeyDown (KeyCode.Escape))
+		if (Awakening && Input.GetKeyDown (KeyCode.Escape))
 			closeAwakenCardMenu ();
 
 	}
@@ -60,36 +60,36 @@ public class ClientGame : MonoBehaviour
 
 		float scale = Screen.width / 1840.0f;
 		Style.fontSize = (int)(30.0f * scale);
-	    if (game.clientPlayer != null)
+	    if (Game.ClientPlayer != null)
 	    {
 	        GUI.Box(new Rect(118.0f * scale, Screen.height / 2.0f + 70.0f * scale, 155.4f * scale, 60.0f * scale),
-	            string.Format("{0} LP", game.clientPlayer.CustomProperties["l"]), Style);
+	            string.Format("{0} LP", Game.ClientPlayer.CustomProperties["l"]), Style);
 	    }
-	    if (game.enemyPlayer != null)
+	    if (Game.EnemyPlayer != null)
 	    {
 	        GUI.Box(new Rect(118.0f * scale, Screen.height / 2.0f - 130.0f * scale, 155.4f * scale, 60.0f * scale),
-	            string.Format("{0} LP", game.enemyPlayer.CustomProperties["l"]), Style);
+	            string.Format("{0} LP", Game.EnemyPlayer.CustomProperties["l"]), Style);
 	    }
-	    GUI.Box(new Rect(118.0f * scale, Screen.height / 2.0f - 30.0f * scale, 155.4f * scale, 60.0f * scale), game.CurrentStage.ToString (), Style);
-		if ((game.clientPlayer != null && game.clientPlayer.isReady ()) || game.CurrentStage == GameStage.WAITING)
+	    GUI.Box(new Rect(118.0f * scale, Screen.height / 2.0f - 30.0f * scale, 155.4f * scale, 60.0f * scale), Game.CurrentStage.ToString (), Style);
+		if ((Game.ClientPlayer != null && Game.ClientPlayer.isReady ()) || Game.CurrentStage == GameStage.WAITING)
 			GUI.Box (new Rect (Screen.width - (271.0f * scale), (Screen.height / 2.0f) - (30.0f * scale), 217.0f * scale, 60.0f * scale), "...", Style);
 		else {
-			if (!confirmCheck) {
+			if (!ConfirmCheck) {
 				if (GUI.Button (new Rect (Screen.width - (271.0f * scale), (Screen.height / 2.0f) - (30.0f * scale), 217.0f * scale, 60.0f * scale), "End Turn", Style)) {
-					if (game.CurrentStage == GameStage.PREP) {
-						confirmCheck = true;
+					if (Game.CurrentStage == GameStage.PREP) {
+						ConfirmCheck = true;
 						this.setRemainingMonstersToDefend();
 					} else {
-						game.clientPlayer.changeStatus (true);
-						game.advanceStage ();
+						Game.ClientPlayer.changeStatus (true);
+						Game.advanceStage ();
 					}
 				}
 			} else {
 				if (GUI.Button (new Rect (Screen.width - (271.0f * scale), (Screen.height / 2.0f) - (30.0f * scale), 217.0f * scale, 60.0f * scale), "Confirm", Style)) {
-					confirmCheck = false;
+					ConfirmCheck = false;
 					this.setRemainingMonstersToDefend();
-					game.clientPlayer.changeStatus (true);
-					game.advanceStage ();
+					Game.ClientPlayer.changeStatus (true);
+					Game.advanceStage ();
 				}
 			}
 		}
@@ -100,18 +100,18 @@ public class ClientGame : MonoBehaviour
 		if (state == ClientState.ConnectedToMaster)
 		{
 			Debug.Log("Connected to master.");
-			game.OpJoinRandomRoom (null, 0);
+			Game.OpJoinRandomRoom (null, 0);
 		}
 	}
 
 	public void OnApplicationQuit()
 	{
-		if (game != null && game.loadBalancingPeer != null)
+		if (Game != null && Game.loadBalancingPeer != null)
 		{
-			game.Disconnect();
-			game.loadBalancingPeer.StopThread();
+			Game.Disconnect();
+			Game.loadBalancingPeer.StopThread();
 		}
-		game = null;
+		Game = null;
 	}
 	
 	public bool isACardSelected() {
@@ -148,7 +148,7 @@ public class ClientGame : MonoBehaviour
 
 	public void setRemainingMonstersToDefend() {
 
-		foreach (CardMonster c in playerMonsters.GetComponentsInChildren<CardMonster>()) {
+		foreach (CardMonster c in PlayerMonsters.GetComponentsInChildren<CardMonster>()) {
 
 			if (c != null && c.State == Card.States.INPLAY && c.Target == null && !c.isDefending())
 				c.setDefending(true);
@@ -157,7 +157,7 @@ public class ClientGame : MonoBehaviour
 
 	public int getSacrPower() {
 
-		return game.totalCardPower (_selectedCards);
+		return Game.totalCardPower (_selectedCards);
 	}
 
 	/// <summary>
@@ -238,7 +238,7 @@ public class ClientGame : MonoBehaviour
 					CardMonster cm = c as CardMonster;
 					if (cm.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairR)) {
 
-						Transform pairDropSlot = enemyMonsters.transform.FindChild(string.Format("enemyMonster{0}", slotID + 1));
+						Transform pairDropSlot = EnemyMonsters.transform.FindChild(string.Format("enemyMonster{0}", slotID + 1));
 						//		foreach (SlotMonster sm in this.transform.parent.GetComponentsInChildren<SlotMonster>()) {
 						//			if (sm.gameObject.name.Equals(string.Format("playerMonster{0}", SlotID + dir)))
 						//				pairDropSlot = sm;
@@ -292,8 +292,8 @@ public class ClientGame : MonoBehaviour
 	/// <returns>The unique CurrentCard ID.</returns>
 	public int getUID() {
 
-		int currentUID = (int)game.CurrentRoom.CustomProperties ["u"];
-		game.CurrentRoom.SetCustomProperties (new Hashtable() {{"u", ++currentUID}});
+		int currentUID = (int)Game.CurrentRoom.CustomProperties ["u"];
+		Game.CurrentRoom.SetCustomProperties (new Hashtable() {{"u", ++currentUID}});
 		return currentUID;
 	}
 
@@ -314,7 +314,7 @@ public class ClientGame : MonoBehaviour
 	/// <param name="ci">The CurrentCard info to search for.</param>
 	public bool isCardInHand(CardInfo ci, out Card cardFound) {
 		cardFound = null;
-		foreach (Card c in playerHandObj.GetComponentsInChildren<Card>()) {
+		foreach (Card c in PlayerHandObj.GetComponentsInChildren<Card>()) {
 			if (c.CardInfo == ci) {
 				cardFound = c;
 				return true;
@@ -330,7 +330,7 @@ public class ClientGame : MonoBehaviour
 	/// <param name="uid">The unique CurrentCard ID to search for.</param>
 	public bool isCardInHand(int uid, out Card cardFound) {
 		cardFound = null;
-		foreach (Card c in playerHandObj.GetComponentsInChildren<Card>()) {
+		foreach (Card c in PlayerHandObj.GetComponentsInChildren<Card>()) {
 			if (c.UID == uid) {
 				cardFound = c;
 				return true;
@@ -341,13 +341,13 @@ public class ClientGame : MonoBehaviour
 
 	public bool awakenCard() {
 
-		if (game.canAwaken (cardAwakening, _selectedCards)) {
+		if (Game.canAwaken (CardAwakening, _selectedCards)) {
 			//server event code here DO NOT FORGET!!!
 			foreach (Card c in _selectedCards) {
 
-				game.SendCardToGraveyard(c);
+				Game.SendCardToGraveyard(c);
 			}
-			cardAwakening.awakenCard();
+			CardAwakening.awakenCard();
 			closeAwakenCardMenu();
 			return true;
 		}
@@ -365,21 +365,21 @@ public class ClientGame : MonoBehaviour
 		switch (cInfo.GetCardType()) {
 		
 		case (CardInfo.CardType.Monster):
-			GameObject m = Instantiate(monsterCardPrefab);
-			m.transform.SetParent(playerHandObj.transform);
+			GameObject m = Instantiate(MonsterCardPrefab);
+			m.transform.SetParent(PlayerHandObj.transform);
 			cardDealt = m.GetComponent<CardMonster>();
 			(cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
 			break;
 		case (CardInfo.CardType.Auxiliary):
-			GameObject a = Instantiate(auxCardPrefab);
-			a.transform.SetParent(playerHandObj.transform);
+			GameObject a = Instantiate(AuxCardPrefab);
+			a.transform.SetParent(PlayerHandObj.transform);
 			cardDealt = a.GetComponent<CardAuxiliary>();
 			(cardDealt as CardAuxiliary).changeCard(cInfo as AuxiliaryInfo);
 			break;
 		}
 
 		if (cardDealt != null) {
-			cardDealt.changeReturnParent (playerHandObj.transform);
+			cardDealt.changeReturnParent (PlayerHandObj.transform);
 			cardDealt.State = Card.States.INHAND;
 			cardDealt.createUID (getUID());
 		}
@@ -398,8 +398,8 @@ public class ClientGame : MonoBehaviour
 		switch (cInfo.GetCardType()) {
 			
 		case (CardInfo.CardType.Monster):
-			GameObject c = Instantiate(monsterCardPrefab);
-			c.transform.SetParent(enemyHandObj.transform);
+			GameObject c = Instantiate(MonsterCardPrefab);
+			c.transform.SetParent(EnemyHandObj.transform);
 			cardDealt = c.GetComponent<CardMonster>();
 			(cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
 		        (cardDealt as CardMonster).IsEnemyCard = true;
@@ -410,7 +410,7 @@ public class ClientGame : MonoBehaviour
 		}
 		
 		if (cardDealt != null) {
-			cardDealt.changeReturnParent (enemyHandObj.transform);
+			cardDealt.changeReturnParent (EnemyHandObj.transform);
 			cardDealt.State = Card.States.DISABLED;
 			cardDealt.createUID (uid);
 		}
@@ -418,19 +418,19 @@ public class ClientGame : MonoBehaviour
 
 	public void openAwakenCardMenu(CardMonster cardToAwaken) {
 	
-		cardAwakening = cardToAwaken;
-		bool leviathan = (cardAwakening.CardInfo as MonsterInfo).GetLevel() > 7;
-		awakening = true;
-		foreach (CardStatComponent csc in cardMenu.GetComponentsInChildren<CardStatComponent>(true))
-			csc.changeStat(cardAwakening.CardInfo);
-		cardMenu.SetActive (true);
+		CardAwakening = cardToAwaken;
+		bool leviathan = (CardAwakening.CardInfo as MonsterInfo).GetLevel() > 7;
+		Awakening = true;
+		foreach (CardStatComponent csc in CardMenu.GetComponentsInChildren<CardStatComponent>(true))
+			csc.changeStat(CardAwakening.CardInfo);
+		CardMenu.SetActive (true);
 		GameObject.FindGameObjectWithTag ("blockRays").GetComponent<BoxCollider2D>().enabled = true;
 		foreach (CardMonster c in GameObject.FindObjectsOfType<CardMonster>()) {
 
 			if (c.canSacrifice(leviathan)) {
 
-				GameObject cmi = GameObject.Instantiate(cardMenuItem);
-				cmi.transform.SetParent(cardMenu.GetComponentInChildren<VerticalLayoutGroup>().gameObject.transform);
+				GameObject cmi = GameObject.Instantiate(CardMenuItem);
+				cmi.transform.SetParent(CardMenu.GetComponentInChildren<VerticalLayoutGroup>().gameObject.transform);
 				cmi.GetComponent<CardMenuSelect>().setCard(c);
 			}
 		}
@@ -438,9 +438,9 @@ public class ClientGame : MonoBehaviour
 
 	public void closeAwakenCardMenu() {
 		
-		cardAwakening = null;
-		awakening = false;
-		cardMenu.SetActive (false);
+		CardAwakening = null;
+		Awakening = false;
+		CardMenu.SetActive (false);
 		_selectedCards.Clear ();
 		GameObject.FindGameObjectWithTag ("blockRays").GetComponent<BoxCollider2D>().enabled = false;
 	}
@@ -451,9 +451,9 @@ public class ClientGame : MonoBehaviour
 
 		int total = 0;
 
-		foreach (CardMonster c in playerMonsters.GetComponentsInChildren<CardMonster>()) {
+		foreach (CardMonster c in PlayerMonsters.GetComponentsInChildren<CardMonster>()) {
 			if (c.Target != null) {
-				game.SendAttackEv(c.UID, c.Target.UID, (c.Target as CardMonster).isDefending());
+				Game.SendAttackEv(c.UID, c.Target.UID, (c.Target as CardMonster).isDefending());
 				ActionQueue.calcAttack(c, c.Target, (c.Target as CardMonster).isDefending());
 				c.clearTarget();
 			} else {
@@ -466,8 +466,8 @@ public class ClientGame : MonoBehaviour
 //			if (c.isDefending())
 //				total += (c.CardI as MonsterInfo).Attack;
 //		}
-	    Debug.LogError(enemyMonsters.GetComponentsInChildren<Card>().Length);
-		if (enemyMonsters.GetComponentsInChildren<Card> ().Length < 1) return total;
+	    Debug.LogError(EnemyMonsters.GetComponentsInChildren<Card>().Length);
+		if (EnemyMonsters.GetComponentsInChildren<Card> ().Length < 1) return total;
 		return -1;
 	}
 }

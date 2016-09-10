@@ -42,7 +42,7 @@ public class CardMenuElement : MonoBehaviour, IPointerDownHandler {
 			this.gameObject.SetActive(false);
 			break;
 		case MenuItem.Confirm:
-			GameObject.FindObjectOfType<ClientGame>().game.SendCardToGraveyard(this.GetComponentInParent<Card> ());
+			GameObject.FindObjectOfType<ClientGame>().Game.SendCardToGraveyard(this.GetComponentInParent<Card> ());
 			break;
 		}
 	}

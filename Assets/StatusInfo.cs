@@ -18,7 +18,7 @@ public class StatusInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
 	public void OnPointerEnter(PointerEventData eventData) {
 		
-		if (client.dragging)
+		if (client.Dragging)
 			return;
 		
 		
@@ -33,7 +33,7 @@ public class StatusInfo : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 	
 	public void OnPointerExit(PointerEventData eventData) {
 		
-		if (client.dragging)
+		if (client.Dragging)
 			return;
 			
 			Vector3 pos = this.transform.localPosition;
