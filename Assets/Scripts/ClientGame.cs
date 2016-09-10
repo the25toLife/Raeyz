@@ -232,11 +232,11 @@ public class ClientGame : MonoBehaviour
 
 				Card c = getCard<Card>(uid);
 
-			    switch (c.CardI.GetCardType()) {
+			    switch (c.CardInfo.GetCardType()) {
 
 				case (CardInfo.CardType.Monster):
 					CardMonster cm = c as CardMonster;
-					if (cm.CardI.AssoCardInfo.ContainsKey (CardRelation.PairR)) {
+					if (cm.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairR)) {
 
 						Transform pairDropSlot = enemyMonsters.transform.FindChild(string.Format("enemyMonster{0}", slotID + 1));
 						//		foreach (SlotMonster sm in this.transform.parent.GetComponentsInChildren<SlotMonster>()) {
@@ -260,7 +260,7 @@ public class ClientGame : MonoBehaviour
 						
 						CardMultiPart mpc = o.GetComponent<CardMultiPart>();
 					    mpc.IsEnemyCard = true;
-						mpc.changeCard((c.CardI as MonsterInfo) + (ecmPair.CardI as MonsterInfo));
+						mpc.changeCard((c.CardInfo as MonsterInfo) + (ecmPair.CardInfo as MonsterInfo));
 						mpc.createUID(uid);
 						mpc.GetComponent<SpriteRenderer> ().sortingOrder = pdsm.GetComponent<SpriteRenderer> ().sortingOrder + 1;
 						mpc.State = Card.States.INPLAY;
@@ -315,7 +315,7 @@ public class ClientGame : MonoBehaviour
 	public bool isCardInHand(CardInfo ci, out Card cardFound) {
 		cardFound = null;
 		foreach (Card c in playerHandObj.GetComponentsInChildren<Card>()) {
-			if (c.CardI == ci) {
+			if (c.CardInfo == ci) {
 				cardFound = c;
 				return true;
 			}
@@ -371,10 +371,10 @@ public class ClientGame : MonoBehaviour
 			(cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
 			break;
 		case (CardInfo.CardType.Auxiliary):
-/*			GameObject a = Instantiate(auxCardPrefab);
+			GameObject a = Instantiate(auxCardPrefab);
 			a.transform.SetParent(playerHandObj.transform);
-			cardDealt = a.GetComponent<CardSpecial>();
-			(cardDealt as CardSpecial).changeCard(cInfo as SpecialInfo);*/
+			cardDealt = a.GetComponent<CardAuxiliary>();
+			(cardDealt as CardAuxiliary).changeCard(cInfo as AuxiliaryInfo);
 			break;
 		}
 
@@ -419,10 +419,10 @@ public class ClientGame : MonoBehaviour
 	public void openAwakenCardMenu(CardMonster cardToAwaken) {
 	
 		cardAwakening = cardToAwaken;
-		bool leviathan = (cardAwakening.CardI as MonsterInfo).GetLevel() > 7;
+		bool leviathan = (cardAwakening.CardInfo as MonsterInfo).GetLevel() > 7;
 		awakening = true;
 		foreach (CardStatComponent csc in cardMenu.GetComponentsInChildren<CardStatComponent>(true))
-			csc.changeStat(cardAwakening.CardI);
+			csc.changeStat(cardAwakening.CardInfo);
 		cardMenu.SetActive (true);
 		GameObject.FindGameObjectWithTag ("blockRays").GetComponent<BoxCollider2D>().enabled = true;
 		foreach (CardMonster c in GameObject.FindObjectsOfType<CardMonster>()) {
@@ -458,7 +458,7 @@ public class ClientGame : MonoBehaviour
 				c.clearTarget();
 			} else {
 				c.setDefending(true);
-				total += (c.CardI as MonsterInfo).Attack;
+				total += (c.CardInfo as MonsterInfo).Attack;
 			}
 		}
 //

@@ -9,8 +9,9 @@ public class Slot : MonoBehaviour, IDropHandler {
 	public Card CurrentCard { get; set; }
 	public ClientGame client;
 	public GameObject multiCardPrefab;
+    public Slot MonsterSlot;
 
-	// Use this for initialization
+    // Use this for initialization
 	void Start () {
 	
 	}
@@ -35,18 +36,18 @@ public class Slot : MonoBehaviour, IDropHandler {
 	public bool canDrop(Card c) {
 		if (CurrentCard != null || !client.game.canTakeAction (Actions.PLAY))
 			return false;
-	    if (c == null || c.CardI.GetCardType() != slotType || !c.dragPass ())
+	    if (c == null || c.CardInfo.GetCardType() != slotType || !c.dragPass ())
 	        return false;
 
 	    switch (slotType) {
             case CardInfo.CardType.Monster:
-	            if (c.CardI.AssoCardInfo.ContainsKey(CardRelation.PairL))
+	            if (c.CardInfo.AssoCardInfo.ContainsKey(CardRelation.PairL))
 	            {
 	                Transform pairDropSlot = transform.parent.FindChild(string.Format("playerMonster{0}", SlotID - 1));
 	                if (pairDropSlot == null) return false;
 	                Slot pdsm = pairDropSlot.GetComponent<Slot>();
 	                if (pdsm == null || pdsm.CurrentCard != null) return false;
-	            } else if (c.CardI.AssoCardInfo.ContainsKey(CardRelation.PairR))
+	            } else if (c.CardInfo.AssoCardInfo.ContainsKey(CardRelation.PairR))
 	            {
 	                Transform pairDropSlot = transform.parent.FindChild(string.Format("playerMonster{0}", SlotID + 1));
 	                if (pairDropSlot == null) return false;
@@ -74,7 +75,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 		if (!canDrop (c))
 			return;
 		if (c is CardMonster && (c as CardMonster).hasPair())
-			setMultiCard(c as CardMonster, (c.CardI.AssoCardInfo.ContainsKey (CardRelation.PairL) ? -1 : 1));
+			setMultiCard(c as CardMonster, (c.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairL) ? -1 : 1));
 		else
 			setCard (c);
 	}	
@@ -82,7 +83,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 	public void setCard(Card c) {
 		CurrentCard = c;
 		c.GetComponent<SpriteRenderer> ().sortingOrder = this.GetComponent<SpriteRenderer>().sortingOrder + 1;
-		c.changeReturnParent(this.transform);
+		c.changeReturnParent(transform);
 		c.State = Card.States.INPLAY;
 
 	    client.game.playCard (c, SlotID);
@@ -90,6 +91,12 @@ public class Slot : MonoBehaviour, IDropHandler {
 	    // Adds the card to the field manager.  Multipart cards are handled separately to prevent them from
 	    // being added to the field manager twice.
 	    if (!(c is CardMultiPart)) client.game.FieldManager.AddCardToField(c);
+
+	    if (CurrentCard is CardAuxiliary)
+	    {
+            if (MonsterSlot != null && (MonsterSlot.CurrentCard as CardMonster) != null)
+                ((CardAuxiliary) CurrentCard).OnPlay((CardMonster) MonsterSlot.CurrentCard);
+	    }
 	}
 	
 	public void setMultiCard(CardMonster c, int dir) {
@@ -108,13 +115,13 @@ public class Slot : MonoBehaviour, IDropHandler {
 			
 			CardMultiPart mpc = o.GetComponent<CardMultiPart>();
 			if (dir > 0) {
-				mpc.changeCard((c.CardI as MonsterInfo) + c.getPair());
+				mpc.changeCard((c.CardInfo as MonsterInfo) + c.getPair());
 				mpc.createUID(c.PairCard.UID);
 				pdsm.setCard(mpc);
 				mpc.createUID(c.UID);
 				setCard(mpc);
 			} else {
-				mpc.changeCard(c.getPair() + (c.CardI as MonsterInfo));
+				mpc.changeCard(c.getPair() + (c.CardInfo as MonsterInfo));
 				mpc.createUID(c.UID);
 				setCard(mpc);
 				mpc.createUID(c.PairCard.UID);

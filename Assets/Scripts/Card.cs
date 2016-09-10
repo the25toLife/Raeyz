@@ -25,23 +25,21 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	public ClientGame client;
 
 	public int UID { get; set; }
-	public CardInfo CardI { get; set; }
+	public CardInfo CardInfo { get; set; }
 	public States State { get; set; }
 
-	public virtual void Start () {
+    public virtual void Start () {
 
 		client = FindObjectOfType<ClientGame> ();
 
-		fullInfoCanvas.SetActive (false);
+        fullInfoCanvas.SetActive (false);
 
 		if (lcMenu != null)
 			lcMenu.SetActive (false);
 
 		float width = GetComponent<SpriteRenderer>().sprite.bounds.size.x;
-		width = 2.22f / width;		
 		float height = GetComponent<SpriteRenderer>().sprite.bounds.size.y;
-		height = 3.01f / height;
-		transform.localScale = new Vector3 (width, height, 1);
+		transform.localScale = new Vector3 (2.22f / width, 3.01f / height, 1);
 	}
 
 	public virtual void Update () {
@@ -81,7 +79,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	
 	public void clearTarget() {
 		
-		this.assignTarget (null);
+		assignTarget (null);
 	}
 
 	public void changeReturnParent(Transform newParent) {
@@ -101,12 +99,18 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [UsedImplicitly]
     private void OnDestroy()
     {
-        FindObjectOfType<FieldManager>().RemoveCardFromField(this);
+        var fieldManager = FindObjectOfType<FieldManager>();
+        if (fieldManager != null) fieldManager.RemoveCardFromField(this);
+    }
+
+    public virtual void OnPlay()
+    {
+        State = States.INPLAY;
     }
 
     public virtual void sendCardToGraveyard ()
 	{
-
+        if (FowActive) Destroy(gameObject);
 	    if (State == States.INHAND && State != States.EXPANDINHAND) {
 			Vector3 pos = this.transform.localPosition;
 			pos.y += 2.28f;
@@ -116,7 +120,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		if (lcMenu.activeSelf)
 			lcMenu.SetActive (false);
 
-	    transform.SetParent(null);
+	    //transform.SetParent(null);
 	    deathHandler.SetActive (true);
 	}
 
@@ -127,7 +131,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void setCardFOW(bool fow)
     {
-        if (CardI == null || FowActive == fow) return;
+        if (CardInfo == null || FowActive == fow) return;
         FowActive = fow;
         if (FowActive)
         {
@@ -138,7 +142,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         else
         {
             gameObject.transform.GetChild(0).gameObject.SetActive(true);
-            Sprite s = Resources.Load("Cards/" + CardI.GetId(), typeof(Sprite)) as Sprite;
+            Sprite s = Resources.Load("Cards/" + CardInfo.GetId(), typeof(Sprite)) as Sprite;
             if (s != null)
                 GetComponent<SpriteRenderer>().sprite = s;
             else
@@ -250,7 +254,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 			if (!client.game.canTakeAction(Actions.MENU))
 				break;
 
-			if (State == States.INPLAY && client.game.canTakeAction(Actions.ATTACK)) {
+			if (State == States.INPLAY && CardInfo.GetCardType() != CardInfo.CardType.Auxiliary && client.game.canTakeAction(Actions.ATTACK)) {
 
 				if (client.isCardSelected(this))
 					client.deselectCard(this);

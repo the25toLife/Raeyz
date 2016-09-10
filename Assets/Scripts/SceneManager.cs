@@ -124,7 +124,7 @@ public class SceneManager : LoadBalancingClient
 	{
 		Hashtable content = new Hashtable();
 		content[(byte)1] = c.UID;
-		content[(byte)2] = c.CardI.GetId();
+		content[(byte)2] = c.CardInfo.GetId();
 		this.loadBalancingPeer.OpRaiseEvent(EvDealCard, content, true, new RaiseEventOptions() { CachingOption = EventCaching.AddToRoomCache });
 	}
 
@@ -416,9 +416,9 @@ public class SceneManager : LoadBalancingClient
 //			dealCardToPlayer ();
 		dealCardToPlayer (CardPool.Cards [334]);
 		dealCardToPlayer (CardPool.Cards [335]);
-		dealCardToPlayer (CardPool.Cards [377]);
-		dealCardToPlayer (CardPool.Cards [378]);
-		dealCardToPlayer (CardPool.Cards [4]);
+		dealCardToPlayer (CardPool.Cards [0]);
+		dealCardToPlayer (CardPool.Cards [1]);
+		dealCardToPlayer (CardPool.Cards [401]);
 
 		stage = GameStage.PREP;
 	}
@@ -505,7 +505,7 @@ public class SceneManager : LoadBalancingClient
 
 		playerActions.Add (a);
 		foreach (GameAction ga in playerActions)
-			Debug.Log (string.Format ("{0} scheduled targeting: {1}", ga.A, ga.getTarget().CardI.GetName()));
+			Debug.Log (string.Format ("{0} scheduled targeting: {1}", ga.A, ga.getTarget().CardInfo.GetName()));
 		return true;
 	}
 
@@ -645,8 +645,8 @@ public class SceneManager : LoadBalancingClient
 		int total = 0;
 		foreach (Card c in cards) {
 
-			if (c.CardI is MonsterInfo)
-				total += (c.CardI as MonsterInfo).GetLevel();
+			if (c.CardInfo is MonsterInfo)
+				total += (c.CardInfo as MonsterInfo).GetLevel();
 		}
 		return total;
 	}
@@ -659,9 +659,9 @@ public class SceneManager : LoadBalancingClient
 	/// <param name="sacr">An ArrayList of cards to sacrifice.</param>
 	public bool canAwaken(Card c, ArrayList sacr) {
 
-		if (!(c.CardI is MonsterInfo))
+		if (!(c.CardInfo is MonsterInfo))
 			return false;
-		if (totalCardPower (sacr) >= (c.CardI as MonsterInfo).GetLevel())
+		if (totalCardPower (sacr) >= (c.CardInfo as MonsterInfo).GetLevel())
 			return true;
 		return false;
 	}
@@ -697,8 +697,8 @@ public class GameAction {
 
 		case (Actions.ATTACK):
 
-			int attackerStat = (actionCard.CardI as MonsterInfo).Attack;
-			int targetStat = ((targetCard as CardMonster).isDefending()) ? (targetCard.CardI as MonsterInfo).Defense : (targetCard.CardI as MonsterInfo).Attack;
+			int attackerStat = (actionCard.CardInfo as MonsterInfo).Attack;
+			int targetStat = ((targetCard as CardMonster).isDefending()) ? (targetCard.CardInfo as MonsterInfo).Defense : (targetCard.CardInfo as MonsterInfo).Attack;
 
 			if (attackerStat > targetStat)
 				targetCard.sendCardToGraveyard();

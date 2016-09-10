@@ -7,15 +7,16 @@ public class CardMultiPart : CardMonster {
 	public override void Start () {
 		base.Start ();
 
-		this.awakenCard ();
-		this.setFullInfoAnimation ();
-		float width = this.GetComponent<SpriteRenderer>().sprite.bounds.size.x;
-		this.transform.localScale = Vector3.one * (4.72f / width);
+		awakenCard ();
+		setFullInfoAnimation ();
+		float width = GetComponent<SpriteRenderer>().sprite.bounds.size.x;
+	    float height = GetComponent<SpriteRenderer>().sprite.bounds.size.y;
+	    transform.localScale = new Vector3(4.72f / width, 3.01f / height, 1);
 	}
 
 	private void setFullInfoAnimation() {
 		Animation a = this.fullInfoCanvas.GetComponentsInChildren<Animation>(true)[0];
-		switch (this.CardI.GetId()) {
+		switch (this.CardInfo.GetId()) {
 
 		case 284:
 		case 285:
@@ -26,9 +27,9 @@ public class CardMultiPart : CardMonster {
 
 	public override void changeCard (CardInfo mi) {
 
-		CardI = mi as MonsterInfo;
-		if (CardI != null) {
-			Sprite s = Resources.Load ("Cards/MultiPart/"+CardI.GetId(), typeof(Sprite)) as Sprite;
+		CardInfo = mi as MonsterInfo;
+		if (CardInfo != null) {
+			Sprite s = Resources.Load ("Cards/MultiPart/"+CardInfo.GetId(), typeof(Sprite)) as Sprite;
 			if (s != null)
 				this.GetComponent<SpriteRenderer> ().sprite = s;
 		}

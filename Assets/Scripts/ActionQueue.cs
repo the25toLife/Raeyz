@@ -11,8 +11,8 @@ public class ActionQueue
 
 	public static void calcAttack(Card mi1, Card mi2, bool defending) {
 
-		int attackerStat = (mi1.CardI as MonsterInfo).Attack;
-		int targetStat = defending ? (mi2.CardI as MonsterInfo).Defense : (mi2.CardI as MonsterInfo).Attack;
+		int attackerStat = (mi1.CardInfo as MonsterInfo).Attack;
+		int targetStat = defending ? (mi2.CardInfo as MonsterInfo).Defense : (mi2.CardInfo as MonsterInfo).Attack;
 		
 		if (attackerStat > targetStat)
 			mi2.sendCardToGraveyard();

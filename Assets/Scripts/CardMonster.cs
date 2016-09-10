@@ -30,19 +30,19 @@ public class CardMonster : Card {
 
 	public override void assignTarget(Card target) {
 
-		this.Target = target;
-		this.attackMonster (this.Target);
+		Target = target;
+		attackMonster (Target);
 	}
 
     public override void changeCard(CardInfo c) {
 
-		CardI = c as MonsterInfo;
-		if (CardI != null) {
-			var s = Resources.Load ("Cards/"+CardI.GetId(), typeof(Sprite)) as Sprite;
+		CardInfo = c as MonsterInfo;
+		if (CardInfo != null) {
+			var s = Resources.Load ("Cards/"+CardInfo.GetId(), typeof(Sprite)) as Sprite;
 			if (s != null)
 				this.GetComponent<SpriteRenderer> ().sprite = s;
 
-			if ((CardI as MonsterInfo).GetLevel() < 15) {
+			if ((CardInfo as MonsterInfo).GetLevel() < 15) {
 				Locked.SetActive(false);
 				AwakenMenuItem.SetActive(false);
 			} else
@@ -58,7 +58,7 @@ public class CardMonster : Card {
 		if (target != null) {
 			this.setDefending (false);
 			this.AttackInfo.SetActive (true);
-			this.AttackInfo.GetComponentInChildren<CardStatComponent> ().changeStat (target.CardI as MonsterInfo);
+			this.AttackInfo.GetComponentInChildren<CardStatComponent> ().changeStat (target.CardInfo as MonsterInfo);
 		} else {
 //			this.setDefending(true);
 			this.AttackInfo.SetActive(false);
@@ -77,7 +77,7 @@ public class CardMonster : Card {
 
 	public bool canSacrifice(bool leviathan) {
 
-		if (leviathan && (CardI as MonsterInfo).GetLevel() < 5)
+		if (leviathan && (CardInfo as MonsterInfo).GetLevel() < 5)
 			return false;
 		
 		return !(_cardLocked || client.cardAwakening == this);
@@ -107,14 +107,14 @@ public class CardMonster : Card {
 
 	public bool hasPair() {
 
-		return (this.CardI.AssoCardInfo.ContainsKey (CardRelation.PairL) || this.CardI.AssoCardInfo.ContainsKey (CardRelation.PairR));
+		return (this.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairL) || this.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairR));
 	}
 
 	public MonsterInfo getPair() {
 		
 		CardInfo ci;
-		if (!this.CardI.AssoCardInfo.TryGetValue (CardRelation.PairL, out ci))
-			this.CardI.AssoCardInfo.TryGetValue (CardRelation.PairR, out ci);
+		if (!this.CardInfo.AssoCardInfo.TryGetValue (CardRelation.PairL, out ci))
+			this.CardInfo.AssoCardInfo.TryGetValue (CardRelation.PairR, out ci);
 		return (ci as MonsterInfo);
 	}
 
@@ -150,7 +150,7 @@ public class CardMonster : Card {
 		
 		if (this.PairCard != null) {
 			PairCard.transform.position = 
-				Camera.main.ScreenToWorldPoint (eventData.position) - new Vector3 ((this.CardI.AssoCardInfo.ContainsKey (CardRelation.PairL) ? 1.0f : -1.0f) * 2.22f, 0.0f, -10.0f);
+				Camera.main.ScreenToWorldPoint (eventData.position) - new Vector3 ((this.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairL) ? 1.0f : -1.0f) * 2.22f, 0.0f, -10.0f);
 		}
 	}
 

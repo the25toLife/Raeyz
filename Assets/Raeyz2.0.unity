@@ -207,6 +207,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!61 &78344729
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -331,7 +332,7 @@ MonoBehaviour:
   auxCardPrefab: {fileID: 130986, guid: 955aa5ef4705cde4b90d595d5d5f7fa2, type: 2}
   MultiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
   cardMenu: {fileID: 723401103}
-  cardMenuItem: {fileID: 167920, guid: dcd266cefca85204796b30e9d7cfaba5, type: 2}
+  cardMenuItem: {fileID: 167920, guid: 94d99daa028e2e9448e7f3cdd217a0dd, type: 2}
 --- !u!4 &100432029
 Transform:
   m_ObjectHideFlags: 0
@@ -515,6 +516,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 351177279}
 --- !u!1 &132873176
 GameObject:
   m_ObjectHideFlags: 0
@@ -593,6 +595,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 235767437}
 --- !u!1 &142801918
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,6 +675,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!61 &142801922
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -779,6 +783,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!1 &205953196
 GameObject:
   m_ObjectHideFlags: 0
@@ -892,6 +897,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!1 &291453904
 GameObject:
   m_ObjectHideFlags: 0
@@ -1072,6 +1078,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!1 &379747752
 GameObject:
   m_ObjectHideFlags: 0
@@ -1274,6 +1281,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 0}
 --- !u!1 &477558796
 GameObject:
   m_ObjectHideFlags: 0
@@ -1352,6 +1360,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 1680864575}
 --- !u!1 &504592403
 GameObject:
   m_ObjectHideFlags: 0
@@ -1430,6 +1439,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 0}
 --- !u!1 &514307439
 GameObject:
   m_ObjectHideFlags: 0
@@ -1869,6 +1879,7 @@ MonoBehaviour:
   slotType: 1
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 1444701226}
 --- !u!61 &674337176
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2314,6 +2325,7 @@ MonoBehaviour:
   slotType: 1
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 2002085216}
 --- !u!61 &826784854
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2489,6 +2501,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!1 &1054958181
 GameObject:
   m_ObjectHideFlags: 0
@@ -2697,6 +2710,7 @@ MonoBehaviour:
   slotType: 1
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 78344728}
 --- !u!61 &1080543964
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2789,6 +2803,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 1009714847}
 --- !u!1 &1208420034
 GameObject:
   m_ObjectHideFlags: 0
@@ -2933,6 +2948,7 @@ MonoBehaviour:
   slotType: 3
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 0}
 --- !u!1 &1344327710
 GameObject:
   m_ObjectHideFlags: 0
@@ -3264,6 +3280,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!61 &1444701227
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3521,6 +3538,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 2127343242}
 --- !u!1 &1680864572
 GameObject:
   m_ObjectHideFlags: 0
@@ -3599,6 +3617,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!1 &1760462921
 GameObject:
   m_ObjectHideFlags: 0
@@ -3936,6 +3955,7 @@ MonoBehaviour:
   slotType: 1
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 142801921}
 --- !u!61 &1891221898
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4029,6 +4049,7 @@ MonoBehaviour:
   slotType: 1
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 159814953}
 --- !u!61 &1921376837
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4220,6 +4241,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!61 &2002085217
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4548,6 +4570,7 @@ MonoBehaviour:
   slotType: 0
   client: {fileID: 0}
   multiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
+  MonsterSlot: {fileID: 0}
 --- !u!1 &2131546814
 GameObject:
   m_ObjectHideFlags: 0
@@ -4626,3 +4649,4 @@ MonoBehaviour:
   slotType: 2
   client: {fileID: 100432028}
   multiCardPrefab: {fileID: 0}
+  MonsterSlot: {fileID: 0}

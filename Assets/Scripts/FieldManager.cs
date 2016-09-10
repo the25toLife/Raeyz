@@ -43,8 +43,8 @@ public class FieldManager : MonoBehaviour {
         var count = 0;
         foreach (Card c in _cardsOnField)
         {
-            if ((!cardTypePar.HasValue || c.CardI.GetCardType().Equals(cardTypePar))
-                && (!cardAffinityPar.HasValue || c.CardI.GetAffinity().Equals(cardAffinityPar)))
+            if ((!cardTypePar.HasValue || c.CardInfo.GetCardType().Equals(cardTypePar))
+                && (!cardAffinityPar.HasValue || c.CardInfo.GetAffinity().Equals(cardAffinityPar)))
                 count++;
         }
         return count;
