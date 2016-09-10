@@ -627,9 +627,10 @@ public static class CardPool {
 		new MonsterInfo(398, "Znuese", CardInfo.CardAffinity.Water, 1, 7, 3, ""),
 		new MonsterInfo(399, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, ""),
 		new MonsterInfo(400, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, ""),
-		new MonsterInfo(401, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, "")
-		//new SpecialInfo(402, "Rallying Heart", CardInfo.CardType.Auxiliary, "Increases a monster's ATTACK by 1.  Light monsters gain 2 ATTACK.").registerEffect(new Effect402())
-		
+		new MonsterInfo(401, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, ""),
+	    new AuxiliaryInfo(402, "Rallying Heart", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        "Increases a monster's ATTACK by 1.  Light monsters gain 2 ATTACK.")
+
 	};
 	
 	public static void associateCards () {

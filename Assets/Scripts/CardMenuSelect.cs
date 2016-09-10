@@ -28,7 +28,7 @@ public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 
 		representedCard = c;
 		foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
-			csc.changeStat(c.CardI);
+			csc.changeStat(c.CardInfo);
 	}
 
 	public void OnPointerDown(PointerEventData eventData) {
