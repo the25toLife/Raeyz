@@ -1,16 +1,18 @@
 using UnityEngine;
-using System;
+using System.Collections;
 
 public class CardAuxiliary : Card
 {
 
     private CardMonster _cardMonster;
 
+
 /*
 	public override void Start() {
 		base.Start ();
 	}
 */
+
 
 	public override void changeCard (CardInfo ci)
 	{
@@ -32,7 +34,8 @@ public class CardAuxiliary : Card
 	}
 
 	public override bool canTarget (Card target) {
-		return false;
+		return target.CardInfo.GetAffinity() == CardInfo.CardAffinity.All
+		       || target.CardInfo.GetAffinity() == CardInfo.GetAffinity();
 	}
 
 	public override void assignTarget (Card target) {
@@ -43,5 +46,9 @@ public class CardAuxiliary : Card
     {
         OnPlay();
         _cardMonster = target;
+        foreach (StatusEffect statusEffect in ((AuxiliaryInfo) CardInfo).StatusEffects)
+        {
+            statusEffect.Apply(_cardMonster);
+        }
     }
 }

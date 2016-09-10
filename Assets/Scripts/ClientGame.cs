@@ -227,61 +227,69 @@ public class ClientGame : MonoBehaviour
 	/// <param name="slotID">The slot to play the CurrentCard in.</param>
 	public void playEnemyCard(int uid, int slotID) {
 
-		foreach (Slot slot in GameObject.FindObjectsOfType<Slot>()) {
+		foreach (Slot slot in FindObjectsOfType<Slot>()) {
 			if (slot.SlotID == slotID + 12) {
 
 				Card c = getCard<Card>(uid);
 
-			    switch (c.CardInfo.GetCardType()) {
+			    switch (c.CardInfo.GetCardType())
+			    {
+                    case (CardInfo.CardType.Monster):
+                        CardMonster cm = c as CardMonster;
+                        if (cm.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairR)) {
 
-				case (CardInfo.CardType.Monster):
-					CardMonster cm = c as CardMonster;
-					if (cm.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairR)) {
+                            Transform pairDropSlot = EnemyMonsters.transform.FindChild(string.Format("enemyMonster{0}", slotID + 1));
+                            //		foreach (SlotMonster sm in this.transform.parent.GetComponentsInChildren<SlotMonster>()) {
+                            //			if (sm.gameObject.name.Equals(string.Format("playerMonster{0}", SlotID + dir)))
+                            //				pairDropSlot = sm;
+                            //		}
+                            if (pairDropSlot == null)
+                                break;
+                            Slot pdsm = pairDropSlot.GetComponent<Slot> ();
+                            if (pdsm == null)
+                                break;
+    //						SlotMonster pairDropSlot = null;
+    //						foreach (SlotMonster sm in slot.transform.parent.GetComponentsInChildren<SlotMonster>()) {
+    //							if (sm.gameObject.name.Equals(string.Format("enemyMonster{0}", slotID + 1)))
+    //								pairDropSlot = sm;
+    //						}
+    //						if (pairDropSlot == null)
+    //							break;
+                            CardMonster ecmPair = pdsm.GetComponentInChildren<CardMonster>();
+                            GameObject o = GameObject.Instantiate(MultiCardPrefab);
 
-						Transform pairDropSlot = EnemyMonsters.transform.FindChild(string.Format("enemyMonster{0}", slotID + 1));
-						//		foreach (SlotMonster sm in this.transform.parent.GetComponentsInChildren<SlotMonster>()) {
-						//			if (sm.gameObject.name.Equals(string.Format("playerMonster{0}", SlotID + dir)))
-						//				pairDropSlot = sm;
-						//		}
-						if (pairDropSlot == null)
-							break;
-						Slot pdsm = pairDropSlot.GetComponent<Slot> ();
-						if (pdsm == null)
-							break;
-//						SlotMonster pairDropSlot = null;	
-//						foreach (SlotMonster sm in slot.transform.parent.GetComponentsInChildren<SlotMonster>()) {
-//							if (sm.gameObject.name.Equals(string.Format("enemyMonster{0}", slotID + 1)))
-//								pairDropSlot = sm;
-//						}
-//						if (pairDropSlot == null)
-//							break;
-						CardMonster ecmPair = pdsm.GetComponentInChildren<CardMonster>();
-						GameObject o = GameObject.Instantiate(MultiCardPrefab);
-						
-						CardMultiPart mpc = o.GetComponent<CardMultiPart>();
-					    mpc.IsEnemyCard = true;
-						mpc.changeCard((c.CardInfo as MonsterInfo) + (ecmPair.CardInfo as MonsterInfo));
-						mpc.createUID(uid);
-						mpc.GetComponent<SpriteRenderer> ().sortingOrder = pdsm.GetComponent<SpriteRenderer> ().sortingOrder + 1;
-						mpc.State = Card.States.INPLAY;
-						mpc.changeReturnParent(pdsm.transform);
-						mpc.returnToParent();
+                            CardMultiPart mpc = o.GetComponent<CardMultiPart>();
+                            mpc.IsEnemyCard = true;
+                            mpc.changeCard((c.CardInfo as MonsterInfo) + (ecmPair.CardInfo as MonsterInfo));
+                            mpc.createUID(uid);
+                            mpc.GetComponent<SpriteRenderer> ().sortingOrder = pdsm.GetComponent<SpriteRenderer> ().sortingOrder + 1;
+                            mpc.State = Card.States.INPLAY;
+                            mpc.changeReturnParent(pdsm.transform);
+                            mpc.returnToParent();
 
-					    FindObjectOfType<FieldManager>().AddCardToField(mpc);
+                            slot.CurrentCard = pdsm.CurrentCard = mpc;
 
-					    Destroy(c.gameObject);
-						Destroy(ecmPair.gameObject);
+                            FindObjectOfType<FieldManager>().AddCardToField(mpc);
 
-					    return;
-					}
-					break;
-				}
+                            Destroy(c.gameObject);
+                            Destroy(ecmPair.gameObject);
+
+                            return;
+                        }
+                        break;
+                    case CardInfo.CardType.Auxiliary:
+                        if (slot.MonsterSlot != null && (slot.MonsterSlot.CurrentCard as CardMonster) != null)
+                            ((CardAuxiliary) c).OnPlay((CardMonster) slot.MonsterSlot.CurrentCard);
+			            break;
+			    }
 
 			    FindObjectOfType<FieldManager>().AddCardToField(c);
 			    c.GetComponent<SpriteRenderer> ().sortingOrder = slot.GetComponent<SpriteRenderer> ().sortingOrder + 1;
 			    c.State = Card.States.INPLAY;
+			    slot.CurrentCard = c;
 			    c.changeReturnParent(slot.transform);
 			    c.returnToParent();
+			    return;
 			}
 		}
 	}
@@ -395,18 +403,24 @@ public class ClientGame : MonoBehaviour
 	public void dealCardToEnemy(int uid, CardInfo cInfo) {
 
 		Card cardDealt = null;
-		switch (cInfo.GetCardType()) {
-			
-		case (CardInfo.CardType.Monster):
-			GameObject c = Instantiate(MonsterCardPrefab);
-			c.transform.SetParent(EnemyHandObj.transform);
-			cardDealt = c.GetComponent<CardMonster>();
-			(cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
-		        (cardDealt as CardMonster).IsEnemyCard = true;
-		        (cardDealt as CardMonster).setCardFOW(true);
-			break;
-		case (CardInfo.CardType.Auxiliary):
-			break;
+		switch (cInfo.GetCardType())
+		{
+            case CardInfo.CardType.Monster:
+                GameObject m = Instantiate(MonsterCardPrefab);
+                m.transform.SetParent(EnemyHandObj.transform);
+                cardDealt = m.GetComponent<CardMonster>();
+                (cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
+                (cardDealt as CardMonster).IsEnemyCard = true;
+                (cardDealt as CardMonster).setCardFOW(true);
+                break;
+            case CardInfo.CardType.Auxiliary:
+                GameObject a = Instantiate(AuxCardPrefab);
+                a.transform.SetParent(EnemyHandObj.transform);
+                cardDealt = a.GetComponent<CardAuxiliary>();
+                (cardDealt as CardAuxiliary).changeCard(cInfo as AuxiliaryInfo);
+                (cardDealt as CardAuxiliary).IsEnemyCard = true;
+                (cardDealt as CardAuxiliary).setCardFOW(true);
+                break;
 		}
 		
 		if (cardDealt != null) {

@@ -3443,7 +3443,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7.114919, y: -0.33473253}
+  m_AnchoredPosition: {x: -5.335797, y: -0.20481348}
   m_SizeDelta: {x: 2.22, y: 3.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22489904
@@ -3523,9 +3523,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62698a01254d56747adf929c86ea6e3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fullInfoCanvas: {fileID: 104830}
-  statOverlay: {fileID: 198454}
-  lcMenu: {fileID: 176948}
-  deathHandler: {fileID: 140732}
-  selectedIndicator: {fileID: 119662}
-  client: {fileID: 0}
+  FullInfoCanvas: {fileID: 104830}
+  StatOverlay: {fileID: 198454}
+  LcMenu: {fileID: 176948}
+  DeathHandler: {fileID: 140732}
+  SelectedIndicator: {fileID: 119662}
+  Client: {fileID: 0}

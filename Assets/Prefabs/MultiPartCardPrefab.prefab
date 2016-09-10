@@ -2380,12 +2380,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65e8de75c0a6e8d4cb3136d08a458f0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fullInfoCanvas: {fileID: 121092}
-  statOverlay: {fileID: 192292}
-  lcMenu: {fileID: 185600}
-  deathHandler: {fileID: 165652}
-  selectedIndicator: {fileID: 173194}
-  client: {fileID: 0}
+  FullInfoCanvas: {fileID: 121092}
+  StatOverlay: {fileID: 156940}
+  LcMenu: {fileID: 185600}
+  DeathHandler: {fileID: 165652}
+  SelectedIndicator: {fileID: 173194}
+  Client: {fileID: 0}
   Locked: {fileID: 190342}
   AwakenMenuItem: {fileID: 125700}
   AttackInfo: {fileID: 156940}
@@ -5179,7 +5179,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.9886765, y: 0.8112514}
+  m_AnchoredPosition: {x: -2.3836036, y: 0.054150745}
   m_SizeDelta: {x: 4.72, y: 3.01}
   m_Pivot: {x: 0.2352, y: 0.5}
 --- !u!224 &22464158

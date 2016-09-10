@@ -38,11 +38,13 @@ public class CardMonster : Card {
 
 		CardInfo = c as MonsterInfo;
 		if (CardInfo != null) {
-			var s = Resources.Load ("Cards/"+CardInfo.GetId(), typeof(Sprite)) as Sprite;
-			if (s != null)
-				GetComponent<SpriteRenderer> ().sprite = s;
-
-			if ((CardInfo as MonsterInfo).GetLevel() < 15) {
+		    if (!FowActive)
+		    {
+		        var s = Resources.Load("Cards/" + CardInfo.GetId(), typeof(Sprite)) as Sprite;
+		        if (s != null)
+		            GetComponent<SpriteRenderer>().sprite = s;
+		    }
+		    if ((CardInfo as MonsterInfo).GetLevel() < 15) {
 				Locked.SetActive(false);
 				AwakenMenuItem.SetActive(false);
 			} else

@@ -225,7 +225,8 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		if (Client.Dragging || DeathHandler.activeSelf || FowActive)
 			return;
 
-		switch (eventData.button) {
+		switch (eventData.button)
+		{
 
 		case PointerEventData.InputButton.Right:
 

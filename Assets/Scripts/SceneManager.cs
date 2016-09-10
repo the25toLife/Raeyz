@@ -414,8 +414,8 @@ public class SceneManager : LoadBalancingClient
 //		dealCardToPlayer (c);
 //		for (int i = 0; i < 4; i++)
 //			dealCardToPlayer ();
-		dealCardToPlayer (CardPool.Cards [334]);
-		dealCardToPlayer (CardPool.Cards [335]);
+		dealCardToPlayer (CardPool.Cards [86]);
+		dealCardToPlayer (CardPool.Cards [87]);
 		dealCardToPlayer (CardPool.Cards [0]);
 		dealCardToPlayer (CardPool.Cards [1]);
 		dealCardToPlayer (CardPool.Cards [401]);

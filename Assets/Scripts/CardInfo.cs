@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 
 public enum CardRelation {
@@ -93,8 +94,8 @@ public class MonsterInfo : CardInfo
 		return toReturn;
 	}
 	
-	public static MonsterInfo operator +(MonsterInfo ci1, StatEffect se) {
-		var toReturn = new MonsterInfo (ci1.GetId(), ci1.GetName(), ci1.GetAffinity(), ci1.GetLevel(), ci1.Attack + se.AttackEff, ci1.Defense + se.DefenseEff, ci1.GetDesc());
+	public static MonsterInfo operator +(MonsterInfo ci1, StatChangeEffect se) {
+		var toReturn = new MonsterInfo (ci1.GetId(), ci1.GetName(), ci1.GetAffinity(), ci1.GetLevel(), ci1.Attack + se.Attack, ci1.Defense + se.Defense, ci1.GetDesc());
 		foreach (var kvp in ci1.AssoCardInfo) {
 			toReturn.associateCardInfo(kvp.Value, kvp.Key);
 		}
@@ -109,6 +110,7 @@ public class AuxiliaryInfo : CardInfo {
         StatChange
     }
 
+    public ArrayList StatusEffects { get; private set; }
     private readonly AuxiliaryType _auxiliaryType;
 	
 	public AuxiliaryInfo(int idPar, string namePar, CardAffinity affinityPar,  AuxiliaryType auxiliaryTypePar,
@@ -116,11 +118,18 @@ public class AuxiliaryInfo : CardInfo {
 	{
 
 	    _auxiliaryType = auxiliaryTypePar;
+	    StatusEffects = new ArrayList();
 	}
 
     public AuxiliaryType GetAuxiliaryType()
     {
         return _auxiliaryType;
+    }
+
+    public AuxiliaryInfo RegisterEffect(StatusEffect statusEffect)
+    {
+        StatusEffects.Add(statusEffect);
+        return this;
     }
 }
 
@@ -630,6 +639,8 @@ public static class CardPool {
 		new MonsterInfo(401, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, ""),
 	    new AuxiliaryInfo(402, "Rallying Heart", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
 	        "Increases a monster's ATTACK by 1.  Light monsters gain 2 ATTACK.")
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1})
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Light, Attack = 1})
 
 	};
 	
