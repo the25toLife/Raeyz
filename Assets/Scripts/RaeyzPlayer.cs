@@ -7,9 +7,9 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class RaeyzPlayer : Player
 {
-	private int lifePoints = 200;
-	private bool ready, turn;
-	public int Life { get { return lifePoints; } }
+	private int _lifePoints = 200;
+	private bool Ready, Turn;
+	public int Life { get { return _lifePoints; } }
 
 	protected internal RaeyzPlayer(string name, int actorID, bool isLocal, Hashtable actorProperties) : base(name, actorID, isLocal, actorProperties)
 	{
@@ -22,24 +22,24 @@ public class RaeyzPlayer : Player
 
 	public void damagePlayer(int dmg) {
 
-		lifePoints -= dmg;
-		this.SetCustomProperties( new Hashtable() {{"l", lifePoints}});
+		_lifePoints -= dmg;
+		this.SetCustomProperties( new Hashtable() {{"l", _lifePoints}});
 	}
 
 	public void changeStatus(bool b) {
-		ready = b;
-		this.SetCustomProperties( new Hashtable() {{"r", ready}});
+		Ready = b;
+		this.SetCustomProperties( new Hashtable() {{"r", Ready}});
 	}
 
 	public void changeTurnIndication(bool b) {
-		turn = b;
+		Turn = b;
 	}
 
 	public bool isTurn() {
-		return turn;
+		return Turn;
 	}
 
 	public bool isReady() {
-		return ready;
+		return Ready;
 	}
 }

@@ -6,19 +6,19 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class ConnectionManager : MonoBehaviour {
 
-	public SceneManager game;
-	public GUIStyle myStyle;
-	public GameObject handCardPrefab;
+	public SceneManager Game;
+	public GUIStyle MyStyle;
+	public GameObject HandCardPrefab;
 
 	void Start () {
 
 		Application.runInBackground = true;
-		game = new SceneManager ();
-		game.AppId = "d5b703ed-840c-4cc1-8771-ffa8f9a6b49c";
+		Game = new SceneManager ();
+		Game.AppId = "d5b703ed-840c-4cc1-8771-ffa8f9a6b49c";
 		
-		game.OnStateChangeAction += this.OnStateChanged;
+		Game.OnStateChangeAction += this.OnStateChanged;
 		
-		game.ConnectToRegionMaster ("us");
+		Game.ConnectToRegionMaster ("us");
 
 	}
 
@@ -27,13 +27,13 @@ public class ConnectionManager : MonoBehaviour {
 		if (state == ClientState.ConnectedToMaster)
 		{
 			Debug.Log("connected to master");
-			game.OpJoinRandomRoom (null, 0);
+			Game.OpJoinRandomRoom (null, 0);
 		}
 	}
 	
 	void Update() {
 		
-		game.Service ();
+		Game.Service ();
 
 		if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetKeyDown(KeyCode.Q))
 		{
@@ -43,12 +43,12 @@ public class ConnectionManager : MonoBehaviour {
 
 	public void OnApplicationQuit()
 	{
-		if (game != null && game.loadBalancingPeer != null)
+		if (Game != null && Game.loadBalancingPeer != null)
 		{
-			game.Disconnect();
-			game.loadBalancingPeer.StopThread();
+			Game.Disconnect();
+			Game.loadBalancingPeer.StopThread();
 		}
-		game = null;
+		Game = null;
 	}
 
 	public void OnGUI() {

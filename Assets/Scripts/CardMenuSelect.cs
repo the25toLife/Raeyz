@@ -5,28 +5,28 @@ using UnityEngine.UI;
 
 public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 
-	public MenuItem itemType;
+	public MenuItem ItemType;
 
-	private Card representedCard;
-	private ClientGame client;
+	private Card _representedCard;
+	private ClientGame _client;
 
 	// Use this for initialization
 	void Start () {
 
-		client = GameObject.FindObjectOfType<ClientGame> ();
+		_client = GameObject.FindObjectOfType<ClientGame> ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		if (itemType == MenuItem.CardUnlock) {
-			this.GetComponentInChildren<Image>().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", client.getSacrPower()), typeof(Sprite)) as Sprite;
+		if (ItemType == MenuItem.CardUnlock) {
+			this.GetComponentInChildren<Image>().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", _client.getSacrPower()), typeof(Sprite)) as Sprite;
 		}
 	}
 
 	public void setCard(Card c) {
 
-		representedCard = c;
+		_representedCard = c;
 		foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
 			csc.changeStat(c.CardInfo);
 	}
@@ -38,21 +38,21 @@ public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 
 		case (PointerEventData.InputButton.Left):
 
-			switch (itemType) {
+			switch (ItemType) {
 
 			case (MenuItem.CardSelect):
-				if (!representedCard)
+				if (!_representedCard)
 					return;
-				if (!client.isCardSelected(representedCard)) {
-					client.selectCard(representedCard);
+				if (!_client.isCardSelected(_representedCard)) {
+					_client.selectCard(_representedCard);
 					this.GetComponent<Image>().color = new Color(0.7f, 0.16f, 0.16f, 0.46f);
 				} else {
-					client.deselectCard(representedCard);
+					_client.deselectCard(_representedCard);
 					this.GetComponent<Image>().color = new Color(0.06f, 0.06f, 0.06f, 0.46f);
 				}
 				break;
 			case (MenuItem.CardUnlock):
-				client.awakenCard();
+				_client.awakenCard();
 				break;
 			}
 			break;
@@ -61,7 +61,7 @@ public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 	
 	public void OnDisable() {
 		
-		if (itemType == MenuItem.CardSelect)
+		if (ItemType == MenuItem.CardSelect)
 			GameObject.Destroy(this.gameObject);
 	}
 }

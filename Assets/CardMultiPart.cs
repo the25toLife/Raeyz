@@ -15,7 +15,7 @@ public class CardMultiPart : CardMonster {
 	}
 
 	private void setFullInfoAnimation() {
-		Animation a = this.fullInfoCanvas.GetComponentsInChildren<Animation>(true)[0];
+		Animation a = this.FullInfoCanvas.GetComponentsInChildren<Animation>(true)[0];
 		switch (this.CardInfo.GetId()) {
 
 		case 284:
@@ -42,20 +42,20 @@ public class CardMultiPart : CardMonster {
 
 		if (eventData.button == PointerEventData.InputButton.Right) {
 
-			if (client.isCardSelected(this))
-				client.deselectCard(this);
+			if (Client.isCardSelected(this))
+				Client.deselectCard(this);
 			
-			lcMenu.SetActive(false);
+			LcMenu.SetActive(false);
 			Shield.SetActive(false);
 			
 			this.transform.localScale = new Vector3(2.8f, 2.8f, 1.0f);
 			this.transform.SetParent(null);
 			this.GetComponent<SpriteRenderer> ().sortingOrder += 100;
-			statOverlay.SetActive (false);
+			StatOverlay.SetActive (false);
 			
-			fullInfoCanvas.SetActive (true);
+			FullInfoCanvas.SetActive (true);
 			this.transform.localPosition = new Vector3(-3.5f, 0.0f, 0.0f);
-			stateToReturnTo = State;
+			StateToReturnTo = State;
 			State = States.INFO;
 			
 			GameObject.FindGameObjectWithTag("blockRays").GetComponent<BoxCollider2D>().enabled = true;

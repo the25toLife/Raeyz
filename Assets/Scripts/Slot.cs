@@ -5,10 +5,10 @@ using UnityEngine.EventSystems;
 public class Slot : MonoBehaviour, IDropHandler {
 	
 	public int SlotID;
-	public CardInfo.CardType slotType;
+	public CardInfo.CardType SlotType;
 	public Card CurrentCard { get; set; }
-	public ClientGame client;
-	public GameObject multiCardPrefab;
+	public ClientGame Client;
+	public GameObject MultiCardPrefab;
     public Slot MonsterSlot;
 
     // Use this for initialization
@@ -19,13 +19,13 @@ public class Slot : MonoBehaviour, IDropHandler {
 	// Update is called once per frame
 	public void Update () {
 
-	    if (client != null && client.dragging)
+	    if (Client != null && Client.Dragging)
 	    {
-	        if (canDrop(client.cardDragged))
+	        if (canDrop(Client.CardDragged))
 	            GetComponent<SpriteRenderer>().color = new Color(0.396f, 0.718f, 1.0f);
 	        else
 	        {
-	            CardMonster cardMonster = client.cardDragged as CardMonster;
+	            CardMonster cardMonster = Client.CardDragged as CardMonster;
 	            if (cardMonster != null && cardMonster.hasPair() && canDrop(cardMonster.PairCard))
 	                GetComponent<SpriteRenderer>().color = new Color(0.396f, 0.718f, 1.0f);
 	        }
@@ -34,12 +34,12 @@ public class Slot : MonoBehaviour, IDropHandler {
 	}
 	
 	public bool canDrop(Card c) {
-		if (CurrentCard != null || !client.game.canTakeAction (Actions.PLAY))
+		if (CurrentCard != null || !Client.Game.canTakeAction (Actions.PLAY))
 			return false;
-	    if (c == null || c.CardInfo.GetCardType() != slotType || !c.dragPass ())
+	    if (c == null || c.CardInfo.GetCardType() != SlotType || !c.dragPass ())
 	        return false;
 
-	    switch (slotType) {
+	    switch (SlotType) {
             case CardInfo.CardType.Monster:
 	            if (c.CardInfo.AssoCardInfo.ContainsKey(CardRelation.PairL))
 	            {
@@ -86,11 +86,11 @@ public class Slot : MonoBehaviour, IDropHandler {
 		c.changeReturnParent(transform);
 		c.State = Card.States.INPLAY;
 
-	    client.game.playCard (c, SlotID);
+	    Client.Game.playCard (c, SlotID);
 
 	    // Adds the card to the field manager.  Multipart cards are handled separately to prevent them from
 	    // being added to the field manager twice.
-	    if (!(c is CardMultiPart)) client.game.FieldManager.AddCardToField(c);
+	    if (!(c is CardMultiPart)) Client.Game.FieldManager.AddCardToField(c);
 
 	    if (CurrentCard is CardAuxiliary)
 	    {
@@ -111,7 +111,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 		Slot pdsm = pairDropSlot.GetComponent<Slot> ();
 		if (pdsm != null && pdsm.canDrop (c.PairCard)) {
 			
-			GameObject o = GameObject.Instantiate(multiCardPrefab);
+			GameObject o = GameObject.Instantiate(MultiCardPrefab);
 			
 			CardMultiPart mpc = o.GetComponent<CardMultiPart>();
 			if (dir > 0) {
@@ -129,8 +129,8 @@ public class Slot : MonoBehaviour, IDropHandler {
 			}
 			mpc.returnToParent();
 
-		    client.game.FieldManager.AddCardToField(mpc);
-		    client.dragging = false;
+		    Client.Game.FieldManager.AddCardToField(mpc);
+		    Client.Dragging = false;
 			
 			Destroy(c.PairCard.gameObject);
 			Destroy(c.gameObject);
