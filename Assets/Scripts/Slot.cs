@@ -82,7 +82,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 
 	public void setCard(Card c) {
 		CurrentCard = c;
-		c.GetComponent<SpriteRenderer> ().sortingOrder = this.GetComponent<SpriteRenderer>().sortingOrder + 1;
+		c.GetComponent<SpriteRenderer> ().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 2;
 		c.changeReturnParent(transform);
 		c.State = Card.States.INPLAY;
 

@@ -101,6 +101,17 @@ public class MonsterInfo : CardInfo
 		}
 		return toReturn;
 	}
+
+    public static MonsterInfo operator -(MonsterInfo ci1, StatChangeEffect se)
+    {
+        var toReturn = new MonsterInfo(ci1.GetId(), ci1.GetName(), ci1.GetAffinity(), ci1.GetLevel(),
+            ci1.Attack - se.Attack, ci1.Defense - se.Defense, ci1.GetDesc());
+        foreach (var kvp in ci1.AssoCardInfo)
+        {
+            toReturn.associateCardInfo(kvp.Value, kvp.Key);
+        }
+        return toReturn;
+    }
 }
 
 public class AuxiliaryInfo : CardInfo {

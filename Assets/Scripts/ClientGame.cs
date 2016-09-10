@@ -262,7 +262,7 @@ public class ClientGame : MonoBehaviour
                             mpc.IsEnemyCard = true;
                             mpc.changeCard((c.CardInfo as MonsterInfo) + (ecmPair.CardInfo as MonsterInfo));
                             mpc.createUID(uid);
-                            mpc.GetComponent<SpriteRenderer> ().sortingOrder = pdsm.GetComponent<SpriteRenderer> ().sortingOrder + 1;
+                            mpc.GetComponent<SpriteRenderer> ().sortingOrder += pdsm.GetComponent<SpriteRenderer> ().sortingOrder;
                             mpc.State = Card.States.INPLAY;
                             mpc.changeReturnParent(pdsm.transform);
                             mpc.returnToParent();
@@ -284,7 +284,7 @@ public class ClientGame : MonoBehaviour
 			    }
 
 			    FindObjectOfType<FieldManager>().AddCardToField(c);
-			    c.GetComponent<SpriteRenderer> ().sortingOrder = slot.GetComponent<SpriteRenderer> ().sortingOrder + 1;
+			    c.GetComponent<SpriteRenderer> ().sortingOrder += slot.GetComponent<SpriteRenderer> ().sortingOrder;
 			    c.State = Card.States.INPLAY;
 			    slot.CurrentCard = c;
 			    c.changeReturnParent(slot.transform);

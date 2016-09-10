@@ -96,8 +96,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		Debug.Log (string.Format("Card assigned UID: {0}", UID));
 	}
 
-    [UsedImplicitly]
-    private void OnDestroy()
+    public virtual void OnDestroy()
     {
         var fieldManager = FindObjectOfType<FieldManager>();
         if (fieldManager != null) fieldManager.RemoveCardFromField(this);

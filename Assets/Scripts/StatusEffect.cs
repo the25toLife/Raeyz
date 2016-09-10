@@ -6,6 +6,7 @@ public abstract class StatusEffect
 {
     public CardInfo.CardAffinity Affinity { get; set; }
     public abstract void Apply(Card c);
+    public abstract void Remove(Card c);
 }
 
 public class StatChangeEffect : StatusEffect
@@ -40,6 +41,29 @@ public class StatChangeEffect : StatusEffect
                             break;
                     }
                 }
+                break;
+            case CardInfo.CardType.Auxiliary:
+                break;
+            case CardInfo.CardType.Ruse:
+                break;
+            case CardInfo.CardType.Unique:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    public override void Remove(Card c)
+    {
+        if (Affinity != CardInfo.CardAffinity.All && c.CardInfo.GetAffinity() != Affinity) return;
+        switch (c.CardInfo.GetCardType())
+        {
+            case CardInfo.CardType.Monster:
+                CardMonster cardMonster = (CardMonster) c;
+                MonsterInfo monsterInfo = (MonsterInfo) cardMonster.CardInfo;
+                cardMonster.changeCard(monsterInfo - this);
+                foreach (var csc in cardMonster.GetComponentsInChildren<CardStatComponent>())
+                    csc.GetComponent<Image>().color = Color.white;
                 break;
             case CardInfo.CardType.Auxiliary:
                 break;

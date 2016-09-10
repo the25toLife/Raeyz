@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using System.Collections;
+using JetBrains.Annotations;
 
 public class CardAuxiliary : Card
 {
@@ -13,8 +15,23 @@ public class CardAuxiliary : Card
 	}
 */
 
+    public override void Update()
+    {
+        base.Update();
+        if (State == States.INPLAY && _cardMonster == null) Destroy(gameObject);
+    }
 
-	public override void changeCard (CardInfo ci)
+    public override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (_cardMonster == null) return;
+        foreach (StatusEffect statusEffect in ((AuxiliaryInfo) CardInfo).StatusEffects)
+        {
+            statusEffect.Remove(_cardMonster);
+        }
+    }
+
+    public override void changeCard (CardInfo ci)
 	{
 
 	    CardInfo = ci as AuxiliaryInfo;
