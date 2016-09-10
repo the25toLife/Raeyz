@@ -40,7 +40,7 @@ public class CardMonster : Card {
 		if (CardInfo != null) {
 			var s = Resources.Load ("Cards/"+CardInfo.GetId(), typeof(Sprite)) as Sprite;
 			if (s != null)
-				this.GetComponent<SpriteRenderer> ().sprite = s;
+				GetComponent<SpriteRenderer> ().sprite = s;
 
 			if ((CardInfo as MonsterInfo).GetLevel() < 15) {
 				Locked.SetActive(false);
