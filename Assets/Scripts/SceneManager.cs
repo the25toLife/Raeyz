@@ -408,17 +408,17 @@ public class SceneManager : LoadBalancingClient
 		_playerHand = new ArrayList ();
 		_playerActions = new ArrayList ();
 
-//		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
-//		while ((c as MonsterInfo).Level > 4)	//Guarentees a basic CurrentCard in the initial hand.
-//			c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];
-//		dealCardToPlayer (c);
-//		for (int i = 0; i < 4; i++)
-//			dealCardToPlayer ();
-		dealCardToPlayer (CardPool.Cards [86]);
+		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
+		while ((c as MonsterInfo).GetLevel() > 4)	//Guarentees a basic CurrentCard in the initial hand.
+			c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];
+		dealCardToPlayer (c);
+		for (int i = 0; i < 4; i++)
+			dealCardToPlayer ();
+/*		dealCardToPlayer (CardPool.Cards [86]);
 		dealCardToPlayer (CardPool.Cards [87]);
 		dealCardToPlayer (CardPool.Cards [0]);
 		dealCardToPlayer (CardPool.Cards [1]);
-		dealCardToPlayer (CardPool.Cards [401]);
+		dealCardToPlayer (CardPool.Cards [401]);*/
 
 		_stage = GameStage.PREP;
 	}
@@ -734,12 +734,15 @@ public class Deck {
 
 		maxSize = size;
 		cards = new ArrayList (maxSize);
-		for (int i = 0; i < maxSize; i++) {
-			
-			int val = Mathf.RoundToInt (UnityEngine.Random.value * (pool.Count - 1));
-			CardInfo c = (CardInfo)pool[val];
-			pool.RemoveAt (val);
-			cards.Add(c);
+		for (int i = 0; i < maxSize; i++)
+		{
+
+		    int index = UnityEngine.Random.Range(0, pool.Count);
+		    while (pool[index] == null) //Guarentees a basic CurrentCard in the initial hand.
+		        index = UnityEngine.Random.Range(0, pool.Count);
+		    CardInfo cardInfo = (CardInfo) pool[UnityEngine.Random.Range(0, pool.Count)];
+		    pool.RemoveAt (val);
+			cards.Add(cardInfo);
 		}
 	}	
 
