@@ -653,6 +653,99 @@ public static class CardPool {
 	        "Increases a monster's ATTACK by 1.  Light monsters gain 2 ATTACK.")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1})
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Light, Attack = 1}),
+        new AuxiliaryInfo(403, "Saving Herald", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Defense = 1 }),
+        null,
+        null,
+        null,
+        null,
+        new AuxiliaryInfo(408, "Tera Plane", CardInfo.CardAffinity.Forest, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Forest, Defense = 3 }),
+        null,
+        new AuxiliaryInfo(410, "Purifying Light", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 }),
+        new AuxiliaryInfo(411, "Arcane Spear", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Fire, Attack = 1 }),
+        new AuxiliaryInfo(412, "Alcain's Staff", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Darkness, Attack = 1 }),
+        new AuxiliaryInfo(413, "Narizite Blade", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Death, Attack = 1 }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        new AuxiliaryInfo(420, "Poseidon's Wrath", CardInfo.CardAffinity.Water, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Water, Attack = 3 }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        new AuxiliaryInfo(436, "Guardian Pixie", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Defense = 1 }),
+        new AuxiliaryInfo(437, "Call to Arms", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 }),
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        new AuxiliaryInfo(448, "Daggerthorn", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Forest, Attack = 1 }),
+        new AuxiliaryInfo(449, "Viridian Vines", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 })
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Forest, Attack = 1 }),
+        null,
+        null,
+        null,
+        null,
+        new AuxiliaryInfo(454, "Roaring Lariat", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 }),
+        new AuxiliaryInfo(455, "Whistling Edge", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 }),
+        null,
+        null,
+        new AuxiliaryInfo(458, "Piercing Light", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            ".")
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 }),
+        null,
+        null,
+        null,
+        null,
 	    new AuxiliaryInfo(463, "Breath of Bone", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
 	            "Increases a monster's ATTACK by 1.  Wind monsters gain 2 ATTACK.")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1})
