@@ -414,7 +414,7 @@ public class SceneManager : LoadBalancingClient
 		dealCardToPlayer (c);
 		for (int i = 0; i < 4; i++)
 			dealCardToPlayer ();*/
-		dealCardToPlayer (CardPool.Cards [548]);
+		dealCardToPlayer (CardPool.Cards [5]);
 		dealCardToPlayer (CardPool.Cards [50]);
 		dealCardToPlayer (CardPool.Cards [11]);
 		dealCardToPlayer (CardPool.Cards [6]);
@@ -626,7 +626,7 @@ public class SceneManager : LoadBalancingClient
 		if (!_isTurn)
 			return;
 		int playerDmg = _clientGame.getDamageToLife ();
-		Debug.LogError (playerDmg);
+		//Debug.LogError (playerDmg);
 		if (playerDmg > 0) {
 			EnemyPlayer.damagePlayer(playerDmg);
 //			SendDamagePlayerEv (playerDmg);

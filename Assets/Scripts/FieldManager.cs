@@ -49,4 +49,16 @@ public class FieldManager : MonoBehaviour {
         }
         return count;
     }
+
+    public ArrayList GetOnFieldCards(CardInfo.CardType? cardTypePar, CardInfo.CardAffinity? cardAffinityPar)
+    {
+        ArrayList cardsOnField = new ArrayList();
+        foreach (Card c in _cardsOnField)
+        {
+            if ((!cardTypePar.HasValue || c.CardInfo.GetCardType().Equals(cardTypePar))
+                && (!cardAffinityPar.HasValue || c.CardInfo.GetAffinity().Equals(cardAffinityPar)))
+                cardsOnField.Add(c);
+        }
+        return cardsOnField;
+    }
 }

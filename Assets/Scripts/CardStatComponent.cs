@@ -38,7 +38,15 @@ public class CardStatComponent : MonoBehaviour {
 			if (c is MonsterInfo) {
 				
 				MonsterInfo m = (MonsterInfo)c;
-				this.GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", m.Attack), typeof(Sprite)) as Sprite;
+			    MonsterInfo baseStatInfo = ((MonsterInfo) CardPool.Cards[m.GetId()-1]);
+			    Image image = GetComponent<Image>();
+			    image.sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", m.Attack), typeof(Sprite)) as Sprite;
+			    if (m.Attack < baseStatInfo.Attack)
+			        image.color = new Color(0.843f, 0.522f, 0.522f);
+			    else if (m.Attack > baseStatInfo.Attack)
+			        image.color = new Color(0.580f, 0.804f, 0.902f);
+			    else
+			        image.color = Color.white;
 			}
 			break;
 		case (StatType.DEFENSE):
@@ -46,7 +54,15 @@ public class CardStatComponent : MonoBehaviour {
 			if (c is MonsterInfo) {
 				
 				MonsterInfo m = (MonsterInfo)c;
-				this.GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", m.Defense), typeof(Sprite)) as Sprite;
+			    MonsterInfo baseStatInfo = ((MonsterInfo) CardPool.Cards[m.GetId()-1]);
+			    Image image = GetComponent<Image>();
+			    image.sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", m.Defense), typeof(Sprite)) as Sprite;
+			    if (m.Attack < baseStatInfo.Attack)
+			        image.color = new Color(0.843f, 0.522f, 0.522f);
+			    else if (m.Attack > baseStatInfo.Attack)
+			        image.color = new Color(0.580f, 0.804f, 0.902f);
+			    else
+			        image.color = Color.white;
 			}
 			break;
 		case (StatType.NAME):
