@@ -15,9 +15,9 @@ public class SplashFade : MonoBehaviour {
         SplashText.canvasRenderer.SetAlpha(0.0f);
 
         FadeIn();
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(3.0f);
         FadeOut();
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(3.0f);
         UnityEngine.SceneManagement.SceneManager.LoadScene(LoadLevel);
     }
 
@@ -31,5 +31,11 @@ public class SplashFade : MonoBehaviour {
     {
         SplashImage.CrossFadeAlpha(0.0f, 2.5f, false);
         SplashText.CrossFadeAlpha(0.0f, 2.5f, false);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            UnityEngine.SceneManagement.SceneManager.LoadScene(LoadLevel);
     }
 }
