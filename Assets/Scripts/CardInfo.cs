@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 public enum CardRelation {
 	PairL, PairR, Summon
@@ -745,8 +746,118 @@ public static class CardPool {
         null,
         null,
         null,
+	    new AuxiliaryInfo(463, "Breath of Bone", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	            "Increases a monster's ATTACK by 1.  Wind monsters gain 2 ATTACK.")
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1})
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Wind, Attack = 1}),
+	    null,
+	    null,
+	    new AuxiliaryInfo(466, "Seven Seas", CardInfo.CardAffinity.Water, AuxiliaryInfo.AuxiliaryType.StatChange,
+            "Increases a water monster's ATTACK by 2.")
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Water, Attack = 2}),
+	    new AuxiliaryInfo(467, "Envenomed Rains", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            "Increases a monster's ATTACK by 1.")
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1}),
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    new AuxiliaryInfo(479, "Heaven's Might", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        "Increases a monster's ATTACK by 1.")
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1}),
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    // #518 needs fixing
+	    new AuxiliaryInfo(518, "Draccon Guard", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        "Increases a monster's DEFENSE by 2.  Dragon monsters gain an additional 2 DEFENSE for every dragon " +
+	        "on the field.  (Currently not working: Dragon types gain 4 DEFENSE instead)")
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Defense = 2})
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Dragon, Defense = 2}),
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    new AuxiliaryInfo(540, "Chilling Force", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        "Increases a monster's ATTACK by 2.  Ice monsters gain 4 ATTACK")
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2})
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Ice, Attack = 2}),
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    new AuxiliaryInfo(549, "Restricting Melody", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        "Increases a monster's DEFENSE by 2, but lowers its ATTACK by 1")
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = -1, Defense = 2}),
+	    new AuxiliaryInfo(550, "Subzero Barrage", CardInfo.CardAffinity.Ice, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        "Inncreases an ice monster's ATTACK by 3.")
+	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Ice, Attack = 3})
+	};
 
-    };
 	
 	public static void associateCards () {
 		//Multi Part Cards
