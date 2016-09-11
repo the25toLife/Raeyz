@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -24,13 +25,17 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	public GameObject FullInfoCanvas, StatOverlay, LcMenu, DeathHandler, SelectedIndicator;
 	public ClientGame Client;
 
+    // ReSharper disable once InconsistentNaming
 	public int UID { get; set; }
 	public CardInfo CardInfo { get; set; }
 	public States State { get; set; }
+    public ArrayList StatusEffects { get; set; }
 
     public virtual void Start () {
 
 		Client = FindObjectOfType<ClientGame> ();
+
+        StatusEffects = new ArrayList();
 
         FullInfoCanvas.SetActive (false);
 
@@ -119,7 +124,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		if (LcMenu.activeSelf)
 			LcMenu.SetActive (false);
 
-	    //transform.SetParent(null);
+	    transform.SetParent(null);
 	    DeathHandler.SetActive (true);
 	}
 

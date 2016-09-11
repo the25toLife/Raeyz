@@ -2,45 +2,55 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum Trigger
+{
+    OnPlay, OnTurn, OnKill, OnDeath
+}
+
 public abstract class StatusEffect
 {
     public CardInfo.CardAffinity Affinity { get; set; }
+    public Trigger Trigger { get; set; }
+
+    protected StatusEffect()
+    {
+        Trigger = Trigger.OnPlay;
+    }
+
     public abstract void Apply(Card c);
-    public abstract void Remove(Card c);
+    public abstract void Remove(Card c, bool complete);
 }
 
-public class StatChangeEffect : StatusEffect
+public class StatEffect : StatusEffect
 {
-    public int Attack { get; set; }
-    public int Defense { get; set; }
+    public int AttackMod { get; set; }
+    public int DefenseMod { get; set; }
+    public int Attack { get; private set; }
+    public int Defense { get; private set; }
 
     public override void Apply(Card c)
     {
         if (Affinity != CardInfo.CardAffinity.All && c.CardInfo.GetAffinity() != Affinity) return;
+
+        if (c.StatusEffects.Contains(this))
+            Remove(c, false);
+        else
+            c.StatusEffects.Add(this);
+
+        if (Trigger == Trigger.OnKill)
+        {
+            CardMonster cardMonster = c as CardMonster;
+            if (cardMonster == null) return;
+            Attack = AttackMod * cardMonster.Kills;
+            Defense = DefenseMod * cardMonster.Kills;
+        }
+
         switch (c.CardInfo.GetCardType())
         {
             case CardInfo.CardType.Monster:
                 CardMonster cardMonster = (CardMonster) c;
                 MonsterInfo monsterInfo = (MonsterInfo) cardMonster.CardInfo;
                 cardMonster.changeCard(monsterInfo + this);
-                foreach (var csc in cardMonster.GetComponentsInChildren<CardStatComponent>())
-                {
-                    switch (csc.statType)
-                    {
-                        case CardStatComponent.StatType.ATTACK:
-                            if (Attack < 0)
-                                csc.GetComponent<Image>().color = new Color(0.843f, 0.102f, 0.082f);
-                            else if (Attack > 0)
-                                csc.GetComponent<Image>().color = new Color(0.063f, 0.647f, 0.900f);
-                            break;
-                        case CardStatComponent.StatType.DEFENSE:
-                            if (Defense < 0)
-                                csc.GetComponent<Image>().color = new Color(0.843f, 0.102f, 0.082f);
-                            else if (Defense > 0)
-                                csc.GetComponent<Image>().color = new Color(0.063f, 0.647f, 0.900f);
-                            break;
-                    }
-                }
                 break;
             case CardInfo.CardType.Auxiliary:
                 break;
@@ -53,17 +63,16 @@ public class StatChangeEffect : StatusEffect
         }
     }
 
-    public override void Remove(Card c)
+    public override void Remove(Card c, bool complete)
     {
         if (Affinity != CardInfo.CardAffinity.All && c.CardInfo.GetAffinity() != Affinity) return;
+        if (!c.StatusEffects.Contains(this)) return;
         switch (c.CardInfo.GetCardType())
         {
             case CardInfo.CardType.Monster:
                 CardMonster cardMonster = (CardMonster) c;
                 MonsterInfo monsterInfo = (MonsterInfo) cardMonster.CardInfo;
                 cardMonster.changeCard(monsterInfo - this);
-                foreach (var csc in cardMonster.GetComponentsInChildren<CardStatComponent>())
-                    csc.GetComponent<Image>().color = Color.white;
                 break;
             case CardInfo.CardType.Auxiliary:
                 break;
@@ -74,5 +83,56 @@ public class StatChangeEffect : StatusEffect
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        if (complete) c.StatusEffects.Remove(this);
+    }
+}
+
+public class ConfusionEffect : StatusEffect
+{
+    public float ChanceMod { get; set; }
+    public float Chance { get; private set; }
+
+    public override void Apply(Card c)
+    {
+        if (Affinity != CardInfo.CardAffinity.All && c.CardInfo.GetAffinity() != Affinity) return;
+
+        if (!c.StatusEffects.Contains(this)) c.StatusEffects.Add(this);
+
+        if (Trigger == Trigger.OnKill)
+        {
+            CardMonster cardMonster = c as CardMonster;
+            if (cardMonster == null) return;
+            Chance = ChanceMod * cardMonster.Kills;
+        }
+    }
+
+    public override void Remove(Card c, bool complete)
+    {
+        if (complete) c.StatusEffects.Remove(this);
+    }
+}
+
+public class HealEffect : StatEffect
+{
+    public float HealMod { get; set; }
+    public float Heal { get; private set; }
+
+    public override void Apply(Card c)
+    {
+        if (Affinity != CardInfo.CardAffinity.All && c.CardInfo.GetAffinity() != Affinity) return;
+
+        if (!c.StatusEffects.Contains(this)) c.StatusEffects.Add(this);
+
+        if (Trigger == Trigger.OnKill)
+        {
+            CardMonster cardMonster = c as CardMonster;
+            if (cardMonster == null) return;
+            Heal = HealMod * cardMonster.Kills;
+        }
+    }
+
+    public override void Remove(Card c, bool complete)
+    {
+        if (complete) c.StatusEffects.Remove(this);
     }
 }

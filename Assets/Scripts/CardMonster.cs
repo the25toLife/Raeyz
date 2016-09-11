@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class CardMonster : Card {
@@ -9,6 +10,7 @@ public class CardMonster : Card {
 	private bool _defending, _cardLocked;
 	public CardMonster PairCard { get; private set; }
 	public Card Target { get; private set; }
+    public int Kills { get; set; }
 
 	public override void Start() {
 		base.Start ();
@@ -77,8 +79,10 @@ public class CardMonster : Card {
 
 	}
 
-	public bool canSacrifice(bool leviathan) {
+	public bool canSacrifice(bool leviathan)
+	{
 
+	    if (IsEnemyCard) return false;
 		if (leviathan && (CardInfo as MonsterInfo).GetLevel() < 5)
 			return false;
 		

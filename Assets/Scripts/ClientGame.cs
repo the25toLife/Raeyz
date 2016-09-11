@@ -466,9 +466,26 @@ public class ClientGame : MonoBehaviour
 		int total = 0;
 
 		foreach (CardMonster c in PlayerMonsters.GetComponentsInChildren<CardMonster>()) {
-			if (c.Target != null) {
-				Game.SendAttackEv(c.UID, c.Target.UID, (c.Target as CardMonster).isDefending());
-				ActionQueue.calcAttack(c, c.Target, (c.Target as CardMonster).isDefending());
+			if (c.Target != null)
+			{
+			    CardMonster actualTarget = (CardMonster) c.Target;
+			    float confusionChance = 0.0f;
+			    foreach (var statusEffect in c.StatusEffects)
+			    {
+			        if (statusEffect is ConfusionEffect)
+			        {
+			            confusionChance += ((ConfusionEffect) statusEffect).Chance;
+			        }
+			    }
+			    //Debug.LogError("Confusion chance: " + confusionChance);
+			    if (confusionChance > 0.0f && Random.value <= confusionChance)
+			    {
+			        //Debug.LogError("Attacked different target.");
+			        ArrayList allMonsterCards = Game.FieldManager.GetOnFieldCards(CardInfo.CardType.Monster, null);
+			        actualTarget = (CardMonster) allMonsterCards[Random.Range(0, allMonsterCards.Count)];
+			    }
+			    Game.SendAttackEv(c.UID, actualTarget.UID, actualTarget.isDefending());
+				ActionQueue.calcAttack(c, actualTarget, actualTarget.isDefending());
 				c.clearTarget();
 			} else {
 				c.setDefending(true);
@@ -478,9 +495,9 @@ public class ClientGame : MonoBehaviour
 //
 //		foreach (CardMonster c in playerMonsters.GetComponentsInChildren<CardMonster>()) {
 //			if (c.isDefending())
-//				total += (c.CardI as MonsterInfo).Attack;
+//				total += (c.CardI as MonsterInfo).AttackMod;
 //		}
-	    Debug.LogError(EnemyMonsters.GetComponentsInChildren<Card>().Length);
+	    //Debug.LogError(EnemyMonsters.GetComponentsInChildren<Card>().Length);
 		if (EnemyMonsters.GetComponentsInChildren<Card> ().Length < 1) return total;
 		return -1;
 	}

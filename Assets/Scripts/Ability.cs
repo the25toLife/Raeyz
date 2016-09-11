@@ -45,12 +45,12 @@ public abstract class Effect {
 	}
 }
 
-public abstract class StatEffect : Effect {
+public abstract class SStatEffect : Effect {
 
 	public int AttackEff { get; set; }
 	public int DefenseEff { get; set; }
 
-	public StatEffect (EffectTrigger t, int atkPar, int defPar) : base(t) {
+	public SStatEffect (EffectTrigger t, int atkPar, int defPar) : base(t) {
 
 		AttackEff = atkPar;
 		DefenseEff = defPar;
@@ -63,7 +63,7 @@ public abstract class StatEffect : Effect {
 	}
 }
 
-public class Effect402 : StatEffect {
+public class Effect402 : SStatEffect {
 
 	public Effect402 () : base(EffectTrigger.AUX, 1, 0) {
 

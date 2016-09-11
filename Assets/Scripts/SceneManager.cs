@@ -408,17 +408,17 @@ public class SceneManager : LoadBalancingClient
 		_playerHand = new ArrayList ();
 		_playerActions = new ArrayList ();
 
-		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
+/*		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
 		while ((c as MonsterInfo).GetLevel() > 4)	//Guarentees a basic CurrentCard in the initial hand.
 			c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];
 		dealCardToPlayer (c);
 		for (int i = 0; i < 4; i++)
-			dealCardToPlayer ();
-/*		dealCardToPlayer (CardPool.Cards [86]);
-		dealCardToPlayer (CardPool.Cards [87]);
-		dealCardToPlayer (CardPool.Cards [0]);
-		dealCardToPlayer (CardPool.Cards [1]);
-		dealCardToPlayer (CardPool.Cards [401]);*/
+			dealCardToPlayer ();*/
+		dealCardToPlayer (CardPool.Cards [5]);
+		dealCardToPlayer (CardPool.Cards [50]);
+		dealCardToPlayer (CardPool.Cards [11]);
+		dealCardToPlayer (CardPool.Cards [6]);
+		dealCardToPlayer (CardPool.Cards [408]);
 
 		_stage = GameStage.PREP;
 	}
@@ -626,7 +626,7 @@ public class SceneManager : LoadBalancingClient
 		if (!_isTurn)
 			return;
 		int playerDmg = _clientGame.getDamageToLife ();
-		Debug.LogError (playerDmg);
+		//Debug.LogError (playerDmg);
 		if (playerDmg > 0) {
 			EnemyPlayer.damagePlayer(playerDmg);
 //			SendDamagePlayerEv (playerDmg);
