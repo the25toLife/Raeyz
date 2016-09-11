@@ -44,7 +44,7 @@ public class CardMonster : Card {
 		        if (s != null)
 		            GetComponent<SpriteRenderer>().sprite = s;
 		    }
-		    if ((CardInfo as MonsterInfo).GetLevel() < 15) {
+		    if ((CardInfo as MonsterInfo).GetLevel() < 5) {
 				Locked.SetActive(false);
 				AwakenMenuItem.SetActive(false);
 			} else

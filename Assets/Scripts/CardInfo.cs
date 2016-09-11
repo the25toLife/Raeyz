@@ -857,6 +857,7 @@ public static class CardPool {
 	        "Inncreases an ice monster's ATTACK by 3.")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Ice, Attack = 3})
 	};
+
 	
 	public static void associateCards () {
 		//Multi Part Cards

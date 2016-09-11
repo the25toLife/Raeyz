@@ -740,7 +740,7 @@ public class Deck {
 		    int index = UnityEngine.Random.Range(0, pool.Count);
 		    while (pool[index] == null) //Guarentees a basic CurrentCard in the initial hand.
 		        index = UnityEngine.Random.Range(0, pool.Count);
-		    CardInfo cardInfo = (CardInfo) pool[UnityEngine.Random.Range(0, pool.Count)];
+		    CardInfo cardInfo = (CardInfo) pool[index];
 		    pool.RemoveAt (index);
 			cards.Add(cardInfo);
 		}
