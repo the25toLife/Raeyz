@@ -291,59 +291,112 @@ public static class CardPool {
 		    "Possibly once a draconian warrior, this dark juggernaut is legendary for his armour which is said to be " +
 		    "wrapped in a scintillating aura of light so brilliant that it was impossible to tell its color or " +
 		    "material.  No man-made weapon can mar its surface let alone pierce it."),
-		new MonsterInfo(44, "Banshee", CardInfo.CardAffinity.Death, 3, 13, 11, ""),
-		new MonsterInfo(45, "Baphomet", CardInfo.CardAffinity.Insect, 6, 22, 20, ""),
-		new MonsterInfo(46, "Bat Mite", CardInfo.CardAffinity.Insect, 2, 10, 8, ""),
-		new MonsterInfo(47, "Beezlebub", CardInfo.CardAffinity.Insect, 4, 16, 15, ""),
-		new MonsterInfo(48, "Behemoth", CardInfo.CardAffinity.Darkness, 6, 24, 15, ""),
-		new MonsterInfo(49, "Black Phoenix", CardInfo.CardAffinity.Fire, 5, 17, 15, ""),
-		new MonsterInfo(50, "Blackwind Rider", CardInfo.CardAffinity.Darkness, 3, 13, 7, ""),
-		new MonsterInfo(51, "Blood Elemental", CardInfo.CardAffinity.Death, 1, 5, 3, ""),
-		new MonsterInfo(52, "Brine", CardInfo.CardAffinity.Water, 4, 16, 10, ""),
-		new MonsterInfo(53, "Brood Arsenal", CardInfo.CardAffinity.Insect, 5, 19, 18, ""),
-		new MonsterInfo(54, "Byakko", CardInfo.CardAffinity.Ice, 7, 19, 27, ""),
-		new MonsterInfo(55, "Byyperzo", CardInfo.CardAffinity.Fire, 2, 10, 4, ""),
-		new MonsterInfo(56, "Calypso", CardInfo.CardAffinity.Water, 5, 17, 15, ""),
-		new MonsterInfo(57, "Cayah", CardInfo.CardAffinity.Water, 2, 12, 6, ""),
-		new MonsterInfo(58, "Cerberix", CardInfo.CardAffinity.Fire, 1, 4, 3, ""),
-		new MonsterInfo(59, "Chaos Librarian", CardInfo.CardAffinity.Darkness, 2, 9, 5, ""),
-		new MonsterInfo(60, "Chaos", CardInfo.CardAffinity.Myth, 5, 23, 13, ""),
-		new MonsterInfo(61, "Cheirotonus", CardInfo.CardAffinity.Insect, 3, 12, 10, ""),
-		new MonsterInfo(62, "Chichus", CardInfo.CardAffinity.Insect, 1, 5, 3, ""),
-		new MonsterInfo(63, "Conienies Kilara", CardInfo.CardAffinity.Light, 2, 6, 12, ""),
-		new MonsterInfo(64, "Coralle", CardInfo.CardAffinity.Water, 1, 9, 3, ""),
-		new MonsterInfo(65, "Core Hound", CardInfo.CardAffinity.Fire, 2, 10, 8, ""),
-		new MonsterInfo(66, "Corvus Promaethon", CardInfo.CardAffinity.Darkness, 5, 21, 11, ""),
-		new MonsterInfo(67, "Crombhala", CardInfo.CardAffinity.Insect, 1, 4, 3, ""),
-		new MonsterInfo(68, "Cronus", CardInfo.CardAffinity.Myth, 6, 26, 17, ""),
-		new MonsterInfo(69, "Crypt Crawler", CardInfo.CardAffinity.Insect, 6, 21, 18, ""),
-		new MonsterInfo(70, "Cthulhu", CardInfo.CardAffinity.Water, 6, 22, 19, ""),
-		new MonsterInfo(71, "Cu Chulainn", CardInfo.CardAffinity.Myth, 5, 16, 16, ""),
-		new MonsterInfo(72, "Daarken", CardInfo.CardAffinity.Fire, 3, 13, 12, ""),
-		new MonsterInfo(73, "Daeh Lluks", CardInfo.CardAffinity.Fire, 4, 18, 13, ""),
-		new MonsterInfo(74, "Dajobas", CardInfo.CardAffinity.Water, 5, 20, 16, ""),
-		new MonsterInfo(75, "Dao", CardInfo.CardAffinity.Forest, 1, 6, 7, ""),
-		new MonsterInfo(76, "Dark Chimera", CardInfo.CardAffinity.Darkness, 1, 4, 4, ""),
-		new MonsterInfo(77, "Dark Unicorn", CardInfo.CardAffinity.Darkness, 2, 9, 8, ""),
-		new MonsterInfo(78, "Death Bringer", CardInfo.CardAffinity.Death, 4, 16, 13, ""),
-		new MonsterInfo(79, "Death Talker", CardInfo.CardAffinity.Fire, 4, 18, 9, ""),
-		new MonsterInfo(80, "Death's Dog", CardInfo.CardAffinity.Death, 2, 10, 7, ""),
-		new MonsterInfo(81, "Deathdealer", CardInfo.CardAffinity.Darkness, 2, 8, 8, ""),
-		new MonsterInfo(82, "Deathwing", CardInfo.CardAffinity.Dragon, 3, 13, 10, ""),
-		new MonsterInfo(83, "Deligarisa", CardInfo.CardAffinity.Forest, 4, 10, 16, ""),
-		new MonsterInfo(84, "Detniat", CardInfo.CardAffinity.Water, 6, 22, 21, ""),
-		new MonsterInfo(85, "Dionesis", CardInfo.CardAffinity.Forest, 5, 12, 20, ""),
-		new MonsterInfo(86, "Dragon Rider", CardInfo.CardAffinity.Dragon, 1, 5, 7, ""),
-		new MonsterInfo(87, "Drak Undon", CardInfo.CardAffinity.Ice, 2, 4, 12, ""),
-		new MonsterInfo(88, "Drapoel", CardInfo.CardAffinity.Forest, 2, 4, 14, ""),
-		new MonsterInfo(89, "Dross Ripper", CardInfo.CardAffinity.Darkness, 1, 6, 5, ""),
-		new MonsterInfo(90, "Druaga", CardInfo.CardAffinity.Darkness, 4, 18, 11, ""),
-		new MonsterInfo(91, "Earth Elemental", CardInfo.CardAffinity.Forest, 7, 19, 0, ""),
-		new MonsterInfo(92, "Earth Elemental", CardInfo.CardAffinity.Forest, 7, 0, 30, ""),
-		new MonsterInfo(93, "Earth Summoner", CardInfo.CardAffinity.Forest, 2, 5, 12, ""),
-		new MonsterInfo(94, "Eastern Flare", CardInfo.CardAffinity.Dragon, 5, 15, 17, ""),
-		new MonsterInfo(95, "Ecafee", CardInfo.CardAffinity.Forest, 4, 10, 17, ""),
-		new MonsterInfo(96, "El'zorn", CardInfo.CardAffinity.Water, 7, 30, 0, ""),
+		new MonsterInfo(44, "Banshee", CardInfo.CardAffinity.Death, 3, 13, 11, 
+            "Spirits of cursed individuals who were greedy in life, and are now forced to seek out and eat human corpses at night.  Should you fall to one in battle, you will surely become its next meal."),
+		new MonsterInfo(45, "Baphomet", CardInfo.CardAffinity.Insect, 6, 22, 20, 
+            "How this creature came to master the mysteries of the occult is unknown.  Its prowess in battle, however, cannot be ignored.  A fierce defender of its hive nest, Baphomet is a deadly opponent."),
+		new MonsterInfo(46, "Bat Mite", CardInfo.CardAffinity.Insect, 2, 10, 8, 
+            "Standing at several stories high, the Bat Mite is a formidable beast.  Its hard chitonous outershell makes damaging it difficult.  Depending entirely on sound to see, it is nearly impossible to pass the Bat Mite undetected."),
+		new MonsterInfo(47, "Beezlebub", CardInfo.CardAffinity.Insect, 4, 16, 15, 
+            "Beezlebub is a demonic fly known by the its title Lord of the Flies. It inflicts a toxic poison on its victims which slowly corrupts them until they lose all sense of sanity and self."),
+		new MonsterInfo(48, "Behemoth", CardInfo.CardAffinity.Darkness, 6, 24, 15, 
+            "The Behemoth--this dark shadow persists tirelessly across the land, consuming all in its path leaving naught but emptiness devoid of life.  Its true nature and purpose is unknown.  Some believe it to have been birthed from mankind's corruption; others--a blight created by the earth itself to wipe humanity from existence."),
+		new MonsterInfo(49, "Black Phoenix", CardInfo.CardAffinity.Fire, 5, 17, 15, 
+            "Its feathers blackened by the ash of its resurrections, the Black Phoenix harbors only rage and hatred for mankind.  Invisible against the night sky, it strikes upon unsuspecting towns and cities setting everything ablaze as its own fires consume it only to be reborn from the ashes yet again."),
+		new MonsterInfo(50, "Blackwind Rider", CardInfo.CardAffinity.Darkness, 3, 13, 7, 
+            "A huntsman whose overwhelming need to destroy his enemies consumed and corrupted the remaining pieces of his soul.  He is now but a hollow harbinger of darkness seeking others to suffer his fate."),
+		new MonsterInfo(51, "Blood Elemental", CardInfo.CardAffinity.Death, 1, 5, 3, 
+            "Feared for her ability to command an opponent's very blood, the Blood Elemental holds the life of her enemies within her very hands.  All but a simple twist of her fingers stands between them and death.  Most horrifically, her victims are found exsanguinated."),
+		new MonsterInfo(52, "Brine", CardInfo.CardAffinity.Water, 4, 16, 10, 
+            "Said to have been born at the start of time in the cosmic waters from which all life sprang forth, the Brine is a creature that few understand.  But to have lived for so long, the secrets and knowledge it must hold make it a terrifying thing to behold."),
+		new MonsterInfo(53, "Brood Arsenal", CardInfo.CardAffinity.Insect, 5, 19, 18, 
+            "The Brood answers to its Mother's call, millions ready to creep from beneath the earth and between the crevices in time to heed her command.  Many have lost faith and hope upon facing such an Arsenal."),
+		new MonsterInfo(54, "Byakko", CardInfo.CardAffinity.Ice, 7, 19, 27, 
+            "Only ever seen when the full moon's glowing light sparks across the whispering frozen crystals of the Byakko, this mysterious ice spirit may bring fortune to the truly virtuous.  However, be wary as those who are not so meet a swift and vicious demise."),
+		new MonsterInfo(55, "Byyperzo", CardInfo.CardAffinity.Fire, 2, 10, 4, 
+            "A horrific beast torn from the tumultuous flows of lava on Mount Kyranthion.  Weapons melt upon contact with its body and even beheading the creature will not stop it as it is able to reform any part of its body."),
+		new MonsterInfo(56, "Calypso", CardInfo.CardAffinity.Water, 5, 17, 15, 
+            "Hatched from a black pearl within the belly of a whale, Calypso is as deadly as she is beautiful.  Many have found themselves entranced simply looking upon her visage only to quickly become her next victim.  The sea and all its creature bend to her every whim.  Any who enter her domain become her playthings."),
+		new MonsterInfo(57, "Cayah", CardInfo.CardAffinity.Water, 2, 12, 6, 
+            "A frightening creature that is rumored to be yet another example of magic gone terribly wrong, or perhaps a failed experiment.  Either way, the Cayah wrecks havoc throughout the sea."),
+		new MonsterInfo(58, "Cerberix", CardInfo.CardAffinity.Fire, 1, 4, 3, 
+            "A fire demon that burns so hot, not even the air around it can stand to be near it.  Be sure Cerberix does not touch you should you ever find yourself facing off agaisnt its blade."),
+		new MonsterInfo(59, "Chaos Librarian", CardInfo.CardAffinity.Darkness, 2, 9, 5, 
+            "Keeper of the balance, the Chaos Librarian is tasked with recording all events over the history of time carefully monitoring the unending conflicts between light and dark and ensuring that chaos reigns evermore."),
+		new MonsterInfo(60, "Chaos", CardInfo.CardAffinity.Myth, 5, 23, 13, 
+            "Eris is the goddess of chaos, taking its name as her own, devoting herself to fostering and nuturing further discord.  She loves to use Enyo, Phobos, and Deimos in her plans to bring strife, terror, discord, and beautiful chaos to all--whether they be mortal or godly in nature.  She cares not for the outcome or victor, so long as more chaos wrends the world."),
+		new MonsterInfo(61, "Cheirotonus", CardInfo.CardAffinity.Insect, 3, 12, 10, 
+            "These insectoid creatures disguise themselves as beautiful women to lure in their unsuspecting prey which they paralyze and slowly liquify over the course of months."),
+		new MonsterInfo(62, "Chichus", CardInfo.CardAffinity.Insect, 1, 5, 3, 
+            "Chichus are infamous for trapping young children in their webs, often singing songs and lullabies to further lure them in to their untimely dooms."),
+		new MonsterInfo(63, "Con Kilara", CardInfo.CardAffinity.Light, 2, 6, 12, 
+            "Con Kilara listens to the songs of time and souls passing and cycling within the Aquifaes, the melodies of life and death.  In essence, she is witness to all things past, present, and future.  Others have sought knowledge and insight from her, but unfortunately none could ever understand let alone comprehend her words when she gave her answer."),
+		new MonsterInfo(64, "Coralle", CardInfo.CardAffinity.Water, 1, 9, 3, 
+            "Coralle is a mystic who sought true peace and balance.  His search led him to the depths of the sea, where he could meditate and find his answers undisturbed."),
+		new MonsterInfo(65, "Core Hound", CardInfo.CardAffinity.Fire, 2, 10, 8, 
+            "Having crawled from the pits of the earth, these dual-headed hounds burn as hot as the core of the earth and deliver an unforgivable bite said to melt through anything found on earth."),
+		new MonsterInfo(66, "Corvus Promaethon", CardInfo.CardAffinity.Darkness, 5, 21, 11, 
+            "Reanimated by a necromancer to serve him, Corvus Promaethon quickly turned on his summoner stealing his soul and powers for his own.  Now Corvus walks the earth unimpeded and untouchable by even Death himself."),
+		new MonsterInfo(67, "Crombhala", CardInfo.CardAffinity.Insect, 1, 4, 3, 
+            "Crombhala are parasitic creatures that tend to build nests within massive trees consuming them until naught remains.  However, in recent years they have come to develop a taste for human flesh, great swarms have been known to infest and decimate entire cities."),
+		new MonsterInfo(68, "Cronus", CardInfo.CardAffinity.Myth, 6, 26, 17, 
+            "The god of time itself, Cronus forsaw his own demise and has since been traveling throughout time and space seeking a means of escaping his fate."),
+		new MonsterInfo(69, "Crypt Crawler", CardInfo.CardAffinity.Insect, 6, 21, 18, 
+            "These otherwordly insects construct massive hives beneath the earth spanning hundreds of thousands of miles.  Many have become victims to the creatures when they emerge in search of food for their young.  Most frightening, though, is when the hive perceives a threat.  In such an event, over a million of the Crypt Crawlers emerge to descend upon their target, not stopping until the threat is removed."),
+		new MonsterInfo(70, "Cthulhu", CardInfo.CardAffinity.Water, 6, 22, 19, 
+            "A great cosmic entity which simply looking upon the creature drives the viewer insane, a trait shared by many of the Great Old Ones and Outer Gods from whence it came.   Its followerers believe that the secret priests would take great Cthulhu from its tomb to revive Its subjects and resume its rule of earth.  Then mankind would become as the Great Old Ones. THAT IS NOT DEAD WHICH CAN ETERNAL LIE."),
+		new MonsterInfo(71, "Cu Chulainn", CardInfo.CardAffinity.Myth, 5, 16, 16, 
+            "Cu Chulainn is renown for single-handedly holding off the armies of Queen Medb.  He must fight alone as battle renders him unrecognizable and a monstrous nature takes hold of him to such a degree as he is unable to identify friend from foe."),
+		new MonsterInfo(72, "Daarken", CardInfo.CardAffinity.Fire, 3, 13, 12, 
+            "Desiring to save his people from sure defeat, Daarken claimed the Everflame.  Its fires emolated him from within and he was lost.  The battle was won, but Daarken had been claimed by the Everflame which now walks the earth."),
+		new MonsterInfo(73, "Daeh Lluks", CardInfo.CardAffinity.Fire, 4, 18, 13, 
+            "When a fire burns bright enough and hot enough, the Daeh Lluks emerges to tear across the earth, spreading the flames reach as far as the eye can see."),
+		new MonsterInfo(74, "Dajobas", CardInfo.CardAffinity.Water, 5, 20, 16, 
+            "A gentle soul, the Dajobas is plagued by an insatiable hunger.  At present, it seems content with feeding upon the providence of the sea, but many have foretold that it is destined to devour the earth once its hunger grows too large."),
+		new MonsterInfo(75, "Dao", CardInfo.CardAffinity.Forest, 1, 6, 7, 
+            "A huntsman who has made the forest his home.  Little sets him apart from others of his kind."),
+		new MonsterInfo(76, "Dark Chimera", CardInfo.CardAffinity.Darkness, 1, 4, 4,
+            "Once a guardian of the forest, this creature became poluted and corrupted until the plague of darkness altered it entirely leaving it a creature of the dark."),
+		new MonsterInfo(77, "Dark Unicorn", CardInfo.CardAffinity.Darkness, 2, 9, 8, 
+            "This riderless steed is believed to have become an omen of victories turned sour after aiding its rider to victory against unimaginable odds only to throw its rider from its back and into the Ebonous Trench."),
+		new MonsterInfo(78, "Death Bringer", CardInfo.CardAffinity.Death, 4, 16, 13, 
+            "Made entirely of bone fragments of the lost, Death Bringer stalks battlefields for others to join it.  Any living souls it encounters meet a swift and merciless end."),
+		new MonsterInfo(79, "Death Talker", CardInfo.CardAffinity.Fire, 4, 18, 9, 
+            "Ever creeping on the curtails of death, Death Stalker desires to burn the evil and corrupt alive and spread their ashes to the wind.  He refuses to face his own death until his quest is deemed complete."),
+		new MonsterInfo(80, "Death's Dog", CardInfo.CardAffinity.Death, 2, 10, 7, 
+            "Sent to retrieve lost or escaped souls, Death's Dog is single-minded in its pursuit."),
+		new MonsterInfo(81, "Deathdealer", CardInfo.CardAffinity.Darkness, 2, 8, 8, 
+            "This warrior of unparalleled talent gained the name of Deathdealer upon embarking on a quest to find her twin brother.  With every death she dealt, Death would bequeath a small clue to his whereabouts.  Sadly, unbeknownst to her, Death stole her brother many years ago."),
+		new MonsterInfo(82, "Deathwing", CardInfo.CardAffinity.Dragon, 3, 13, 10, 
+            "A true isolationist--Deathwing abhors the presence of others and sequestered himself far from any living creature.  Be ware that you do not stumble upon him."),
+		new MonsterInfo(83, "Deligarisa", CardInfo.CardAffinity.Forest, 4, 10, 16, 
+            "A huntress of great skill, Deligarisa believes that with each kill, her prowess grows stronger making her prey's strength her own."),
+		new MonsterInfo(84, "Detniat", CardInfo.CardAffinity.Water, 6, 22, 21,
+            "A serpent of ages old, born of the same mantels that gave raise to the earth.  It has no equal, none to rival its strength.  Curled deep beneath the waves of the sea, it slumbers for millennia.  When it rises from that sleep, the oceans cry out and rage."),
+		new MonsterInfo(85, "Dionesis", CardInfo.CardAffinity.Forest, 5, 12, 20, 
+            "Once part of the pantheon of mythic gods, Dionesis left to enjoy the pleasures of the forest.  Don't let her imbibed appearance fool you.  Her achohol tolerance surpasses that of any mere mortal and even while drunk, she could easily defeat any who would challenge her."),
+		new MonsterInfo(86, "Dragon Rider", CardInfo.CardAffinity.Dragon, 1, 5, 7,
+            "Rider and dragon exist as one making these warriors formidable opponents on the battlefield."),
+		new MonsterInfo(87, "Drak Undon", CardInfo.CardAffinity.Ice, 2, 4, 12, 
+            "Fur forever died by the blood of his victims, Drak Undon travels the land following the winter snows and hunting any who stumble across his path."),
+		new MonsterInfo(88, "Drapoel", CardInfo.CardAffinity.Forest, 2, 4, 14, 
+            "Senseless beasts with even poorer vision.  The Drapoel are known for attacking anything that moves."),
+		new MonsterInfo(89, "Dross Ripper", CardInfo.CardAffinity.Darkness, 1, 6, 5, 
+            "Figments of nothingness--Dross Ripper crawl into the dreams of their slumbering victims.  If you're lucky, you'll only suffer terrifying nightmares; the unlucky never awaken."),
+		new MonsterInfo(90, "Druaga", CardInfo.CardAffinity.Darkness, 4, 18, 11, 
+            "Lurking within shadows, the Druaga can pull forth the very soul of its prey.  Most fearsome perhaps is their lack of reason or motive making them truly unpredictable.  Should you have reason to suspect the Druaga is lying in wait for you, light a candle and pray."),
+		new MonsterInfo(91, "Earth Elemental", CardInfo.CardAffinity.Forest, 7, 19, 0, 
+            "A massive creature whose glistening hide is made of obsidian from deep within the earth.  Rivaling mountains in size, few exist who can break this creature's defenses.  Surely only a god could hope to subdue such a force of nature."),
+		new MonsterInfo(92, "Earth Elemental", CardInfo.CardAffinity.Forest, 7, 0, 30, 
+            "A massive creature whose glistening hide is made of obsidian from deep within the earth.  Rivaling mountains in size, few exist who can break this creature's defenses.  Surely only a god could hope to subdue such a force of nature."),
+		new MonsterInfo(93, "Earth Summoner", CardInfo.CardAffinity.Forest, 2, 5, 12,
+            "Calling forth giant creatures of mud and rock, Earth Summoners can quickly turn the tide of battle."),
+		new MonsterInfo(94, "Eastern Flare", CardInfo.CardAffinity.Dragon, 5, 15, 17,
+            "The size of a thimble, the Eastern Flare is unique in its ability to change its size at will.  The extent of this talent is unknown.  It's possible that it could very well grow long enough in size to circle the entire earth.  Rumors point to the irridescent pearl it carries as the source of its powers."),
+		new MonsterInfo(95, "Ecafee", CardInfo.CardAffinity.Forest, 4, 10, 17, 
+            "In tune with every part of her forest, Ecafee has become more plant than person.  It is even believed that she has the ability to disguise herself as flower of otherwordly beauty, luring trespassers to their deaths as they breath in the toxic perfume of the bloom."),
+		new MonsterInfo(96, "El'zorn", CardInfo.CardAffinity.Water, 7, 30, 0, 
+            "From the belly of the seas, El'zom awakens; it's pierces call heard for leagues.  No one knows what it is calling to, only that destruction follows in its wake.  May the heavens save our souls should their ever be an answering call."),
 		new MonsterInfo(97, "El'zorn", CardInfo.CardAffinity.Water, 7, 0, 21, ""),
 		new MonsterInfo(98, "Elian", CardInfo.CardAffinity.Darkness, 7, 27, 17, ""),
 		new MonsterInfo(99, "Elienai", CardInfo.CardAffinity.Light, 5, 15, 19, ""),
@@ -352,7 +405,8 @@ public static class CardPool {
 		new MonsterInfo(102, "Emrakul Hatchling", CardInfo.CardAffinity.Insect, 2, 7, 7, ""),
 		new MonsterInfo(103, "Enaus", CardInfo.CardAffinity.Darkness, 7, 0, 20, ""),
 		new MonsterInfo(104, "Enaus", CardInfo.CardAffinity.Darkness, 7, 30, 0, ""),
-		new MonsterInfo(105, "Enenra", CardInfo.CardAffinity.Wind, 1, 4, 3, ""),
+		new MonsterInfo(105, "Enenra", CardInfo.CardAffinity.Wind, 1, 4, 3, 
+            "Do not be lulled to complacency but its deceptive exterior.  The Enenra always travel in massive flocks often totalling in the thousands.  Be cautious for where there is one, many are to follow."),
 		new MonsterInfo(106, "Enzoma", CardInfo.CardAffinity.Light, 1, 5, 5, ""),
 		new MonsterInfo(107, "Eris", CardInfo.CardAffinity.Myth, 6, 24, 14, ""),
 		new MonsterInfo(108, "Ertacalti", CardInfo.CardAffinity.Forest, 6, 18, 20, ""),
@@ -366,8 +420,10 @@ public static class CardPool {
 		new MonsterInfo(116, "Fate", CardInfo.CardAffinity.Death, 7, 29, 17, ""),
 		new MonsterInfo(117, "Feng Yi", CardInfo.CardAffinity.Forest, 3, 8, 12, ""),
 		new MonsterInfo(118, "Fenrir", CardInfo.CardAffinity.Ice, 4, 10, 16, ""),
-		new MonsterInfo(119, "Fire Elemental", CardInfo.CardAffinity.Fire, 7, 0, 18, ""),
-		new MonsterInfo(120, "Fire Elemental", CardInfo.CardAffinity.Fire, 7, 30, 0, ""),
+		new MonsterInfo(119, "Fire Elemental", CardInfo.CardAffinity.Fire, 7, 0, 18, 
+            "The living flame born from the heart of the first volcano from which all other fires were birthed.  As fire given living form, this elemental endlessly searches to feed its hungering flames.  Unquenchable, unconsciousable.  Being the epitome of one of nature's most deadliest elements, it cannot be reasoned with nor can it be redirected from its path."),
+		new MonsterInfo(120, "Fire Elemental", CardInfo.CardAffinity.Fire, 7, 30, 0, 
+            "The living flame born from the heart of the first volcano from which all other fires were birthed.  As fire given living form, this elemental endlessly searches to feed its hungering flames.  Unquenchable, unconsciousable.  Being the epitome of one of nature's most deadliest elements, it cannot be reasoned with nor can it be redirected from its path."),
 		new MonsterInfo(121, "Fire Fairy", CardInfo.CardAffinity.Fire, 1, 5, 4, ""),
 		new MonsterInfo(122, "Fire Golem", CardInfo.CardAffinity.Fire, 3, 17, 6, ""),
 		new MonsterInfo(123, "Fire Lord Burninates", CardInfo.CardAffinity.Fire, 3, 18, 5, ""),
@@ -650,33 +706,33 @@ public static class CardPool {
 		new MonsterInfo(400, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, ""),
 		new MonsterInfo(401, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, ""),
 	    new AuxiliaryInfo(402, "Rallying Heart", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-	        "Increases a monster's ATTACK by 1.  Light monsters gain 2 ATTACK.")
+	        "Increases a monster's ATTACK by 1.  LIGHT monsters gain 2 ATTACK.")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1})
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Light, Attack = 1}),
         new AuxiliaryInfo(403, "Saving Herald", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's DEFENSE by 1.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Defense = 1 }),
         null,
         null,
         null,
         null,
         new AuxiliaryInfo(408, "Tera Plane", CardInfo.CardAffinity.Forest, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a FOREST monster's DEFENSE by 3.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Forest, Defense = 3 }),
         null,
         new AuxiliaryInfo(410, "Purifying Light", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 2.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 }),
         new AuxiliaryInfo(411, "Arcane Spear", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 1.  FIRE monsters gain 2 ATTACK")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Fire, Attack = 1 }),
         new AuxiliaryInfo(412, "Alcain's Staff", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 1.  DARKNESS monsters gain 2 ATTACK")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Darkness, Attack = 1 }),
         new AuxiliaryInfo(413, "Narizite Blade", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 1.  DEATH monsters gain 2 ATTACK.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Death, Attack = 1 }),
         null,
@@ -686,7 +742,7 @@ public static class CardPool {
         null,
         null,
         new AuxiliaryInfo(420, "Poseidon's Wrath", CardInfo.CardAffinity.Water, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a WATER monster's ATTACK by 3.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Water, Attack = 3 }),
         null,
         null,
@@ -704,11 +760,11 @@ public static class CardPool {
         null,
         null,
         new AuxiliaryInfo(436, "Guardian Pixie", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 1 and DEFENSE by 1.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Defense = 1 }),
         new AuxiliaryInfo(437, "Call to Arms", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 1.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 }),
         null,
         null,
@@ -720,11 +776,11 @@ public static class CardPool {
         null,
         null,
         new AuxiliaryInfo(448, "Daggerthorn", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 1.  FOREST monsters gain 2 ATTACK")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Forest, Attack = 1 }),
         new AuxiliaryInfo(449, "Viridian Vines", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 2.  FOREST monsters gain 3 ATTACK.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 })
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Forest, Attack = 1 }),
         null,
@@ -732,28 +788,28 @@ public static class CardPool {
         null,
         null,
         new AuxiliaryInfo(454, "Roaring Lariat", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 2.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 }),
         new AuxiliaryInfo(455, "Whistling Edge", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 1.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 }),
         null,
         null,
         new AuxiliaryInfo(458, "Piercing Light", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-            ".")
+            "Increases a monster's ATTACK by 2.")
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 }),
         null,
         null,
         null,
         null,
 	    new AuxiliaryInfo(463, "Breath of Bone", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-	            "Increases a monster's ATTACK by 1.  Wind monsters gain 2 ATTACK.")
+	            "Increases a monster's ATTACK by 1.  WIND monsters gain 2 ATTACK.")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1})
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Wind, Attack = 1}),
 	    null,
 	    null,
 	    new AuxiliaryInfo(466, "Seven Seas", CardInfo.CardAffinity.Water, AuxiliaryInfo.AuxiliaryType.StatChange,
-            "Increases a water monster's ATTACK by 2.")
+            "Increases a WATER monster's ATTACK by 2.")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Water, Attack = 2}),
 	    new AuxiliaryInfo(467, "Envenomed Rains", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
             "Increases a monster's ATTACK by 1.")
@@ -812,8 +868,8 @@ public static class CardPool {
 	    null,
 	    // #518 needs fixing
 	    new AuxiliaryInfo(518, "Draccon Guard", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-	        "Increases a monster's DEFENSE by 2.  Dragon monsters gain an additional 2 DEFENSE for every dragon " +
-	        "on the field.  (Currently not working: Dragon types gain 4 DEFENSE instead)")
+	        "Increases a monster's DEFENSE by 2.  DRAGON monsters gain an additional 2 DEFENSE for every DRAGON " +
+	        "on the field.  (Currently not working: DRAGON types gain 4 DEFENSE instead)")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Defense = 2})
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Dragon, Defense = 2}),
 	    null,
@@ -838,7 +894,7 @@ public static class CardPool {
 	    null,
 	    null,
 	    new AuxiliaryInfo(540, "Chilling Force", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
-	        "Increases a monster's ATTACK by 2.  Ice monsters gain 4 ATTACK")
+	        "Increases a monster's ATTACK by 2.  ICE monsters gain 4 ATTACK")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2})
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Ice, Attack = 2}),
 	    null,
@@ -854,7 +910,7 @@ public static class CardPool {
 	        "Increases a monster's DEFENSE by 2, but lowers its ATTACK by 1")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = -1, Defense = 2}),
 	    new AuxiliaryInfo(550, "Subzero Barrage", CardInfo.CardAffinity.Ice, AuxiliaryInfo.AuxiliaryType.StatChange,
-	        "Inncreases an ice monster's ATTACK by 3.")
+	        "Inncreases an ICE monster's ATTACK by 3.")
 	        .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.Ice, Attack = 3})
 	};
 
