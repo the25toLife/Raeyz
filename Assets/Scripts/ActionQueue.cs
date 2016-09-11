@@ -4,7 +4,13 @@ using System;
 public class ActionQueue
 {
 
-	public ActionQueue ()
+    public static event EventHandler AllyKilled;
+    public static event EventHandler EnemyKilled;
+
+    public static int AlliesKilled { get; set; }
+    public static int EnemiesKilled { get; set; }
+
+    public ActionQueue ()
 	{
 
 	}
@@ -14,6 +20,8 @@ public class ActionQueue
 		int attackerStat = (mi1.CardInfo as MonsterInfo).Attack;
 		int targetStat = defending ? (mi2.CardInfo as MonsterInfo).Defense : (mi2.CardInfo as MonsterInfo).Attack;
 
+	    EventHandler handler;
+
 	    if (attackerStat > targetStat)
 	    {
 	        (mi1 as CardMonster).Kills++;
@@ -21,6 +29,10 @@ public class ActionQueue
 	        {
 	            if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply(mi1);
 	        }
+	        if (mi2.IsEnemyCard)
+	            OnEnemyKilled();
+	        else
+	            OnAllyKilled();
 	        mi2.sendCardToGraveyard();
 	    }
 		else if (attackerStat < targetStat)
@@ -30,6 +42,10 @@ public class ActionQueue
 	        {
 	            if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply(mi1);
 	        }
+	        if (mi1.IsEnemyCard)
+	            OnEnemyKilled();
+	        else
+	            OnAllyKilled();
 	        mi1.sendCardToGraveyard();
 	    }
 	    else
@@ -43,9 +59,35 @@ public class ActionQueue
 	            }
 	        }
 	        else
+	        {
+	            if (mi2.IsEnemyCard)
+	                OnEnemyKilled();
+	            else
+	                OnAllyKilled();
 	            mi2.sendCardToGraveyard();
+	        }
+	        if (mi1.IsEnemyCard)
+	            OnEnemyKilled();
+	        else
+	            OnAllyKilled();
 	        mi1.sendCardToGraveyard();
 	    }
 	}
+
+    private static void OnAllyKilled()
+    {
+        AlliesKilled++;
+        EventHandler handler = AllyKilled;
+        // ReSharper disable once UseNullPropagation
+        if (handler != null) handler.Invoke(null, EventArgs.Empty);
+    }
+
+    private static void OnEnemyKilled()
+    {
+        EnemiesKilled++;
+        EventHandler handler = EnemyKilled;
+        // ReSharper disable once UseNullPropagation
+        if (handler != null) handler.Invoke(null, EventArgs.Empty);
+    }
 }
 

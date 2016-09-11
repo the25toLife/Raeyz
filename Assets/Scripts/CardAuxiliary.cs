@@ -80,6 +80,22 @@ public class CardAuxiliary : Card
                     };
                 }
             }
+            if (statusEffect.Trigger == Trigger.OnAllyKilled)
+            {
+                statusEffect.Counter = ActionQueue.AlliesKilled;
+                if (_cardMonster.IsEnemyCard)
+                {
+                    ActionQueue.EnemyKilled += delegate {
+                        statusEffect.Apply(_cardMonster);
+                    };
+                }
+                else
+                {
+                    ActionQueue.AllyKilled += delegate {
+                        statusEffect.Apply(_cardMonster);
+                    };
+                }
+            }
         }
     }
 }

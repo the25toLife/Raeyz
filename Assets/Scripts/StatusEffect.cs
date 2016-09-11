@@ -4,13 +4,14 @@ using UnityEngine.UI;
 
 public enum Trigger
 {
-    OnPlay, OnTurn, OnKill, OnDeath
+    OnPlay, OnTurn, OnKill, OnDeath, OnAllyKilled, OnEnemyKilled
 }
 
 public abstract class StatusEffect
 {
     public CardInfo.CardAffinity Affinity { get; set; }
     public Trigger Trigger { get; set; }
+    public int Counter { get; set; }
 
     protected StatusEffect()
     {
@@ -46,6 +47,12 @@ public class StatEffect : StatusEffect
             if (cardMonster == null) return;
             Attack = AttackMod * cardMonster.Kills;
             Defense = DefenseMod * cardMonster.Kills;
+        }
+
+        if (Trigger == Trigger.OnAllyKilled)
+        {
+            Attack = AttackMod * (ActionQueue.AlliesKilled - Counter);
+            Defense = DefenseMod * (ActionQueue.AlliesKilled - Counter);
         }
 
         switch (c.CardInfo.GetCardType())
@@ -109,6 +116,9 @@ public class ConfusionEffect : StatusEffect
             if (cardMonster == null) return;
             Chance = ChanceMod * cardMonster.Kills;
         }
+
+        if (Trigger == Trigger.OnAllyKilled)
+            Chance = ChanceMod * (ActionQueue.AlliesKilled - Counter);
     }
 
     public override void Remove(Card c, bool complete)
@@ -136,6 +146,9 @@ public class HealEffect : StatusEffect
             if (cardMonster == null) return;
             Heal = HealMod * cardMonster.Kills;
         }
+
+        if (Trigger == Trigger.OnAllyKilled)
+            Heal = HealMod * (ActionQueue.AlliesKilled - Counter);
 
         RaeyzPlayer player = c.IsEnemyCard ? c.Client.Game.EnemyPlayer : c.Client.Game.ClientPlayer;
         player.damagePlayer(-Heal);

@@ -777,7 +777,10 @@ public static class CardPool {
         null,
         null,
         null,
-        null,
+        new AuxiliaryInfo(441, "Valiant Rage", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            "Increases a monster's ATTACK by 1 for each fallen ally")
+            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All,
+                AttackMod = 1, Trigger = Trigger.OnAllyKilled}),
         null,
         null,
         null,

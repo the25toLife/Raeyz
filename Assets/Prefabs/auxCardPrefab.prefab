@@ -407,7 +407,7 @@ Animation:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163012}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Animation: {fileID: 7400000, guid: f6dcfb5873c795947a5c8025c52b845d, type: 2}
   m_Animations:
@@ -3101,7 +3101,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 11
   m_TargetDisplay: 0
 --- !u!224 &22400354
 RectTransform:
@@ -3443,7 +3443,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -5.335797, y: -0.20481348}
+  m_AnchoredPosition: {x: -3.6419249, y: 0.8273031}
   m_SizeDelta: {x: 2.22, y: 3.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22489904
