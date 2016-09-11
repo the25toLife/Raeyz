@@ -1,7 +1,4 @@
-using System;
 using UnityEngine;
-using System.Collections;
-using JetBrains.Annotations;
 
 public class CardAuxiliary : Card
 {
@@ -65,7 +62,7 @@ public class CardAuxiliary : Card
         _cardMonster = target;
         foreach (StatusEffect statusEffect in ((AuxiliaryInfo) CardInfo).StatusEffects)
         {
-            statusEffect.Apply(_cardMonster);
+            if (statusEffect.Trigger == Trigger.OnPlay) statusEffect.Apply(_cardMonster);
         }
     }
 }

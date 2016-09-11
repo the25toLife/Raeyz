@@ -56,10 +56,9 @@ public class Slot : MonoBehaviour, IDropHandler {
 	            }
 	            break;
 	        case CardInfo.CardType.Auxiliary:
-	            foreach (Slot s in FindObjectsOfType<Slot>()) {
-	                if (s.SlotID == SlotID - 5 && s.CurrentCard == null)
-	                    return false;
-	            }
+	            if (MonsterSlot.CurrentCard == null ||
+	                (c.CardInfo.GetAffinity() != CardInfo.CardAffinity.All &&
+	                 MonsterSlot.CurrentCard.CardInfo.GetAffinity() != c.CardInfo.GetAffinity())) return false;
 	            break;
 	    }
 

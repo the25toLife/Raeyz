@@ -2,14 +2,26 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum Trigger
+{
+    OnPlay, OnTurn, OnKill, OnDeath
+}
+
 public abstract class StatusEffect
 {
     public CardInfo.CardAffinity Affinity { get; set; }
+    public Trigger Trigger { get; set; }
+
+    protected StatusEffect()
+    {
+        Trigger = Trigger.OnPlay;
+    }
+
     public abstract void Apply(Card c);
     public abstract void Remove(Card c);
 }
 
-public class StatChangeEffect : StatusEffect
+public class StatEffect : StatusEffect
 {
     public int Attack { get; set; }
     public int Defense { get; set; }
@@ -29,13 +41,13 @@ public class StatChangeEffect : StatusEffect
                     {
                         case CardStatComponent.StatType.ATTACK:
                             if (Attack < 0)
-                                csc.GetComponent<Image>().color = new Color(0.843f, 0.102f, 0.082f);
+                                csc.GetComponent<Image>().color = new Color(0.843f, 0.522f, 0.522f);
                             else if (Attack > 0)
                                 csc.GetComponent<Image>().color = new Color(0.063f, 0.647f, 0.900f);
                             break;
                         case CardStatComponent.StatType.DEFENSE:
                             if (Defense < 0)
-                                csc.GetComponent<Image>().color = new Color(0.843f, 0.102f, 0.082f);
+                                csc.GetComponent<Image>().color = new Color(0.843f, 0.522f, 0.522f);
                             else if (Defense > 0)
                                 csc.GetComponent<Image>().color = new Color(0.063f, 0.647f, 0.900f);
                             break;

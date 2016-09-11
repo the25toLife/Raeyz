@@ -77,8 +77,10 @@ public class CardMonster : Card {
 
 	}
 
-	public bool canSacrifice(bool leviathan) {
+	public bool canSacrifice(bool leviathan)
+	{
 
+	    if (IsEnemyCard) return false;
 		if (leviathan && (CardInfo as MonsterInfo).GetLevel() < 5)
 			return false;
 		
