@@ -708,7 +708,7 @@ public static class CardPool {
             .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Defense = 1 }),
         new AuxiliaryInfo(437, "Call to Arms", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
             ".")
-            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity,All, Attack = 1 }),
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 }),
         null,
         null,
         null,
@@ -732,15 +732,15 @@ public static class CardPool {
         null,
         new AuxiliaryInfo(454, "Roaring Lariat", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
             ".")
-            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 })
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 }),
         new AuxiliaryInfo(455, "Whistling Edge", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
             ".")
-            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 })
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 1 }),
         null,
         null,
         new AuxiliaryInfo(458, "Piercing Light", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
             ".")
-            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 })
+            .RegisterEffect(new StatChangeEffect {Affinity = CardInfo.CardAffinity.All, Attack = 2 }),
         null,
         null,
         null,
