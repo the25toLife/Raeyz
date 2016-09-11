@@ -70,7 +70,7 @@ GameObject:
   - 224: {fileID: 224000011074706086}
   - 114: {fileID: 114000011620181038}
   m_Layer: 0
-  m_Name: Special Card Info small
+  m_Name: Special Card Info 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
