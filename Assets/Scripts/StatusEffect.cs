@@ -37,6 +37,9 @@ public class StatEffect : StatusEffect
         else
             c.StatusEffects.Add(this);
 
+        Attack = AttackMod;
+        Defense = DefenseMod;
+
         if (Trigger == Trigger.OnKill)
         {
             CardMonster cardMonster = c as CardMonster;
@@ -98,6 +101,8 @@ public class ConfusionEffect : StatusEffect
 
         if (!c.StatusEffects.Contains(this)) c.StatusEffects.Add(this);
 
+        Chance = ChanceMod;
+
         if (Trigger == Trigger.OnKill)
         {
             CardMonster cardMonster = c as CardMonster;
@@ -112,10 +117,10 @@ public class ConfusionEffect : StatusEffect
     }
 }
 
-public class HealEffect : StatEffect
+public class HealEffect : StatusEffect
 {
-    public float HealMod { get; set; }
-    public float Heal { get; private set; }
+    public int HealMod { get; set; }
+    public int Heal { get; private set; }
 
     public override void Apply(Card c)
     {
@@ -123,12 +128,17 @@ public class HealEffect : StatEffect
 
         if (!c.StatusEffects.Contains(this)) c.StatusEffects.Add(this);
 
+        Heal = HealMod;
+
         if (Trigger == Trigger.OnKill)
         {
             CardMonster cardMonster = c as CardMonster;
             if (cardMonster == null) return;
             Heal = HealMod * cardMonster.Kills;
         }
+
+        RaeyzPlayer player = c.IsEnemyCard ? c.Client.Game.EnemyPlayer : c.Client.Game.ClientPlayer;
+        player.damagePlayer(-Heal);
     }
 
     public override void Remove(Card c, bool complete)

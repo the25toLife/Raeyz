@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CardAuxiliary : Card
@@ -62,8 +63,23 @@ public class CardAuxiliary : Card
         _cardMonster = target;
         foreach (StatusEffect statusEffect in ((AuxiliaryInfo) CardInfo).StatusEffects)
         {
-            //if (statusEffect.Trigger == Trigger.OnPlay)
-                statusEffect.Apply(_cardMonster);
+            _cardMonster.StatusEffects.Add(statusEffect);
+            if (statusEffect.Trigger == Trigger.OnPlay) statusEffect.Apply(_cardMonster);
+            if (statusEffect.Trigger == Trigger.OnTurn)
+            {
+                if (_cardMonster.IsEnemyCard)
+                {
+                    Client.Game.EnemyTurnStart += delegate {
+                        statusEffect.Apply(_cardMonster);
+                    };
+                }
+                else
+                {
+                    Client.Game.TurnStart += delegate {
+                        statusEffect.Apply(_cardMonster);
+                    };
+                }
+            }
         }
     }
 }

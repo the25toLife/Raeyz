@@ -2016,7 +2016,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 1
-  m_Spacing: 0.275
+  m_Spacing: 0.29
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
 --- !u!224 &638119121 stripped

@@ -757,7 +757,10 @@ public static class CardPool {
         null,
         null,
         null,
-        null,
+        new AuxiliaryInfo(429, "Fleeting Bloom", CardInfo.CardAffinity.Forest, AuxiliaryInfo.AuxiliaryType.StatChange,
+            "Heals the player for 15 LP per turn.")
+            .RegisterEffect(new HealEffect {Affinity = CardInfo.CardAffinity.Forest,
+                HealMod = 15, Trigger = Trigger.OnTurn}),
         null,
         null,
         null,

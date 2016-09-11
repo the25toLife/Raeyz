@@ -21,6 +21,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     protected Transform ParentToReturnTo;
 	protected States StateToReturnTo;
+    protected Vector3 Scale { get; set; }
 
 	public GameObject FullInfoCanvas, StatOverlay, LcMenu, DeathHandler, SelectedIndicator;
 	public ClientGame Client;
@@ -44,7 +45,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 		float width = GetComponent<SpriteRenderer>().sprite.bounds.size.x;
 		float height = GetComponent<SpriteRenderer>().sprite.bounds.size.y;
-		transform.localScale = new Vector3 (2.22f / width, 3.01f / height, 1);
+		transform.localScale = Scale = new Vector3 (2.22f / width, 3.01f / height, 1);
 	}
 
 	public virtual void Update () {
@@ -61,7 +62,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	    if (Input.GetKeyDown (KeyCode.Escape)) {	//Handles closing menus
 
 			if (State == States.INFO) {	//Close full info menu
-				transform.localScale = Vector3.one;
+			    transform.localScale = Scale;
 				FullInfoCanvas.SetActive (false);
 				StatOverlay.SetActive (true);
 				GetComponent<SpriteRenderer> ().sortingOrder -= 100;
@@ -239,7 +240,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 			LcMenu.SetActive(false);
 
-			this.transform.localScale = new Vector3(3.0f, 3.0f, 1.0f);
+			this.transform.localScale = new Vector3(3.0f * Scale.x, 3.0f * Scale.y, 1.0f);
 			this.transform.SetParent(null);
 			this.GetComponent<SpriteRenderer> ().sortingOrder += 100;
 			StatOverlay.SetActive (false);

@@ -46,6 +46,8 @@ public class SceneManager : LoadBalancingClient
 	public const byte EvDefenseToggle = 6;
 	public const byte EvAttack = 7;
 
+    public event EventHandler TurnStart, EnemyTurnStart;
+
 	protected internal override Player CreatePlayer(string actorName, int actorNumber, bool isLocal, Hashtable actorProperties)
 	{
 		return new RaeyzPlayer(actorName, actorNumber, isLocal, new Hashtable {{"l", 200}, {"r", false}});
@@ -371,11 +373,11 @@ public class SceneManager : LoadBalancingClient
 	/// </summary>
 	public void nextTurn() {
 		TurnNumber += 0.5f;
-		if (_isTurn)
-			this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"t#", TurnNumber}, {"tp", EnemyPlayer.ID}});
-		else
-			this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"t#", TurnNumber}, {"tp", ClientPlayer.ID}});
-		_isTurn = !_isTurn;
+	    if (_isTurn)
+	        this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"t#", TurnNumber}, {"tp", EnemyPlayer.ID}});
+	    else
+	        this.OpSetCustomPropertiesOfRoom(new Hashtable() {{"t#", TurnNumber}, {"tp", ClientPlayer.ID}});
+	    _isTurn = !_isTurn;
 	}
 
 	/// <summary>
@@ -414,9 +416,9 @@ public class SceneManager : LoadBalancingClient
 		dealCardToPlayer (c);
 		for (int i = 0; i < 4; i++)
 			dealCardToPlayer ();*/
-		dealCardToPlayer (CardPool.Cards [5]);
+		dealCardToPlayer (CardPool.Cards [428]);
 		dealCardToPlayer (CardPool.Cards [50]);
-		dealCardToPlayer (CardPool.Cards [11]);
+		dealCardToPlayer (CardPool.Cards [4]);
 		dealCardToPlayer (CardPool.Cards [6]);
 		dealCardToPlayer (CardPool.Cards [408]);
 
@@ -600,12 +602,18 @@ public class SceneManager : LoadBalancingClient
 			else if (_stage == GameStage.PREP)
 				_nextStage = GameStage.BATTLE;
 			else if (_stage == GameStage.WAITING)
-				_nextStage = GameStage.BATTLE;
-			else if (_stage == GameStage.BATTLE) {
-				nextTurn();		//The first player to ready up during the BATTLE stage advances the room's turn.
-				_nextStage = _isTurn ? GameStage.PREP : GameStage.WAITING;
-			}
-			SendStageChangedEv (_nextStage);
+		    {
+		        _nextStage = GameStage.BATTLE;
+		        EventHandler handler = EnemyTurnStart;
+		        // ReSharper disable once UseNullPropagation
+		        if (handler != null) handler.Invoke(this, EventArgs.Empty);
+		    }
+		    else if (_stage == GameStage.BATTLE)
+		    {
+		        nextTurn(); //The first player to ready up during the BATTLE stage advances the room's turn.
+		        _nextStage = _isTurn ? GameStage.PREP : GameStage.WAITING;
+		    }
+		    SendStageChangedEv (_nextStage);
 		}
 	}
 
@@ -615,6 +623,9 @@ public class SceneManager : LoadBalancingClient
 	private void startPrepStage() {
 
 		dealFullHandToPlayer ();
+	    EventHandler handler = TurnStart;
+	    // ReSharper disable once UseNullPropagation
+	    if (handler != null) handler.Invoke(this, EventArgs.Empty);
 	}
 
 
