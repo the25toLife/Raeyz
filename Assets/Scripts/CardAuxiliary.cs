@@ -1,5 +1,5 @@
-using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardAuxiliary : Card
 {
@@ -23,9 +23,9 @@ public class CardAuxiliary : Card
     {
         base.OnDestroy();
         if (_cardMonster == null) return;
-        foreach (StatusEffect statusEffect in ((AuxiliaryInfo) CardInfo).StatusEffects)
+        foreach (StatusEffect statusEffect in _cardMonster.StatusEffects.ToArray())
         {
-            statusEffect.Remove(_cardMonster, true);
+            if (statusEffect.CardAppliedBy.UID == UID) statusEffect.Remove(true);
         }
     }
 
@@ -37,7 +37,10 @@ public class CardAuxiliary : Card
 	    {
 	        var s = Resources.Load("Cards/" + CardInfo.GetId(), typeof(Sprite)) as Sprite;
 	        if (s != null)
-	            GetComponent<SpriteRenderer>().sprite = s;
+	        {
+	            Image image = transform.Find("CardImage").GetComponent<Image>();
+	            image.sprite = s;
+	        }
 	    }
 	    else
 	    {
@@ -48,9 +51,9 @@ public class CardAuxiliary : Card
 			csc.changeStat(CardInfo);
 	}
 
-	public override bool canTarget (Card target) {
-		return target.CardInfo.GetAffinity() == CardInfo.CardAffinity.All
-		       || target.CardInfo.GetAffinity() == CardInfo.GetAffinity();
+	public override bool canTarget (Card target)
+	{
+	    return CardInfo.TargetCriteria.Matches(target);
 	}
 
 	public override void assignTarget (Card target) {
@@ -62,40 +65,6 @@ public class CardAuxiliary : Card
         OnPlay();
         _cardMonster = target;
         foreach (StatusEffect statusEffect in ((AuxiliaryInfo) CardInfo).StatusEffects)
-        {
-            _cardMonster.StatusEffects.Add(statusEffect);
-            if (statusEffect.Trigger == Trigger.OnPlay) statusEffect.Apply(_cardMonster);
-            if (statusEffect.Trigger == Trigger.OnTurn)
-            {
-                if (_cardMonster.IsEnemyCard)
-                {
-                    Client.Game.EnemyTurnStart += delegate {
-                        statusEffect.Apply(_cardMonster);
-                    };
-                }
-                else
-                {
-                    Client.Game.TurnStart += delegate {
-                        statusEffect.Apply(_cardMonster);
-                    };
-                }
-            }
-            if (statusEffect.Trigger == Trigger.OnAllyKilled)
-            {
-                statusEffect.Counter = ActionQueue.AlliesKilled;
-                if (_cardMonster.IsEnemyCard)
-                {
-                    ActionQueue.EnemyKilled += delegate {
-                        statusEffect.Apply(_cardMonster);
-                    };
-                }
-                else
-                {
-                    ActionQueue.AllyKilled += delegate {
-                        statusEffect.Apply(_cardMonster);
-                    };
-                }
-            }
-        }
+            statusEffect.Clone().AddToCard(_cardMonster, this);
     }
 }

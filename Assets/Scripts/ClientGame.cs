@@ -29,14 +29,13 @@ public class ClientGame : MonoBehaviour
 	public GameObject PlayerHandObj, EnemyHandObj, PlayerMonsters, EnemyMonsters, MonsterCardPrefab, AuxCardPrefab, MultiCardPrefab, CardMenu, CardMenuItem;
 
     [UsedImplicitly]
-    private void Start () {
-
+    private void Start ()
+    {
 		Application.runInBackground = true;
 		CardPool.associateCards ();
 
 	    Game = new SceneManager {
-	        AppId = "d5b703ed-840c-4cc1-8771-ffa8f9a6b49c",
-	        FieldManager = FindObjectOfType<FieldManager>()
+	        AppId = "d5b703ed-840c-4cc1-8771-ffa8f9a6b49c"
 	    };
         Game.OnStateChangeAction += OnStateChanged;
 		Game.ConnectToRegionMaster ("us");
@@ -269,7 +268,7 @@ public class ClientGame : MonoBehaviour
 
                             slot.CurrentCard = pdsm.CurrentCard = mpc;
 
-                            FindObjectOfType<FieldManager>().AddCardToField(mpc);
+                            FieldManager.AddCardToField(mpc);
 
                             Destroy(c.gameObject);
                             Destroy(ecmPair.gameObject);
@@ -283,8 +282,8 @@ public class ClientGame : MonoBehaviour
 			            break;
 			    }
 
-			    FindObjectOfType<FieldManager>().AddCardToField(c);
-			    c.GetComponent<SpriteRenderer> ().sortingOrder += slot.GetComponent<SpriteRenderer> ().sortingOrder;
+			    FieldManager.AddCardToField(c);
+			    c.GetComponent<Canvas> ().sortingOrder += slot.GetComponent<SpriteRenderer> ().sortingOrder;
 			    c.State = Card.States.INPLAY;
 			    slot.CurrentCard = c;
 			    c.changeReturnParent(slot.transform);
@@ -371,11 +370,11 @@ public class ClientGame : MonoBehaviour
 
 		Card cardDealt = null;
 		switch (cInfo.GetCardType()) {
-		
+
 		case (CardInfo.CardType.Monster):
 			GameObject m = Instantiate(MonsterCardPrefab);
-			m.transform.SetParent(PlayerHandObj.transform);
-			cardDealt = m.GetComponent<CardMonster>();
+		        m.transform.SetParent(PlayerHandObj.transform);
+		        cardDealt = m.GetComponent<CardMonster>();
 			(cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
 			break;
 		case (CardInfo.CardType.Auxiliary):
@@ -481,7 +480,7 @@ public class ClientGame : MonoBehaviour
 			    if (confusionChance > 0.0f && Random.value <= confusionChance)
 			    {
 			        //Debug.LogError("Attacked different target.");
-			        ArrayList allMonsterCards = Game.FieldManager.GetOnFieldCards(CardInfo.CardType.Monster, null);
+			        ArrayList allMonsterCards = FieldManager.GetOnFieldCards(CardInfo.CardType.Monster, null);
 			        actualTarget = (CardMonster) allMonsterCards[Random.Range(0, allMonsterCards.Count)];
 			    }
 			    Game.SendAttackEv(c.UID, actualTarget.UID, actualTarget.isDefending());
@@ -497,7 +496,7 @@ public class ClientGame : MonoBehaviour
 //			if (c.isDefending())
 //				total += (c.CardI as MonsterInfo).AttackMod;
 //		}
-	    //Debug.LogError(EnemyMonsters.GetComponentsInChildren<Card>().Length);
+	    //Debug.LogError(EnemyMonsters.GetComponentsInChildren<CardAppliedTo>().Length);
 		if (EnemyMonsters.GetComponentsInChildren<Card> ().Length < 1) return total;
 		return -1;
 	}

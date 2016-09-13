@@ -1,7 +1,9 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 //theredhex FFBDBD
 //fontfordesc antipasto : avantgarde : sentrygothic
@@ -21,7 +23,6 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     protected Transform ParentToReturnTo;
 	protected States StateToReturnTo;
-    protected Vector3 Scale { get; set; }
 
 	public GameObject FullInfoCanvas, StatOverlay, LcMenu, DeathHandler, SelectedIndicator;
 	public ClientGame Client;
@@ -30,28 +31,21 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	public int UID { get; set; }
 	public CardInfo CardInfo { get; set; }
 	public States State { get; set; }
-    public ArrayList StatusEffects { get; set; }
+    public List<StatusEffect> StatusEffects { get; set; }
 
     public virtual void Start () {
 
 		Client = FindObjectOfType<ClientGame> ();
 
-        StatusEffects = new ArrayList();
+        StatusEffects = new List<StatusEffect>();
 
         FullInfoCanvas.SetActive (false);
 
 		if (LcMenu != null)
 			LcMenu.SetActive (false);
-
-		float width = GetComponent<SpriteRenderer>().sprite.bounds.size.x;
-		float height = GetComponent<SpriteRenderer>().sprite.bounds.size.y;
-		transform.localScale = Scale = new Vector3 (2.22f / width, 3.01f / height, 1);
-	}
+    }
 
 	public virtual void Update () {
-
-	    Canvas canvas = GetComponentInChildren<Canvas>();
-	    if (canvas != null) canvas.sortingOrder = GetComponent<SpriteRenderer> ().sortingOrder + 1;
 
 	    if (IsEnemyCard && (Client.Game.CurrentStage == GameStage.SETUP ||
 	                        (State != States.INPLAY && State != States.INFO)))
@@ -62,10 +56,10 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	    if (Input.GetKeyDown (KeyCode.Escape)) {	//Handles closing menus
 
 			if (State == States.INFO) {	//Close full info menu
-			    transform.localScale = Scale;
+			    transform.localScale = Vector3.one;
 				FullInfoCanvas.SetActive (false);
 				StatOverlay.SetActive (true);
-				GetComponent<SpriteRenderer> ().sortingOrder -= 100;
+				GetComponent<Canvas> ().sortingOrder -= 100;
 				returnToParent();
 
 				State = StateToReturnTo == States.EXPANDINHAND ? States.INHAND : StateToReturnTo;
@@ -99,13 +93,12 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	/// <param name="uid">The unique ID to assign.</param>
 	public void createUID(int uid) {
 		UID = uid;
-		Debug.Log (string.Format("Card assigned UID: {0}", UID));
+		Debug.Log (string.Format("CardAppliedTo assigned UID: {0}", UID));
 	}
 
     public virtual void OnDestroy()
     {
-        var fieldManager = FindObjectOfType<FieldManager>();
-        if (fieldManager != null) fieldManager.RemoveCardFromField(this);
+        FieldManager.RemoveCardFromField(this);
     }
 
     public virtual void OnPlay()
@@ -125,12 +118,12 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		if (LcMenu.activeSelf)
 			LcMenu.SetActive (false);
 
-	    transform.SetParent(null);
+	    if (IsEnemyCard && State != States.INHAND) transform.SetParent(null);
 	    DeathHandler.SetActive (true);
 	}
 
 	public void returnToParent() {
-		this.transform.SetParent (ParentToReturnTo);
+	    this.transform.SetParent (ParentToReturnTo);
 		this.transform.localPosition = Vector3.zero;
 	}
 
@@ -140,18 +133,21 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         FowActive = fow;
         if (FowActive)
         {
-            gameObject.transform.GetChild(0).gameObject.SetActive(false);
-            GetComponent<SpriteRenderer>().sprite =
+            transform.Find("Overlay").gameObject.SetActive(false);
+            Image image = transform.Find("CardImage").GetComponent<Image>();
+            image.sprite =
                 Resources.Load(IsEnemyCard ? "Cards/cardBackRed" : "Cards/cardBackBlue", typeof(Sprite)) as Sprite;
         }
         else
         {
-            gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            transform.Find("Overlay").gameObject.SetActive(true);
             Sprite s = Resources.Load("Cards/" + CardInfo.GetId(), typeof(Sprite)) as Sprite;
             if (s != null)
-                GetComponent<SpriteRenderer>().sprite = s;
-            else
-                GetComponent<SpriteRenderer>().sprite = Resources.Load("Cards/_empty", typeof(Sprite)) as Sprite;
+            {
+                Image image = transform.Find("CardImage").GetComponent<Image>();
+                image.sprite =
+                    Resources.Load("Cards/" + CardInfo.GetId(), typeof(Sprite)) as Sprite;
+            }
         }
     }
 
@@ -161,7 +157,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	    if (IsEnemyCard) return false;
 
-		if (!Client.Game.canTakeAction (Actions.PLAY) && GetComponent<BoxCollider2D>().enabled)
+		if (!Client.Game.canTakeAction (Actions.PLAY) && GetComponent<GraphicRaycaster>().enabled)
 			return false;
 
 		if (DeathHandler.activeSelf)
@@ -169,7 +165,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 		if (State != States.INHAND && State != States.EXPANDINHAND) {
 			
-			if (State == States.INPLAY && GetComponent<BoxCollider2D>().enabled)
+			if (State == States.INPLAY && GetComponent<GraphicRaycaster>().enabled)
 				return false;
 		}
 
@@ -184,8 +180,8 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 			LcMenu.SetActive (false);
 		ParentToReturnTo = this.transform.parent;
 		this.transform.SetParent (null);
-		this.GetComponent<SpriteRenderer> ().sortingOrder += 100;
-		this.GetComponent<BoxCollider2D> ().enabled = false;
+		this.GetComponent<Canvas> ().sortingOrder += 100;
+		this.GetComponent<GraphicRaycaster> ().enabled = false;
 	}
 
 	public void endDrag() {
@@ -197,10 +193,10 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		if (State == States.EXPANDINHAND)
 			State = States.INHAND;
 		
-		if (this.GetComponent<SpriteRenderer> ().sortingOrder > 99)
-			this.GetComponent<SpriteRenderer> ().sortingOrder -= 100;
+		if (this.GetComponent<Canvas> ().sortingOrder > 99)
+			this.GetComponent<Canvas> ().sortingOrder -= 100;
 
-		this.GetComponent<BoxCollider2D> ().enabled = true;
+		this.GetComponent<GraphicRaycaster> ().enabled = true;
 	}
 
 	public virtual void OnBeginDrag(PointerEventData eventData) {
@@ -240,9 +236,9 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 			LcMenu.SetActive(false);
 
-			this.transform.localScale = new Vector3(3.0f * Scale.x, 3.0f * Scale.y, 1.0f);
+		    transform.localScale = new Vector3(3.0f, 3.0f, 1.0f);
 			this.transform.SetParent(null);
-			this.GetComponent<SpriteRenderer> ().sortingOrder += 100;
+			this.GetComponent<Canvas> ().sortingOrder += 100;
 			StatOverlay.SetActive (false);
 
 			FullInfoCanvas.SetActive (true);

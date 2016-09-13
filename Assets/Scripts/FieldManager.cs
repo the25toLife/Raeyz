@@ -1,47 +1,45 @@
 ﻿using System;
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
-// ReSharper disable once CheckNamespace
-public class FieldManager : MonoBehaviour {
+public static class FieldManager {
 
-    // Temporary public fields for debugging
-    public int[] CardTypeCount = new int[Enum.GetNames(typeof(CardInfo.CardType)).Length];
-    public int[] CardAffinityType = new int[Enum.GetNames(typeof(CardInfo.CardAffinity)).Length];
-    private ArrayList _cardsOnField;
+//    public int[] CardTypeCount = new int[Enum.GetNames(typeof(CardInfo.CardType)).Length];
+//    public int[] CardAffinityType = new int[Enum.GetNames(typeof(CardInfo.CardAffinity)).Length];
 
-    [UsedImplicitly]
-    private void Start()
+    private static readonly List<Card> CardsOnField = new List<Card>();
+    public static event EventHandler OnFieldChanged;
+
+    public static void AddCardToField(Card c)
     {
-        _cardsOnField = new ArrayList();
+        CardsOnField.Add(c);
+        EventHandler handler = OnFieldChanged;
+        if (handler != null) handler.Invoke(null, EventArgs.Empty);
     }
 
-    [UsedImplicitly]
-    private void Update()
+    public static void RemoveCardFromField(Card c)
     {
-        Array types = Enum.GetValues(typeof(CardInfo.CardType));
-        Array affinities = Enum.GetValues(typeof(CardInfo.CardAffinity));
-        for (int i = 0; i < types.Length; i++)
-            CardTypeCount[i] = GetOnFieldCardCount((CardInfo.CardType) types.GetValue(i), null);
-        for (int i = 0; i < affinities.Length; i++)
-            CardAffinityType[i] = GetOnFieldCardCount(null, (CardInfo.CardAffinity) affinities.GetValue(i));
+        CardsOnField.Remove(c);
+        EventHandler handler = OnFieldChanged;
+        if (handler != null) handler.Invoke(null, EventArgs.Empty);
     }
 
-    public void AddCardToField(Card c)
-    {
-        _cardsOnField.Add(c);
-    }
-
-    public void RemoveCardFromField(Card c)
-    {
-        _cardsOnField.Remove(c);
-    }
-
-    public int GetOnFieldCardCount(CardInfo.CardType? cardTypePar, CardInfo.CardAffinity? cardAffinityPar)
+    public static int GetOnFieldCardCount(TargetCriteria targetCriteria)
     {
         var count = 0;
-        foreach (Card c in _cardsOnField)
+        foreach (Card card in CardsOnField)
+        {
+            if (targetCriteria.Matches(card))
+                count++;
+        }
+        return count;
+    }
+
+    public static int GetOnFieldCardCount(CardInfo.CardType? cardTypePar, CardInfo.CardAffinity? cardAffinityPar)
+    {
+        var count = 0;
+        foreach (Card c in CardsOnField)
         {
             if ((!cardTypePar.HasValue || c.CardInfo.GetCardType().Equals(cardTypePar))
                 && (!cardAffinityPar.HasValue || c.CardInfo.GetAffinity().Equals(cardAffinityPar)))
@@ -50,10 +48,10 @@ public class FieldManager : MonoBehaviour {
         return count;
     }
 
-    public ArrayList GetOnFieldCards(CardInfo.CardType? cardTypePar, CardInfo.CardAffinity? cardAffinityPar)
+    public static ArrayList GetOnFieldCards(CardInfo.CardType? cardTypePar, CardInfo.CardAffinity? cardAffinityPar)
     {
         ArrayList cardsOnField = new ArrayList();
-        foreach (Card c in _cardsOnField)
+        foreach (Card c in CardsOnField)
         {
             if ((!cardTypePar.HasValue || c.CardInfo.GetCardType().Equals(cardTypePar))
                 && (!cardAffinityPar.HasValue || c.CardInfo.GetAffinity().Equals(cardAffinityPar)))

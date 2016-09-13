@@ -10,24 +10,17 @@ public class ActionQueue
     public static int AlliesKilled { get; set; }
     public static int EnemiesKilled { get; set; }
 
-    public ActionQueue ()
-	{
-
-	}
-
 	public static void calcAttack(Card mi1, Card mi2, bool defending) {
 
 		int attackerStat = (mi1.CardInfo as MonsterInfo).Attack;
 		int targetStat = defending ? (mi2.CardInfo as MonsterInfo).Defense : (mi2.CardInfo as MonsterInfo).Attack;
-
-	    EventHandler handler;
 
 	    if (attackerStat > targetStat)
 	    {
 	        (mi1 as CardMonster).Kills++;
 	        foreach (StatusEffect statusEffect in mi1.StatusEffects)
 	        {
-	            if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply(mi1);
+	            if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply();
 	        }
 	        if (mi2.IsEnemyCard)
 	            OnEnemyKilled();
@@ -40,7 +33,7 @@ public class ActionQueue
 	        (mi2 as CardMonster).Kills++;
 	        foreach (StatusEffect statusEffect in mi1.StatusEffects)
 	        {
-	            if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply(mi1);
+	            if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply();
 	        }
 	        if (mi1.IsEnemyCard)
 	            OnEnemyKilled();
@@ -55,7 +48,7 @@ public class ActionQueue
 	            (mi2 as CardMonster).Kills++;
 	            foreach (StatusEffect statusEffect in mi1.StatusEffects)
 	            {
-	                if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply(mi1);
+	                if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply();
 	            }
 	        }
 	        else

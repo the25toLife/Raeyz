@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CardMonster : Card {
 
@@ -19,6 +20,8 @@ public class CardMonster : Card {
 	}
 
 	public override void Update() {
+
+
 
 		if (Input.GetKeyDown(KeyCode.Escape) && State == States.INFO)
 			Shield.SetActive (_defending);
@@ -44,18 +47,23 @@ public class CardMonster : Card {
 		    {
 		        var s = Resources.Load("Cards/" + CardInfo.GetId(), typeof(Sprite)) as Sprite;
 		        if (s != null)
-		            GetComponent<SpriteRenderer>().sprite = s;
+		        {
+		            Image image = transform.Find("CardImage").GetComponent<Image>();
+		            image.sprite = s;
+		        }
 		    }
-		    if ((CardInfo as MonsterInfo).GetLevel() < 5) {
+		    if ((CardInfo as MonsterInfo).GetLevel() < 15) {
 				Locked.SetActive(false);
 				AwakenMenuItem.SetActive(false);
 			} else
 				_cardLocked = true;
 		}
-		
-		foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
-			csc.changeStat(c);
-	}
+
+        foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
+        {
+            if (!csc.transform.parent.name.Equals("attackInfo")) csc.changeStat(c);
+        }
+    }
 	
 	public void attackMonster(Card target) {
 

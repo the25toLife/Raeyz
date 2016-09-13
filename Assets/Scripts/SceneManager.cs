@@ -25,8 +25,6 @@ public enum Actions {
 
 public class SceneManager : LoadBalancingClient
 {
-    public FieldManager FieldManager { get; set; }
-
     private Deck _playerDeck, _playerGrave, _enemyDeck;
 	private ClientGame _clientGame;
 	private ArrayList _playerHand, _playerActions;
@@ -309,7 +307,7 @@ public class SceneManager : LoadBalancingClient
 				CardMonster c = _clientGame.getCard<CardMonster>(uid);
 				c.setDefending(state);
 				
-				Debug.Log(string.Format("Card with UID: {0} is {1}", uid, (state ? "now defending." : "no longer defending.")));
+				Debug.Log(string.Format("CardAppliedTo with UID: {0} is {1}", uid, (state ? "now defending." : "no longer defending.")));
 			}
 			break;
 		case (byte)EvAttack:
@@ -344,7 +342,7 @@ public class SceneManager : LoadBalancingClient
 //				GameAction action = new GameAction(a, clientGame.getCard(CardPool.Cards[actionCardID-1], CardInfo.CardType.MONSTER, true), clientGame.getCard(CardPool.Cards[targetCardID-1]));
 //				action.executeAction();
 //				
-//				Debug.Log(string.Format("Card with ID {0} is performing action: {1} on CurrentCard with ID {2}", actionCardID, a, targetCardID));
+//				Debug.Log(string.Format("CardAppliedTo with ID {0} is performing action: {1} on CurrentCard with ID {2}", actionCardID, a, targetCardID));
 //			}
 //			break;
 			//
@@ -416,11 +414,11 @@ public class SceneManager : LoadBalancingClient
 		dealCardToPlayer (c);
 		for (int i = 0; i < 4; i++)
 			dealCardToPlayer ();*/
-		dealCardToPlayer (CardPool.Cards [440]);
-		dealCardToPlayer (CardPool.Cards [50]);
-		dealCardToPlayer (CardPool.Cards [4]);
-		dealCardToPlayer (CardPool.Cards [6]);
-		dealCardToPlayer (CardPool.Cards [408]);
+		dealCardToPlayer (CardPool.Cards [517]);
+		dealCardToPlayer (CardPool.Cards [5]);
+		dealCardToPlayer (CardPool.Cards [12]);
+		dealCardToPlayer (CardPool.Cards [24]);
+		dealCardToPlayer (CardPool.Cards [81]);
 
 		_stage = GameStage.PREP;
 	}
@@ -456,7 +454,7 @@ public class SceneManager : LoadBalancingClient
 
 		Card cardDrawn = _clientGame.dealCardToPlayer (cardInfo);
 		_playerHand.Add (cardDrawn);
-		SendDealCardEv(cardDrawn);
+	    SendDealCardEv(cardDrawn);
 	}
 
 	/// <summary>

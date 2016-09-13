@@ -56,9 +56,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 	            }
 	            break;
 	        case CardInfo.CardType.Auxiliary:
-	            if (MonsterSlot.CurrentCard == null ||
-	                (c.CardInfo.GetAffinity() != CardInfo.CardAffinity.All &&
-	                 MonsterSlot.CurrentCard.CardInfo.GetAffinity() != c.CardInfo.GetAffinity())) return false;
+	            if (MonsterSlot.CurrentCard == null || !c.canTarget(MonsterSlot.CurrentCard)) return false;
 	            break;
 	    }
 
@@ -81,7 +79,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 
 	public void setCard(Card c) {
 		CurrentCard = c;
-		c.GetComponent<SpriteRenderer> ().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 2;
+		c.GetComponent<Canvas> ().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 2;
 		c.changeReturnParent(transform);
 		c.State = Card.States.INPLAY;
 
@@ -89,7 +87,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 
 	    // Adds the card to the field manager.  Multipart cards are handled separately to prevent them from
 	    // being added to the field manager twice.
-	    if (!(c is CardMultiPart)) Client.Game.FieldManager.AddCardToField(c);
+	    if (!(c is CardMultiPart)) FieldManager.AddCardToField(c);
 
 	    if (CurrentCard is CardAuxiliary)
 	    {
@@ -128,7 +126,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 			}
 			mpc.returnToParent();
 
-		    Client.Game.FieldManager.AddCardToField(mpc);
+		    FieldManager.AddCardToField(mpc);
 		    Client.Dragging = false;
 			
 			Destroy(c.PairCard.gameObject);
