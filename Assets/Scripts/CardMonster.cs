@@ -21,8 +21,6 @@ public class CardMonster : Card {
 
 	public override void Update() {
 
-
-
 		if (Input.GetKeyDown(KeyCode.Escape) && State == States.INFO)
 			Shield.SetActive (_defending);
 
@@ -30,13 +28,16 @@ public class CardMonster : Card {
 	}
 
 	public override bool canTarget(Card target) {
-		return (target is CardMonster && target.IsEnemyCard);
+		return CardInfo.TargetCriteria.Matches(target);
 	}
 
 	public override void assignTarget(Card target) {
 
-		Target = target;
-		attackMonster (Target);
+	    Target = target;
+	    foreach (var statusEffect in StatusEffects)
+	        if (statusEffect.AppliesAgainstCriteria != null) statusEffect.Apply();
+
+	    attackMonster (Target);
 	}
 
     public override void changeCard(CardInfo c) {

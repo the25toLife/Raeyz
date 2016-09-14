@@ -155,7 +155,7 @@ GameObject:
   - 61: {fileID: 6196076}
   - 114: {fileID: 114000010133165200}
   m_Layer: 0
-  m_Name: auxCardPrefab
+  m_Name: auxCardPrefab OLD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

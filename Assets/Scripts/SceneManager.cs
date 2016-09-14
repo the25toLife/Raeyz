@@ -414,11 +414,11 @@ public class SceneManager : LoadBalancingClient
 		dealCardToPlayer (c);
 		for (int i = 0; i < 4; i++)
 			dealCardToPlayer ();*/
-		dealCardToPlayer (CardPool.Cards [517]);
-		dealCardToPlayer (CardPool.Cards [5]);
-		dealCardToPlayer (CardPool.Cards [12]);
-		dealCardToPlayer (CardPool.Cards [24]);
-		dealCardToPlayer (CardPool.Cards [81]);
+		dealCardToPlayer (CardPool.Cards [532]);
+		dealCardToPlayer (CardPool.Cards [4]);
+		dealCardToPlayer (CardPool.Cards [33]);
+		dealCardToPlayer (CardPool.Cards [130]);
+		dealCardToPlayer (CardPool.Cards [520]);
 
 		_stage = GameStage.PREP;
 	}
@@ -431,8 +431,8 @@ public class SceneManager : LoadBalancingClient
 
 		ArrayList cardsInPool = new ArrayList ();
 		foreach (CardInfo c in CardPool.Cards) {
-			// run if checks here to exclude CurrentCard IDs
-			cardsInPool.Add(c);
+			// run if checks here to exclude card IDs
+            cardsInPool.Add(c);
 		}
 		
 		Deck d = new Deck (cardsInPool, 200);

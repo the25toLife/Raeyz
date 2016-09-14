@@ -1,6 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
+using System.Diagnostics;
 
 public enum CardRelation {
 	PairL, PairR, Summon
@@ -801,7 +800,7 @@ public static class CardPool {
         null,
         new AuxiliaryInfo(429, "Fleeting Bloom", CardInfo.CardAffinity.Forest,
             "Heals the player for 15 LP per turn.")
-            .RegisterEffect(new HealEffect {HealMod = 15, Trigger = Trigger.OnTurn}),
+            .RegisterEffect(new HealthEffect {HealthMod = 15, AffectPlayer = true, Trigger = Trigger.OnTurn}),
         null,
         null,
         null,
@@ -904,6 +903,26 @@ public static class CardPool {
 	    null,
 	    null,
 	    null,
+	    new AuxiliaryInfo(483, "Kings Army", CardInfo.CardAffinity.Ice,
+	        "Increases Vylerion's [#374] ATK by 2 and DEF by 1 per friendly ice monster.")
+            {
+                TargetCriteria =
+                {
+                    CardIds = {374}
+                }
+            }
+	        .RegisterEffect(new StatEffect
+	        {
+	            Trigger = Trigger.OnFieldChange,
+	            AffectingCardCriteria = new TargetCriteria
+	            {
+	                Affinities = {CardInfo.CardAffinity.Ice},
+	                CardTypes = {CardInfo.CardType.Monster},
+	                AllyOnly = true
+	            },
+	            AttackMod = 2,
+	            DefenseMod = 1
+	        }),
 	    null,
 	    null,
 	    null,
@@ -938,8 +957,6 @@ public static class CardPool {
 	    null,
 	    null,
 	    null,
-	    null,
-	    // #518 needs fixing
 	    new AuxiliaryInfo(518, "Draccon Guard", CardInfo.CardAffinity.All,
 	        "Increases a monster's DEFENSE by 2.  DRAGON monsters gain an additional 2 DEFENSE for every DRAGON " +
 	        "monster on the field.")
@@ -960,7 +977,9 @@ public static class CardPool {
 	        }),
 	    null,
 	    null,
-	    null,
+	    new AuxiliaryInfo(521, "Soul Consumption", CardInfo.CardAffinity.All,
+	        "Heals the player for 5 LP per kill")
+	        .RegisterEffect(new HealthEffect {Trigger = Trigger.OnKill, HealthMod = 5, AffectPlayer = true}),
 	    null,
 	    null,
 	    null,
@@ -971,16 +990,45 @@ public static class CardPool {
 	    null,
 	    null,
 	    new AuxiliaryInfo(531, "Bump in the Dark", CardInfo.CardAffinity.All,
-	        "Increases a BASIC monster's DEFENSE by 3.") {
-                TargetCriteria = new TargetCriteria
+	        "Increases a BASIC monster's DEFENSE by 3.")
+	        {
+                TargetCriteria =
                 {
                     LevelMax = 4
                 }
 	        }
 	        .RegisterEffect(new StatEffect {DefenseMod = 3}),
 	    null,
-	    null,
-	    null,
+	    new AuxiliaryInfo(533, "The Hunter", CardInfo.CardAffinity.All,
+	        "Increases a monster's ATTACK by 3 when attacking FOREST monsters.")
+            {
+                TargetCriteria =
+                {
+                    AffinitiesBlacklist = {CardInfo.CardAffinity.Forest}
+                }
+            }
+	        .RegisterEffect(new StatEffect
+	        {
+	            AppliesAgainstCriteria = new TargetCriteria
+	            {
+	                Affinities = {CardInfo.CardAffinity.Forest},
+	                CardTypes = {CardInfo.CardType.Monster}
+	            },
+	            AttackMod = 3
+	        }),
+	    new AuxiliaryInfo(534, "Imbuing Might", CardInfo.CardAffinity.All,
+	        "Increases a monster's ATTACK and DEFENSE by 1 per friendly special card on the field.")
+	        .RegisterEffect(new StatEffect
+	        {
+	            Trigger = Trigger.OnFieldChange,
+	            AffectingCardCriteria =
+	            {
+	                CardTypes = {CardInfo.CardType.Auxiliary, CardInfo.CardType.Unique, CardInfo.CardType.Ruse},
+	                AllyOnly = true
+	            },
+	            AttackMod = 1,
+	            DefenseMod = 1
+	        }),
 	    null,
 	    null,
 	    null,

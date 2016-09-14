@@ -24,7 +24,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     protected Transform ParentToReturnTo;
 	protected States StateToReturnTo;
 
-	public GameObject FullInfoCanvas, StatOverlay, LcMenu, DeathHandler, SelectedIndicator;
+	public GameObject FullInfoCanvas, StatOverlay, LcMenu, DeathHandler, SelectedIndicator, StatusEffectInfoPrefab;
 	public ClientGame Client;
 
     // ReSharper disable once InconsistentNaming
@@ -273,14 +273,19 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		if (Client.Dragging)
 			return;
 
-		if (State == States.INHAND) {
-			Vector3 pos = this.transform.localPosition;
-			pos.y += 2.28f;
+	    if (State == States.INHAND)
+	    {
+	        Vector3 pos = this.transform.localPosition;
+	        pos.y += 2.28f;
 //			parentToReturnTo = this.transform.parent;
 //			this.transform.SetParent(null);
-			this.transform.localPosition = pos;
-			State = States.EXPANDINHAND;
-		}
+	        this.transform.localPosition = pos;
+	        State = States.EXPANDINHAND;
+	    }
+	    else
+	    {
+	        GameObject.Find("StatusEffectInfo").GetComponent<StatusEffectInfo>().UpdateList(this);
+	    }
 	}
 	
 	public virtual void OnPointerExit(PointerEventData eventData) {
@@ -299,5 +304,6 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		}
 		if (LcMenu.activeSelf && !Client.Awakening)
 			LcMenu.SetActive (false);
+	    GameObject.Find("StatusEffectInfo").GetComponent<StatusEffectInfo>().UpdateList(null);
 	}
 }

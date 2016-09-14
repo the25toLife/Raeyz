@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 // Currently completed triggers include: OnPlay, OnTurn, OnKill, OnAllyKilled, OnEnemyKilled, OnFieldChanged
 // Still needing to be implemented: OnDeath
@@ -9,13 +10,66 @@ public enum Trigger
 
 public abstract class StatusEffect
 {
+    /// <summary>Designates which cards the status effect can be applied to.</summary>
     public TargetCriteria TargetCriteria { get; set; }
+
+    /// <summary>
+    /// Designates when the status effect is applied and when it should be reapplied/updated.
+    /// Defaults to <c>OnPlay</c>.
+    /// </summary>
     public Trigger Trigger { get; set; }
+
+    /// <summary>
+    /// Designates which cards contribute to the status effect's <see cref="Multiplier"/>.
+    /// Only applicable when the <see cref="Trigger"/> is set to <c>OnFieldChange</c>.
+    /// </summary>
+    /// <example>
+    /// Used when a status effect increases the ATTACK stat by 2 per friendly ICE monster on the field.
+    /// <code>
+    /// StatEffect statEffect = new StatEffect
+    /// {
+    ///     Trigger = Trigger.OnFieldChange,
+    ///     AffectingCardCriteria = new TargetCriteria
+    ///     {
+    ///         Affinities = {CardInfo.CardAffinity.Ice},
+    ///         CardTypes = {CardInfo.CardType.Monster},
+    ///         AllyOnly = true
+    ///     },
+    ///     AttackMod = 2
+    /// }
+    /// </code>
+    /// </example>
     public TargetCriteria AffectingCardCriteria { get; set; }
-    public int Counter { get; set; }
-    protected int Multiplier { get; set; }
+
+    /// <summary>
+    /// Used when an effect can be applied to one type of card, but only takes affect against another.
+    /// </summary>
+    /// <example>
+    /// Used when a status effect increases the ATTACK stat by 3, but only against FOREST monsters.
+    /// <code>
+    /// StatEffect statEffect = new StatEffect
+    /// {
+    ///     AppliesAgainstCriteria = new TargetCriteria
+    ///     {
+    ///         Affinities = {CardInfo.CardAffinity.Forest},
+    ///         CardTypes = {CardInfo.CardType.Monster}
+    ///     },
+    ///     AttackMod = 3
+    /// }
+    /// </code>
+    /// </example>
+    public TargetCriteria AppliesAgainstCriteria { get; set; }
+
+    /// <summary>
+    /// Gets the card that initially applied the status effect to its target.
+    /// Used to keep track of the source of a status effect.
+    /// </summary>
+    public Card CardAppliedBy { get; protected set; }
+
     protected Card CardAppliedTo { get; set; }
-    public Card CardAppliedBy { get; set; }
+    protected int Counter { get; set; }
+    protected int Multiplier { get; set; }
+
 
     protected StatusEffect()
     {
@@ -37,6 +91,11 @@ public abstract class StatusEffect
         {
             case Trigger.OnPlay:
                 Apply();
+                break;
+            case Trigger.OnKill:
+                CardMonster cardMonster = CardAppliedTo as CardMonster;
+                if (cardMonster == null) return;
+                Counter = cardMonster.Kills;
                 break;
             case Trigger.OnTurn:
                 if (cardAppliedTo.IsEnemyCard)
@@ -65,10 +124,10 @@ public abstract class StatusEffect
         }
     }
 
-    public virtual void Apply()
+    public virtual bool Apply()
     {
         // Return if the effect has not yet been applied to a card
-        if (CardAppliedTo == null) return;
+        if (CardAppliedTo == null) return false;
         // If the status effect already exists on the target, clear it's effects so it can be reapplied.
         if (CardAppliedTo.StatusEffects.Contains(this))
             Remove(false);
@@ -78,8 +137,8 @@ public abstract class StatusEffect
         {
             case Trigger.OnKill:
                 CardMonster cardMonster = CardAppliedTo as CardMonster;
-                if (cardMonster == null) return;
-                Multiplier = cardMonster.Kills;
+                if (cardMonster == null) return false;
+                Multiplier = cardMonster.Kills - Counter;
                 break;
             case Trigger.OnAllyKilled:
                 Multiplier = ActionQueue.AlliesKilled - Counter;
@@ -94,6 +153,18 @@ public abstract class StatusEffect
                 Multiplier = 1;
                 break;
         }
+
+        // Check if the status effect should only take affect when targeting cards matching a specific criteria
+        if (AppliesAgainstCriteria != null)
+        {
+            CardMonster cardMonster = CardAppliedTo as CardMonster;
+            if (cardMonster == null) return false;
+
+            // If current target does not match the criteria, then nullify the status effect
+            Multiplier *= AppliesAgainstCriteria.Matches(cardMonster.Target) ? 1 : 0;
+        }
+
+        return true;
     }
 
     public virtual void Remove(bool complete)
@@ -146,6 +217,7 @@ public abstract class StatusEffect
         statusEffect.TargetCriteria = TargetCriteria;
         statusEffect.Trigger = Trigger;
         statusEffect.AffectingCardCriteria = AffectingCardCriteria;
+        statusEffect.AppliesAgainstCriteria = AppliesAgainstCriteria;
         statusEffect.Counter = Counter;
         statusEffect.Multiplier = Multiplier;
         return statusEffect;
@@ -159,9 +231,9 @@ public class StatEffect : StatusEffect
     public int Attack { get; private set; }
     public int Defense { get; private set; }
 
-    public override void Apply()
+    public override bool Apply()
     {
-        base.Apply();
+        if (!base.Apply()) return false;
 
         Attack = AttackMod * Multiplier;
         Defense = DefenseMod * Multiplier;
@@ -182,6 +254,8 @@ public class StatEffect : StatusEffect
             default:
                 throw new ArgumentOutOfRangeException();
         }
+
+        return true;
     }
 
     public override void Remove(bool complete)
@@ -216,6 +290,22 @@ public class StatEffect : StatusEffect
             Defense = Defense
         });
     }
+
+    public override string ToString()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (AttackMod != 0)
+        {
+            stringBuilder.AppendFormat("{0}{1} ATK", Attack < 0 ? "- " : Attack > 0 ? "+ " : "", Attack);
+            stringBuilder.AppendLine();
+        }
+        if (DefenseMod != 0)
+        {
+            stringBuilder.AppendFormat("{0}{1} DEF", Defense < 0 ? "- " : Defense > 0 ? "+ " : "", Defense);
+            stringBuilder.AppendLine();
+        }
+        return stringBuilder.ToString();
+    }
 }
 
 public class ConfusionEffect : StatusEffect
@@ -223,11 +313,14 @@ public class ConfusionEffect : StatusEffect
     public float ChanceMod { get; set; }
     public float Chance { get; private set; }
 
-    public override void Apply()
+    public override bool Apply()
     {
-        base.Apply();
+        if (!base.Apply()) return false;
 
         Chance = ChanceMod * Multiplier;
+        if (Chance > 1.0f) Chance = 1.0f;
+
+        return true;
     }
 
     public override StatusEffect Clone()
@@ -239,29 +332,105 @@ public class ConfusionEffect : StatusEffect
         });
     }
 
+    public override string ToString()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.AppendFormat("{0}{1}% C", Chance < 0 ? "- " : Chance > 0 ? "+ " : "", Chance * 100);
+        stringBuilder.AppendLine();
+        return stringBuilder.ToString();
+    }
 }
 
-public class HealEffect : StatusEffect
+public class HealthEffect : StatusEffect
 {
-    public int HealMod { get; set; }
-    public int Heal { get; private set; }
+    public int HealthMod { get; set; }
+    public int Health { get; private set; }
+    public bool AffectPlayer { get; set; }
+    public bool AffectEnemy { get; set; }
 
-    public override void Apply()
+    public override bool Apply()
     {
-        base.Apply();
+        if (!base.Apply()) return false;
 
-        Heal = HealMod * Multiplier;
+        Health = HealthMod * Multiplier;
 
-        RaeyzPlayer player = CardAppliedTo.IsEnemyCard ? CardAppliedTo.Client.Game.EnemyPlayer : CardAppliedTo.Client.Game.ClientPlayer;
-        player.damagePlayer(-Heal);
+        RaeyzPlayer player;
+        if (AffectPlayer)
+        {
+            player = CardAppliedTo.Client.Game.ClientPlayer;
+            player.damagePlayer(-Health);
+        }
+        if (AffectEnemy)
+        {
+            player = CardAppliedTo.Client.Game.EnemyPlayer;
+            player.damagePlayer(-Health);
+        }
+
+        return true;
+    }
+
+    public override void Remove(bool complete)
+    {
+        base.Remove(complete);
+        RaeyzPlayer player;
+        if (AffectPlayer)
+        {
+            player = CardAppliedTo.Client.Game.ClientPlayer;
+            player.damagePlayer(Health);
+        }
+        if (AffectEnemy)
+        {
+            player = CardAppliedTo.Client.Game.EnemyPlayer;
+            player.damagePlayer(Health);
+        }
     }
 
     public override StatusEffect Clone()
     {
-        return base.Clone(new HealEffect
+        return base.Clone(new HealthEffect
         {
-            HealMod = HealMod,
-            Heal = Heal
+            HealthMod = HealthMod,
+            Health = Health,
+            AffectPlayer = AffectPlayer,
+            AffectEnemy = AffectEnemy
         });
+    }
+
+    public override string ToString()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.AppendFormat("{0}{1} LP", HealthMod < 0 ? "- " : HealthMod > 0 ? "+ " : "", HealthMod);
+        stringBuilder.AppendLine();
+        stringBuilder.Append("<size=75>");
+        stringBuilder.AppendFormat("to {0}", AffectPlayer ? AffectEnemy ? "both players" : "the player" : "the enemy");
+        stringBuilder.AppendLine();
+        switch (Trigger)
+        {
+            case Trigger.OnPlay:
+                stringBuilder.Append("on play");
+                break;
+            case Trigger.OnTurn:
+                stringBuilder.Append("per turn");
+                break;
+            case Trigger.OnKill:
+                stringBuilder.Append("per kill");
+                break;
+            case Trigger.OnDeath:
+                stringBuilder.Append("on death");
+                break;
+            case Trigger.OnAllyKilled:
+                stringBuilder.Append("/ ally killed");
+                break;
+            case Trigger.OnEnemyKilled:
+                stringBuilder.Append("/ enemy killed");
+                break;
+            case Trigger.OnFieldChange:
+                stringBuilder.Append("on condition");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        stringBuilder.Append("</size>");
+        return stringBuilder.ToString();
     }
 }
