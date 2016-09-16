@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -8,7 +9,8 @@ using UnityEngine.UI;
 //theredhex FFBDBD
 //fontfordesc antipasto : avantgarde : sentrygothic
 
-public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
+public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler,
+    IPointerExitHandler, IPointerClickHandler, IDropHandler {
 
 	public enum States {
 
@@ -24,14 +26,18 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     protected Transform ParentToReturnTo;
 	protected States StateToReturnTo;
 
-	public GameObject FullInfoCanvas, StatOverlay, LcMenu, DeathHandler, SelectedIndicator, StatusEffectInfoPrefab;
+	public GameObject FullInfoCanvas, StatOverlay, LcMenu, DeathHandler, SelectedIndicator;
 	public ClientGame Client;
 
     // ReSharper disable once InconsistentNaming
 	public int UID { get; set; }
 	public CardInfo CardInfo { get; set; }
-	public States State { get; set; }
+	public States State { get; private set; }
     public List<StatusEffect> StatusEffects { get; set; }
+
+    //public delegate void StateChangedEventHandler(StateChangedEventArgs e);
+
+    public event EventHandler StateChangedEvent;
 
     public virtual void Start () {
 
@@ -62,7 +68,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 				GetComponent<Canvas> ().sortingOrder -= 100;
 				returnToParent();
 
-				State = StateToReturnTo == States.EXPANDINHAND ? States.INHAND : StateToReturnTo;
+				ChangeState(StateToReturnTo == States.EXPANDINHAND ? States.INHAND : StateToReturnTo);
 
 				GameObject.FindGameObjectWithTag("blockRays").GetComponent<BoxCollider2D>().enabled = false;
 			} else if (State == States.INPLAY && Client.isCardSelected(this)) {	//deselects this CurrentCard
@@ -93,7 +99,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	/// <param name="uid">The unique ID to assign.</param>
 	public void createUID(int uid) {
 		UID = uid;
-		Debug.Log (string.Format("CardAppliedTo assigned UID: {0}", UID));
+		Debug.Log (string.Format("Card assigned UID: {0}", UID));
 	}
 
     public virtual void OnDestroy()
@@ -103,7 +109,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public virtual void OnPlay()
     {
-        State = States.INPLAY;
+        ChangeState(States.INPLAY);
     }
 
     public virtual void sendCardToGraveyard ()
@@ -113,7 +119,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 			Vector3 pos = this.transform.localPosition;
 			pos.y += 2.28f;
 			this.transform.localPosition = pos;
-			State = States.EXPANDINHAND;
+			ChangeState(States.EXPANDINHAND);
 		}
 		if (LcMenu.activeSelf)
 			LcMenu.SetActive (false);
@@ -151,6 +157,15 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
     }
 
+    public void ReturnToHand()
+    {
+        if (State == States.INHAND || State == States.EXPANDINHAND) return;
+
+        ChangeState(States.INHAND);
+        ParentToReturnTo = GameObject.Find(IsEnemyCard ? "enemyHand" : "playerHand").transform;
+        if (IsEnemyCard) setCardFOW(true);
+        returnToParent();
+    }
 
     public virtual bool dragPass()
 	{
@@ -184,14 +199,14 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		this.GetComponent<GraphicRaycaster> ().enabled = false;
 	}
 
-	public void endDrag() {
+	public virtual void endDrag() {
 		
 		Client.Dragging = false;
 		Client.CardDragged = null;
 
-		this.returnToParent ();
+	    this.returnToParent ();
 		if (State == States.EXPANDINHAND)
-			State = States.INHAND;
+			ChangeState(States.INHAND);
 		
 		if (this.GetComponent<Canvas> ().sortingOrder > 99)
 			this.GetComponent<Canvas> ().sortingOrder -= 100;
@@ -221,7 +236,20 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		endDrag ();
 	}
 
-	public virtual void OnPointerClick(PointerEventData eventData) {
+    public virtual void OnDrop(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right) return;
+
+        Card card = eventData.pointerDrag.GetComponent<Card>();
+        if (!card.dragPass()) return;
+        if (card is CardUnique)
+        {
+            CardUnique cardUnique = (CardUnique) card;
+            if (cardUnique.canTarget(this)) cardUnique.OnPlay(this);
+        }
+    }
+
+    public virtual void OnPointerClick(PointerEventData eventData) {
 
 		if (Client.Dragging || DeathHandler.activeSelf || FowActive)
 			return;
@@ -244,7 +272,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 			FullInfoCanvas.SetActive (true);
 			this.transform.localPosition = new Vector3(-3.33f, 0.0f, 0.0f);
 			StateToReturnTo = State;
-			State = States.INFO;
+			ChangeState(States.INFO);
 
 			GameObject.FindGameObjectWithTag("blockRays").GetComponent<BoxCollider2D>().enabled = true;
 
@@ -280,7 +308,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 //			parentToReturnTo = this.transform.parent;
 //			this.transform.SetParent(null);
 	        this.transform.localPosition = pos;
-	        State = States.EXPANDINHAND;
+	        ChangeState(States.EXPANDINHAND);
 	    }
 	    else
 	    {
@@ -300,10 +328,28 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 				pos.y -= 2.28f;
 //			this.transform.SetParent (parentToReturnTo);
 			this.transform.localPosition = pos;
-			State = States.INHAND;
+			ChangeState(States.INHAND);
 		}
 		if (LcMenu.activeSelf && !Client.Awakening)
 			LcMenu.SetActive (false);
 	    GameObject.Find("StatusEffectInfo").GetComponent<StatusEffectInfo>().UpdateList(null);
 	}
+
+    public void ChangeState(States state)
+    {
+        State = state;
+        if (State == States.INHAND) GetComponent<Canvas>().sortingOrder = 10;
+        EventHandler handler = StateChangedEvent;
+        if (handler != null) handler.Invoke(this, new StateChangedEventArgs(State));
+    }
+}
+
+public class StateChangedEventArgs : EventArgs
+{
+    public Card.States State { get; private set; }
+
+    public StateChangedEventArgs(Card.States state)
+    {
+        State = state;
+    }
 }

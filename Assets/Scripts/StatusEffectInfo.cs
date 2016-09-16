@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StatusEffectInfo : MonoBehaviour
 {
@@ -12,9 +11,15 @@ public class StatusEffectInfo : MonoBehaviour
 
         foreach (StatusEffect statusEffect in card.StatusEffects)
         {
+            // If card contains DISSIPATE effect then hide all other effects
+            if (statusEffect is DissipateEffect)
+                foreach (Transform child in transform) Destroy(child.gameObject);
+
             GameObject statusEffectInfoElement = Instantiate(StatusEffectInfoElementPrefab);
-            statusEffectInfoElement.GetComponent<StatusEffectInfoElement>().StatusEffect = statusEffect;
+            statusEffectInfoElement.GetComponent<StatusEffectInfoElement>().SetStatusEffect(statusEffect);
             statusEffectInfoElement.transform.SetParent(transform);
+
+            if (statusEffect is DissipateEffect) break;
         }
     }
 }

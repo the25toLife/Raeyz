@@ -19,6 +19,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 	// Update is called once per frame
 	public void Update () {
 
+	    if (CurrentCard != null && CurrentCard.State == Card.States.INHAND) setCard(null);
 	    if (Client != null && Client.Dragging)
 	    {
 	        if (canDrop(Client.CardDragged))
@@ -65,11 +66,10 @@ public class Slot : MonoBehaviour, IDropHandler {
 
 	public void OnDrop(PointerEventData eventData)
 	{
-
 	    if (eventData.button == PointerEventData.InputButton.Right) return;
 
 		Card c = eventData.pointerDrag.GetComponent<Card> ();
-		if (!canDrop (c))
+	    if (!canDrop (c))
 			return;
 		if (c is CardMonster && (c as CardMonster).hasPair())
 			setMultiCard(c as CardMonster, (c.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairL) ? -1 : 1));
@@ -79,9 +79,10 @@ public class Slot : MonoBehaviour, IDropHandler {
 
 	public void setCard(Card c) {
 		CurrentCard = c;
+	    if (CurrentCard == null) return;
 		c.GetComponent<Canvas> ().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 2;
 		c.changeReturnParent(transform);
-		c.State = Card.States.INPLAY;
+		c.ChangeState(Card.States.INPLAY);
 
 	    Client.Game.playCard (c, SlotID);
 

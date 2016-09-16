@@ -74,11 +74,7 @@ public class CardStatComponent : MonoBehaviour {
 			break;
 		case (StatType.AFFINITY):
 
-			if (c is MonsterInfo) {
-				
-				MonsterInfo m = (MonsterInfo)c;
-				this.GetComponent<Text>().text = m.GetAffinity().ToString().ToLower();
-			}
+            this.GetComponent<Text>().text = c.GetAffinity().ToString().ToLower();
 			break;
 		case (StatType.AFFICO):
 			

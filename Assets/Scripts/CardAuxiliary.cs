@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,13 +6,6 @@ public class CardAuxiliary : Card
 {
 
     private CardMonster _cardMonster;
-
-
-/*
-	public override void Start() {
-		base.Start ();
-	}
-*/
 
     public override void Update()
     {
@@ -25,7 +19,7 @@ public class CardAuxiliary : Card
         if (_cardMonster == null) return;
         foreach (StatusEffect statusEffect in _cardMonster.StatusEffects.ToArray())
         {
-            if (statusEffect.CardAppliedBy.UID == UID) statusEffect.Remove(true);
+            if (statusEffect.CardAppliedBy != null && statusEffect.CardAppliedBy.UID == UID) statusEffect.Remove(true);
         }
     }
 
@@ -41,19 +35,18 @@ public class CardAuxiliary : Card
 	            Image image = transform.Find("CardImage").GetComponent<Image>();
 	            image.sprite = s;
 	        }
+	        foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
+	            csc.changeStat(CardInfo);
 	    }
 	    else
 	    {
 	        Debug.LogError("Cannot change auxiliary card (UID:" + UID + ") to contain " + ci.GetType());
 	    }
-		
-		foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
-			csc.changeStat(CardInfo);
 	}
 
 	public override bool canTarget (Card target)
 	{
-	    return CardInfo.TargetCriteria.Matches(target);
+	    return (CardInfo.TargetCriteria.Matches(target) && !target.StatusEffects.OfType<DissipateEffect>().Any());
 	}
 
 	public override void assignTarget (Card target) {

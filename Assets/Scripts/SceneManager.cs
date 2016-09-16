@@ -41,8 +41,9 @@ public class SceneManager : LoadBalancingClient
 	public const byte EvStageChanged = 3;
 	public const byte EvGraveCard = 4;
 	public const byte EvPlayCard = 5;
-	public const byte EvDefenseToggle = 6;
-	public const byte EvAttack = 7;
+    public const byte EvPlayCardWithTarget = 6;
+    public const byte EvDefenseToggle = 7;
+	public const byte EvAttack = 8;
 
     public event EventHandler TurnStart, EnemyTurnStart;
 
@@ -163,7 +164,17 @@ public class SceneManager : LoadBalancingClient
 		this.loadBalancingPeer.OpRaiseEvent(EvPlayCard, content, true, new RaiseEventOptions() { CachingOption = EventCaching.AddToRoomCache });
 	}
 
-	/// <summary>
+    public void SendPlayCardWithTargetEv(int uid, int targetUid)
+    {
+
+        Hashtable content = new Hashtable();
+        content[(byte) 1] = uid;
+        content[(byte) 2] = targetUid;
+        this.loadBalancingPeer.OpRaiseEvent(EvPlayCardWithTarget, content, true,
+            new RaiseEventOptions() {CachingOption = EventCaching.AddToRoomCache});
+    }
+
+    /// <summary>
 	/// Informs the other players this client has toggled the defense state of a CurrentCard.
 	/// </summary>
 	/// <param name="cid">The unique CurrentCard ID of the CurrentCard.</param>
@@ -292,6 +303,19 @@ public class SceneManager : LoadBalancingClient
 			//
 			//end
 
+            case EvPlayCardWithTarget:
+		        content = photonEvent.Parameters[ParameterCode.CustomEventContent];
+		        Hashtable playWithTargetInfo = content as Hashtable;
+		        if (playWithTargetInfo != null)
+		        {
+		            int uid = (int) playWithTargetInfo[(byte) 1];
+		            int targetUid = (int) playWithTargetInfo[(byte) 2];
+		            _clientGame.playEnemyCardWithTarget(uid, targetUid);
+
+		            Debug.Log(string.Format("Playing card with ID {0} targeting card with ID {1}", uid, targetUid));
+		        }
+		        break;
+
 		case (byte)EvDefenseToggle:
 
 			//thought this one would be fine but no.
@@ -414,11 +438,11 @@ public class SceneManager : LoadBalancingClient
 		dealCardToPlayer (c);
 		for (int i = 0; i < 4; i++)
 			dealCardToPlayer ();*/
-		dealCardToPlayer (CardPool.Cards [532]);
-		dealCardToPlayer (CardPool.Cards [4]);
-		dealCardToPlayer (CardPool.Cards [33]);
+		dealCardToPlayer (CardPool.Cards [421]);
+		dealCardToPlayer (CardPool.Cards [422]);
+		dealCardToPlayer (CardPool.Cards [392]);
 		dealCardToPlayer (CardPool.Cards [130]);
-		dealCardToPlayer (CardPool.Cards [520]);
+		dealCardToPlayer (CardPool.Cards [4]);
 
 		_stage = GameStage.PREP;
 	}

@@ -7,7 +7,7 @@ public class CardMultiPart : CardMonster {
 	public override void Start () {
 		base.Start ();
 
-		awakenCard ();
+		SetAwake (true);
 		setFullInfoAnimation ();
 	}
 
@@ -61,7 +61,7 @@ public class CardMultiPart : CardMonster {
 			FullInfoCanvas.SetActive (true);
 			this.transform.localPosition = new Vector3(-3.5f, 0.0f, 0.0f);
 			StateToReturnTo = State;
-			State = States.INFO;
+			ChangeState(States.INFO);
 			
 			GameObject.FindGameObjectWithTag("blockRays").GetComponent<BoxCollider2D>().enabled = true;
 

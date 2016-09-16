@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
+using UnityEngine;
 
 // Currently completed triggers include: OnPlay, OnTurn, OnKill, OnAllyKilled, OnEnemyKilled, OnFieldChanged
 // Still needing to be implemented: OnDeath
@@ -9,7 +11,10 @@ public enum Trigger
 }
 
 public abstract class StatusEffect
-{
+{/*
+    public const int UseAttackStat = 0x100;
+    public const int UseDefenseStat = 0x101;*/
+
     /// <summary>Designates which cards the status effect can be applied to.</summary>
     public TargetCriteria TargetCriteria { get; set; }
 
@@ -65,8 +70,16 @@ public abstract class StatusEffect
     /// Used to keep track of the source of a status effect.
     /// </summary>
     public Card CardAppliedBy { get; protected set; }
+    public int CardAppliedById { get; protected set; }
 
-    protected Card CardAppliedTo { get; set; }
+    /// <summary>
+    /// The number of turns that the status effect will be in play.
+    /// A value of 0 means the effect will immeadiately be removed and a value of -1 mean the effect will last
+    /// until removed, either by another effect or the removal of the the source card.
+    /// </summary>
+    public int Lifetime { get; set; }
+
+    protected virtual Card CardAppliedTo { get; set; }
     protected int Counter { get; set; }
     protected int Multiplier { get; set; }
 
@@ -75,6 +88,7 @@ public abstract class StatusEffect
     {
         TargetCriteria = new TargetCriteria();
         AffectingCardCriteria = new TargetCriteria();
+        Lifetime = -1;
         Trigger = Trigger.OnPlay;
     }
 
@@ -85,7 +99,12 @@ public abstract class StatusEffect
 
         // Set and add status effect to the target and create necessary event handlers
         CardAppliedBy = cardAppliedBy;
+        CardAppliedById = cardAppliedBy.CardInfo.GetId();
         CardAppliedTo = cardAppliedTo;
+
+        CardAppliedBy.StateChangedEvent += OnCardStateChanged;
+        CardAppliedTo.StateChangedEvent += OnCardStateChanged;
+
         CardAppliedTo.StatusEffects.Add(this);
         switch (Trigger)
         {
@@ -122,12 +141,23 @@ public abstract class StatusEffect
                 FieldManager.OnFieldChanged += ApplyOnTrigger;
                 break;
         }
+        if (Lifetime < 1)
+        {
+            if (Lifetime == 0) Remove(true);
+            return;
+        }
+        if (CardAppliedTo.IsEnemyCard)
+            CardAppliedTo.Client.Game.EnemyTurnStart += OnTurn;
+        else
+            CardAppliedTo.Client.Game.TurnStart += OnTurn;
     }
 
     public virtual bool Apply()
     {
         // Return if the effect has not yet been applied to a card
         if (CardAppliedTo == null) return false;
+        // Return if the card being affected is also under the effects of DISSIPATE
+        if (CardAppliedTo.StatusEffects.OfType<DissipateEffect>().Any() && !(this is DissipateEffect)) return false;
         // If the status effect already exists on the target, clear it's effects so it can be reapplied.
         if (CardAppliedTo.StatusEffects.Contains(this))
             Remove(false);
@@ -175,6 +205,8 @@ public abstract class StatusEffect
         // If a complete removal is needed, remove the status effect from the target and remove any event handlers
         if (complete)
         {
+            CardAppliedBy.StateChangedEvent -= OnCardStateChanged;
+            CardAppliedTo.StateChangedEvent -= OnCardStateChanged;
             CardAppliedTo.StatusEffects.Remove(this);
             switch (Trigger)
             {
@@ -202,12 +234,42 @@ public abstract class StatusEffect
                     FieldManager.OnFieldChanged -= ApplyOnTrigger;
                     break;
             }
+
+            if (Lifetime < 1) return;
+            if (CardAppliedTo.IsEnemyCard)
+                CardAppliedTo.Client.Game.EnemyTurnStart -= OnTurn;
+            else
+                CardAppliedTo.Client.Game.TurnStart -= OnTurn;
         }
     }
 
     private void ApplyOnTrigger(object sender, EventArgs e)
     {
         Apply();
+    }
+
+    private void OnCardStateChanged(object sender, EventArgs e)
+    {
+        StateChangedEventArgs args = e as StateChangedEventArgs;
+        if (args == null) return;
+        if (sender.Equals(CardAppliedBy))
+        {
+            if (args.State == Card.States.INHAND || args.State == Card.States.DISABLED)
+                Remove(true);
+        }
+        else if (sender.Equals(CardAppliedTo))
+        {
+            if (args.State == Card.States.INHAND)
+                Remove(true);
+        }
+    }
+
+    private void OnTurn(object sender, EventArgs e)
+    {
+        if (Lifetime < 1)
+            Remove(true);
+        else
+            Lifetime--;
     }
 
     public abstract StatusEffect Clone();
@@ -220,12 +282,30 @@ public abstract class StatusEffect
         statusEffect.AppliesAgainstCriteria = AppliesAgainstCriteria;
         statusEffect.Counter = Counter;
         statusEffect.Multiplier = Multiplier;
+        statusEffect.Lifetime = Lifetime;
         return statusEffect;
+    }
+
+    protected string ToString(string str)
+    {
+        if (Lifetime > 0)
+        {
+            StringBuilder stringBuilder = new StringBuilder(str);
+            stringBuilder.Append("<size=75>");
+            stringBuilder.AppendFormat("{0} turn{1} left", Lifetime, Lifetime > 1 ? "s" : "");
+            stringBuilder.Append("</size>");
+            return stringBuilder.ToString();
+        }
+
+        return str;
     }
 }
 
 public class StatEffect : StatusEffect
 {
+    public const int Zero = 0x200;
+    public const int Double = 0x201;
+
     public int AttackMod { get; set; }
     public int DefenseMod { get; set; }
     public int Attack { get; private set; }
@@ -235,14 +315,20 @@ public class StatEffect : StatusEffect
     {
         if (!base.Apply()) return false;
 
-        Attack = AttackMod * Multiplier;
-        Defense = DefenseMod * Multiplier;
-
         switch (CardAppliedTo.CardInfo.GetCardType())
         {
             case CardInfo.CardType.Monster:
                 CardMonster cardMonster = (CardMonster) CardAppliedTo;
                 MonsterInfo monsterInfo = (MonsterInfo) cardMonster.CardInfo;
+
+                if (AttackMod == Double) AttackMod = monsterInfo.Attack;
+                else if (AttackMod == Zero) AttackMod = -monsterInfo.Attack;
+
+                if (DefenseMod == Double) DefenseMod = monsterInfo.Defense;
+                else if (DefenseMod == Zero) DefenseMod = -monsterInfo.Defense;
+
+                Attack = AttackMod * Multiplier;
+                Defense = DefenseMod * Multiplier;
                 cardMonster.changeCard(monsterInfo + this);
                 break;
             case CardInfo.CardType.Auxiliary:
@@ -296,15 +382,50 @@ public class StatEffect : StatusEffect
         StringBuilder stringBuilder = new StringBuilder();
         if (AttackMod != 0)
         {
-            stringBuilder.AppendFormat("{0}{1} ATK", Attack < 0 ? "- " : Attack > 0 ? "+ " : "", Attack);
+            stringBuilder.AppendFormat("{0}{1} ATK", Attack > 0 ? "+ " : "", Attack);
             stringBuilder.AppendLine();
         }
         if (DefenseMod != 0)
         {
-            stringBuilder.AppendFormat("{0}{1} DEF", Defense < 0 ? "- " : Defense > 0 ? "+ " : "", Defense);
+            stringBuilder.AppendFormat("{0}{1} DEF", Defense > 0 ? "+ " : "", Defense);
             stringBuilder.AppendLine();
         }
-        return stringBuilder.ToString();
+        if (Trigger != Trigger.OnPlay && Trigger != Trigger.OnDeath)
+        {
+            stringBuilder.Append("<size=65>");
+            if (AttackMod != 0) stringBuilder.AppendFormat("{0}{1} ATK", Attack > 0 ? "+" : "", Attack);
+            if (AttackMod != 0 && DefenseMod != 0) stringBuilder.Append("  ");
+            if (DefenseMod != 0) stringBuilder.AppendFormat("{0}{1} DEF", Defense > 0 ? "+" : "", Defense);
+            stringBuilder.AppendLine();
+            switch (Trigger)
+            {
+                case Trigger.OnPlay:
+                    stringBuilder.Append("on play");
+                    break;
+                case Trigger.OnTurn:
+                    stringBuilder.Append("per turn");
+                    break;
+                case Trigger.OnKill:
+                    stringBuilder.Append("per kill");
+                    break;
+                case Trigger.OnDeath:
+                    stringBuilder.Append("on death");
+                    break;
+                case Trigger.OnAllyKilled:
+                    stringBuilder.Append("/ ally killed");
+                    break;
+                case Trigger.OnEnemyKilled:
+                    stringBuilder.Append("/ enemy killed");
+                    break;
+                case Trigger.OnFieldChange:
+                    stringBuilder.Append("on condition");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            stringBuilder.Append("</size>");
+        }
+        return base.ToString(stringBuilder.ToString());
     }
 }
 
@@ -335,16 +456,16 @@ public class ConfusionEffect : StatusEffect
     public override string ToString()
     {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.AppendFormat("{0}{1}% C", Chance < 0 ? "- " : Chance > 0 ? "+ " : "", Chance * 100);
+        stringBuilder.AppendFormat("{0}{1}% CON", Chance < 0 ? "- " : Chance > 0 ? "+ " : "", Chance * 100);
         stringBuilder.AppendLine();
-        return stringBuilder.ToString();
+        return base.ToString(stringBuilder.ToString());
     }
 }
 
 public class HealthEffect : StatusEffect
 {
     public int HealthMod { get; set; }
-    public int Health { get; private set; }
+    public int Health { get; protected set; }
     public bool AffectPlayer { get; set; }
     public bool AffectEnemy { get; set; }
 
@@ -352,7 +473,8 @@ public class HealthEffect : StatusEffect
     {
         if (!base.Apply()) return false;
 
-        Health = HealthMod * Multiplier;
+
+        Health = HealthMod;
 
         RaeyzPlayer player;
         if (AffectPlayer)
@@ -369,7 +491,7 @@ public class HealthEffect : StatusEffect
         return true;
     }
 
-    public override void Remove(bool complete)
+/*    public override void Remove(bool complete)
     {
         base.Remove(complete);
         RaeyzPlayer player;
@@ -383,7 +505,7 @@ public class HealthEffect : StatusEffect
             player = CardAppliedTo.Client.Game.EnemyPlayer;
             player.damagePlayer(Health);
         }
-    }
+    }*/
 
     public override StatusEffect Clone()
     {
@@ -431,6 +553,125 @@ public class HealthEffect : StatusEffect
                 throw new ArgumentOutOfRangeException();
         }
         stringBuilder.Append("</size>");
-        return stringBuilder.ToString();
+        return base.ToString(stringBuilder.ToString());
     }
 }
+
+public class DissipateEffect : StatusEffect
+{
+    public override bool Apply()
+    {
+        if (!base.Apply()) return false;
+
+        foreach (var statusEffect in CardAppliedTo.StatusEffects.ToArray())
+        {
+            if (statusEffect != this)
+                statusEffect.Remove(statusEffect.CardAppliedBy == null);
+        }
+
+        return true;
+    }
+
+    public override void Remove(bool complete)
+    {
+        base.Remove(complete);
+
+        if (complete)
+        {
+            foreach (var statusEffect in CardAppliedTo.StatusEffects.ToArray())
+            {
+                statusEffect.Remove(true);
+                statusEffect.AddToCard(CardAppliedTo, statusEffect.CardAppliedBy);
+            }
+        }
+    }
+
+    public override StatusEffect Clone()
+    {
+        return base.Clone(new DissipateEffect());
+    }
+
+    public override string ToString()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.AppendLine("IMMUNE");
+        stringBuilder.Append("<size=75>");
+        stringBuilder.AppendFormat("to status effects");
+        stringBuilder.AppendLine();
+        stringBuilder.Append("</size>");
+        return base.ToString(stringBuilder.ToString());
+    }
+}
+
+public class ReturnCardEffect : StatusEffect
+{
+    public bool UnawakenMonster { get; set; }
+
+    public ReturnCardEffect()
+    {
+        Lifetime = 0;
+        UnawakenMonster = false;
+    }
+
+    public override bool Apply()
+    {
+        if (!base.Apply()) return false;
+
+        CardAppliedTo.ReturnToHand();
+        if (CardAppliedTo is CardMonster && UnawakenMonster)
+        {
+            CardMonster cardMonster = (CardMonster) CardAppliedTo;
+            cardMonster.SetAwake(false);
+        }
+
+        return true;
+    }
+
+    public override StatusEffect Clone()
+    {
+        return base.Clone(new ReturnCardEffect
+        {
+            UnawakenMonster = UnawakenMonster
+        });
+    }
+
+    public override string ToString()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.AppendLine("RETURN");
+        stringBuilder.Append("<size=75>");
+        stringBuilder.AppendFormat("to hand");
+        stringBuilder.AppendLine();
+        stringBuilder.Append("</size>");
+        return base.ToString(stringBuilder.ToString());
+    }
+}
+
+/*public class TimeEffect : StatusEffect
+{
+    public int LifetimeMod { get; set; }
+    public int LifetimeChange { get; private set; }
+
+    public TimeEffect()
+    {
+        Lifetime = 0;
+    }
+
+    public override bool Apply()
+    {
+        if (!base.Apply()) return false;
+
+        foreach (var statusEffect in CardAppliedTo.StatusEffects.ToArray())
+        {
+            if (statusEffect != this)
+                statusEffect.Remove(statusEffect.CardAppliedBy == null);
+        }
+
+        return true;
+    }
+
+    public override StatusEffect Clone()
+    {
+        return base.Clone(new TimeEffect());
+    }
+}*/

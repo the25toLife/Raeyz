@@ -10,6 +10,7 @@ public class TargetCriteria
     public List<CardInfo.CardType> CardTypesBlacklist { get; set; }
     public List<int> CardIds { get; set; }
     public List<int> CardIdsBlacklist { get; set; }
+    public List<Card.States> States { get; set; }
     public bool AllyOnly { get; set; }
     public bool EnemyOnly { get; set; }
 
@@ -22,6 +23,7 @@ public class TargetCriteria
         CardTypesBlacklist = new List<CardInfo.CardType>();
         CardIds = new List<int>();
         CardIdsBlacklist = new List<int>();
+        States = new List<Card.States> {Card.States.INPLAY};
         AllyOnly = EnemyOnly = false;
     }
 
@@ -51,6 +53,9 @@ public class TargetCriteria
         // Check card ID requirements if they exist
         if (CardIds.Count > 0 && !CardIds.Contains(card.CardInfo.GetId())) return false;
         if (CardIdsBlacklist.Count > 0 && CardIdsBlacklist.Contains(card.CardInfo.GetId())) return false;
+
+        // Check card state requirements if they exist
+        if (States.Count > 0 && !States.Contains(card.State)) return false;
 
         // Check player affiliation requirements if they exist
         // If AllyOnly and EnemyOnly equal either player is assumed to be a valid target

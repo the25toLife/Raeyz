@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ public class CardMonster : Card {
 
 	private bool _defending, _cardLocked;
 	public CardMonster PairCard { get; private set; }
-	public Card Target { get; private set; }
+	public CardMonster Target { get; set; }
     public int Kills { get; set; }
 
 	public override void Start() {
@@ -33,9 +34,22 @@ public class CardMonster : Card {
 
 	public override void assignTarget(Card target) {
 
-	    Target = target;
+	    if (target == null && Target != null)
+	    {
+	        Target.Target = null;
+	        foreach (var statusEffect in Target.StatusEffects)
+	            if (statusEffect.AppliesAgainstCriteria != null) statusEffect.Apply();
+	    }
+	    Target = target as CardMonster;
 	    foreach (var statusEffect in StatusEffects)
 	        if (statusEffect.AppliesAgainstCriteria != null) statusEffect.Apply();
+
+	    if (Target != null)
+	    {
+	        Target.Target = this;
+	        foreach (var statusEffect in Target.StatusEffects)
+	            if (statusEffect.AppliesAgainstCriteria != null) statusEffect.Apply();
+	    }
 
 	    attackMonster (Target);
 	}
@@ -112,12 +126,12 @@ public class CardMonster : Card {
 		if (!IsEnemyCard) Client.Game.SendDefenseToggleEv (this.UID, this.isDefending ());
 	}
 	
-	public bool awakenCard() {
+	public bool SetAwake(bool awake) {
 		
-		this._cardLocked = false;
-		Locked.SetActive(false);
-		AwakenMenuItem.SetActive(false);
-		return true;
+		_cardLocked = !awake;
+		Locked.SetActive(!awake);
+		AwakenMenuItem.SetActive(!awake);
+	    return true;
 	}
 
 	public bool hasPair() {
@@ -176,7 +190,28 @@ public class CardMonster : Card {
 			PairCard.endDrag();
 	}
 
-	public override void OnPointerClick(PointerEventData eventData)
+    public override void OnDrop(PointerEventData eventData)
+    {
+        base.OnDrop(eventData);
+        if (eventData.button == PointerEventData.InputButton.Right) return;
+
+        // Allows auxiliary cards to be dropped on a monster card in order to play it
+        Card card = eventData.pointerDrag.GetComponent<Card>();
+        if (!card.dragPass()) return;
+        if (card is CardAuxiliary)
+        {
+            CardAuxiliary cardAuxiliary = (CardAuxiliary) card;
+            if (cardAuxiliary.canTarget(this))
+            {
+                Slot slot = GetComponentInParent<Slot>();
+                if (slot == null) return;
+                Slot auxiliarySlot = GameObject.Find(String.Format("playerAux{0}", slot.SlotID)).GetComponent<Slot>();
+                if (auxiliarySlot != null && auxiliarySlot.CurrentCard == null) auxiliarySlot.setCard(cardAuxiliary);
+            }
+        }
+    }
+
+    public override void OnPointerClick(PointerEventData eventData)
 	{
 		base.OnPointerClick (eventData);
 

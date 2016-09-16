@@ -331,6 +331,8 @@ MonoBehaviour:
     type: 2}
   AuxCardPrefab: {fileID: 1000011979532062, guid: 57ac6d88d9fc6284ca385f4936ece8b0,
     type: 2}
+  UniqueCardPrefab: {fileID: 1000012717368680, guid: f2239508cfe16484f93a5d9ecc9da767,
+    type: 2}
   MultiCardPrefab: {fileID: 152292, guid: d4c8abb2174f84141a19a4d0704b43ec, type: 2}
   CardMenu: {fileID: 723401103}
   CardMenuItem: {fileID: 167920, guid: 94d99daa028e2e9448e7f3cdd217a0dd, type: 2}
@@ -1266,7 +1268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SlotID: 23
-  SlotType: 3
+  SlotType: 4
   Client: {fileID: 0}
   MultiCardPrefab: {fileID: 0}
   MonsterSlot: {fileID: 0}
@@ -2978,6 +2980,7 @@ GameObject:
   - 4: {fileID: 1241687522}
   - 212: {fileID: 1241687521}
   - 114: {fileID: 1241687523}
+  - 61: {fileID: 1241687524}
   m_Layer: 0
   m_Name: playerUnique
   m_TagString: Untagged
@@ -3043,10 +3046,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SlotID: 11
-  SlotType: 3
+  SlotType: 4
   Client: {fileID: 100432028}
   MultiCardPrefab: {fileID: 0}
   MonsterSlot: {fileID: 0}
+--- !u!61 &1241687524
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1241687520}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Size: {x: 2.22, y: 3.01}
 --- !u!1 &1344327710
 GameObject:
   m_ObjectHideFlags: 0

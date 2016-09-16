@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 
 public enum CardRelation {
 	PairL, PairR, Summon
@@ -9,7 +8,7 @@ public class CardInfo {
 	
 	public enum CardType
 	{
-		Monster, Auxiliary, Ruse, Unique
+		Monster, Auxiliary, Ruse, Unique, UniqueField
 	}	
 
 	public enum CardAffinity
@@ -127,36 +126,54 @@ public class MonsterInfo : CardInfo
     }
 }
 
-public class AuxiliaryInfo : CardInfo {
+public class SpecialInfo : CardInfo {
 
     public List<StatusEffect> StatusEffects { get; private set; }
 	
-	public AuxiliaryInfo(int idPar, string namePar, CardAffinity affinityPar, string descPar)
-	    : base(idPar, namePar, CardType.Auxiliary, affinityPar, descPar)
+	public SpecialInfo(int idPar, string namePar, CardType cardTypePar, CardAffinity affinityPar, string descPar)
+	    : base(idPar, namePar, cardTypePar, affinityPar, descPar)
 	{
 
 	    StatusEffects = new List<StatusEffect>();
 
-	    // Define default auxiliary target conditions
-	    // Can only target friendly monster cards of the same affinity
+	    // Define default special target conditions
+	    // Can only target cards of the same affinity
 	    TargetCriteria = new TargetCriteria
 	    {
 	        Affinities = new List<CardAffinity>
 	        {
 	            affinityPar
-	        },
-	        CardTypes = new List<CardType>
-	        {
-	            CardType.Monster
-	        },
-	        AllyOnly = true
+	        }
 	    };
 	}
 
-    public AuxiliaryInfo RegisterEffect(StatusEffect statusEffect)
+    public SpecialInfo RegisterEffect(StatusEffect statusEffect)
     {
         StatusEffects.Add(statusEffect);
         return this;
+    }
+}
+
+public class AuxiliaryInfo : SpecialInfo
+{
+
+    public AuxiliaryInfo(int idPar, string namePar, CardAffinity affinityPar, string descPar)
+        : base(idPar, namePar, CardType.Auxiliary, affinityPar, descPar)
+    {
+        // Define default auxiliary target conditions
+        // Can only target friendly monster cards of the same affinity
+        TargetCriteria = new TargetCriteria
+        {
+            Affinities = new List<CardAffinity>
+            {
+                affinityPar
+            },
+            CardTypes = new List<CardType>
+            {
+                CardType.Monster
+            },
+            AllyOnly = true
+        };
     }
 }
 
@@ -791,8 +808,29 @@ public static class CardPool {
             "Increases a WATER monster's ATTACK by 3.")
             .RegisterEffect(new StatEffect {AttackMod = 3}),
         null,
-        null,
-        null,
+        new SpecialInfo(422, "Ultimate Sacrifice", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+            "Sacrifice LP equal to a targeted monster's ATTACK in order to double their ATTACK for 3 turns.")
+            {
+                TargetCriteria =
+                {
+                    CardTypes = {CardInfo.CardType.Monster}
+                }
+            }
+            .RegisterEffect(new StatusEffect422())
+            .RegisterEffect(new StatEffect {Lifetime = 3, AttackMod = StatEffect.Double}),
+	    // Still buggy, setting stats to zero doesnt work too well
+        new SpecialInfo(423, "Price of Loyalty", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+            "Completely drain a friendly monster's ATTACK and DEFENSE and convert the sum to LP. " +
+            "[CURRENTLY BUGGED: DRAINING DOES NOT WORK RIGHT.]")
+            {
+                TargetCriteria =
+                {
+                    CardTypes = {CardInfo.CardType.Monster},
+                    AllyOnly = true
+                }
+            }
+            .RegisterEffect(new StatusEffect423())
+            .RegisterEffect(new StatEffect {AttackMod = StatEffect.Zero, DefenseMod = StatEffect.Zero}),
         null,
         null,
         null,
@@ -818,14 +856,23 @@ public static class CardPool {
         null,
         null,
         new AuxiliaryInfo(441, "Valiant Rage", CardInfo.CardAffinity.All,
-            "Increases a monster's ATTACK by 1 for each fallen ally")
+            "Increases a monster's ATTACK by 1 for each fallen ally.")
             .RegisterEffect(new StatEffect {AttackMod = 1, Trigger = Trigger.OnAllyKilled}),
         null,
         null,
         null,
         null,
         null,
-	    null,
+	    new SpecialInfo(447, "March of Victory", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Damages the opponent player's LP equal to a targeted friendly monster's ATTACK.")
+            {
+                TargetCriteria =
+                {
+                    CardTypes = {CardInfo.CardType.Monster},
+                    AllyOnly = true
+                }
+            }
+	        .RegisterEffect(new StatusEffect447()),
         new AuxiliaryInfo(448, "Daggerthorn", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 1.  FOREST monsters gain 2 ATTACK")
             .RegisterEffect(new StatEffect {AttackMod = 1 })
@@ -887,7 +934,9 @@ public static class CardPool {
             "Increases a monster's ATTACK by 1.")
 	        .RegisterEffect(new StatEffect {AttackMod = 1}),
 	    null,
-	    null,
+	    new AuxiliaryInfo(469, "Ancient Abjuration", CardInfo.CardAffinity.All,
+	        "Removes and prevents all status effects.")
+	        .RegisterEffect(new DissipateEffect()),
 	    null,
 	    null,
 	    null,
@@ -943,7 +992,16 @@ public static class CardPool {
 	    null,
 	    null,
 	    null,
-	    null,
+	    new SpecialInfo(504, "Bifrucation", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Returns an OMEGA monster to the owner's hand.  The monster must be awoken again to be played.")
+	        {
+	            TargetCriteria =
+	            {
+	                CardTypes = {CardInfo.CardType.Monster},
+	                LevelMin = 5
+	            }
+	        }
+	        .RegisterEffect(new ReturnCardEffect {UnawakenMonster = true}),
 	    null,
 	    null,
 	    null,
@@ -1045,14 +1103,36 @@ public static class CardPool {
 	            },
 	            AttackMod = 2
 	        }),
+	    new SpecialInfo(541, "Revokement", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Returns a special to the owner's hand.")
+            {
+                TargetCriteria =
+                {
+                    CardTypesBlacklist = {CardInfo.CardType.Monster}
+                }
+            }
+	        .RegisterEffect(new ReturnCardEffect()),
 	    null,
 	    null,
 	    null,
 	    null,
-	    null,
-	    null,
-	    null,
-	    null,
+	    new SpecialInfo(546, "Defy the Gods", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Increases S'gniwon's [#287] ATTACK by 10 for 1 turn.")
+            {
+                TargetCriteria =
+                {
+                    CardIds = {287},
+                    AllyOnly = true
+                }
+            }
+	        .RegisterEffect(new StatEffect
+	        {
+	            Lifetime = 1,
+	            AttackMod = 10
+	        }),
+	    new SpecialInfo(547, "Fallen Comrade", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Removes current status effects and prevents new ones from being applied to the target for 1 turn.")
+	        .RegisterEffect(new DissipateEffect {Lifetime = 0}),
 	    null,
 	    new AuxiliaryInfo(549, "Restricting Melody", CardInfo.CardAffinity.All,
 	        "Increases a monster's DEFENSE by 2, but lowers its ATTACK by 1")
