@@ -1,16 +1,11 @@
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardAuxiliary : Card
 {
 
     private CardMonster _cardMonster;
-
-
-/*
-	public override void Start() {
-		base.Start ();
-	}
-*/
 
     public override void Update()
     {
@@ -22,9 +17,9 @@ public class CardAuxiliary : Card
     {
         base.OnDestroy();
         if (_cardMonster == null) return;
-        foreach (StatusEffect statusEffect in ((AuxiliaryInfo) CardInfo).StatusEffects)
+        foreach (StatusEffect statusEffect in _cardMonster.StatusEffects.ToArray())
         {
-            statusEffect.Remove(_cardMonster, true);
+            if (statusEffect.CardAppliedBy != null && statusEffect.CardAppliedBy.UID == UID) statusEffect.Remove(true);
         }
     }
 
@@ -36,20 +31,22 @@ public class CardAuxiliary : Card
 	    {
 	        var s = Resources.Load("Cards/" + CardInfo.GetId(), typeof(Sprite)) as Sprite;
 	        if (s != null)
-	            GetComponent<SpriteRenderer>().sprite = s;
+	        {
+	            Image image = transform.Find("CardImage").GetComponent<Image>();
+	            image.sprite = s;
+	        }
+	        foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
+	            csc.changeStat(CardInfo);
 	    }
 	    else
 	    {
 	        Debug.LogError("Cannot change auxiliary card (UID:" + UID + ") to contain " + ci.GetType());
 	    }
-		
-		foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
-			csc.changeStat(CardInfo);
 	}
 
-	public override bool canTarget (Card target) {
-		return target.CardInfo.GetAffinity() == CardInfo.CardAffinity.All
-		       || target.CardInfo.GetAffinity() == CardInfo.GetAffinity();
+	public override bool canTarget (Card target)
+	{
+	    return (CardInfo.TargetCriteria.Matches(target) && !target.StatusEffects.OfType<DissipateEffect>().Any());
 	}
 
 	public override void assignTarget (Card target) {
@@ -61,9 +58,6 @@ public class CardAuxiliary : Card
         OnPlay();
         _cardMonster = target;
         foreach (StatusEffect statusEffect in ((AuxiliaryInfo) CardInfo).StatusEffects)
-        {
-            //if (statusEffect.Trigger == Trigger.OnPlay)
-                statusEffect.Apply(_cardMonster);
-        }
+            statusEffect.Clone().AddToCard(_cardMonster, this);
     }
 }

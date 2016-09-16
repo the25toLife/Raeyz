@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
 public class CardStatComponent : MonoBehaviour {
@@ -57,9 +56,9 @@ public class CardStatComponent : MonoBehaviour {
 			    MonsterInfo baseStatInfo = ((MonsterInfo) CardPool.Cards[m.GetId()-1]);
 			    Image image = GetComponent<Image>();
 			    image.sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", m.Defense), typeof(Sprite)) as Sprite;
-			    if (m.Attack < baseStatInfo.Attack)
+			    if (m.Defense < baseStatInfo.Defense)
 			        image.color = new Color(0.843f, 0.522f, 0.522f);
-			    else if (m.Attack > baseStatInfo.Attack)
+			    else if (m.Defense > baseStatInfo.Defense)
 			        image.color = new Color(0.580f, 0.804f, 0.902f);
 			    else
 			        image.color = Color.white;
@@ -75,11 +74,7 @@ public class CardStatComponent : MonoBehaviour {
 			break;
 		case (StatType.AFFINITY):
 
-			if (c is MonsterInfo) {
-				
-				MonsterInfo m = (MonsterInfo)c;
-				this.GetComponent<Text>().text = m.GetAffinity().ToString().ToLower();
-			}
+            this.GetComponent<Text>().text = c.GetAffinity().ToString().ToLower();
 			break;
 		case (StatType.AFFICO):
 			

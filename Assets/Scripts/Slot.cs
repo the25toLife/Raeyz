@@ -19,6 +19,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 	// Update is called once per frame
 	public void Update () {
 
+	    if (CurrentCard != null && CurrentCard.State == Card.States.INHAND) setCard(null);
 	    if (Client != null && Client.Dragging)
 	    {
 	        if (canDrop(Client.CardDragged))
@@ -56,9 +57,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 	            }
 	            break;
 	        case CardInfo.CardType.Auxiliary:
-	            if (MonsterSlot.CurrentCard == null ||
-	                (c.CardInfo.GetAffinity() != CardInfo.CardAffinity.All &&
-	                 MonsterSlot.CurrentCard.CardInfo.GetAffinity() != c.CardInfo.GetAffinity())) return false;
+	            if (MonsterSlot.CurrentCard == null || !c.canTarget(MonsterSlot.CurrentCard)) return false;
 	            break;
 	    }
 
@@ -67,11 +66,10 @@ public class Slot : MonoBehaviour, IDropHandler {
 
 	public void OnDrop(PointerEventData eventData)
 	{
-
 	    if (eventData.button == PointerEventData.InputButton.Right) return;
 
 		Card c = eventData.pointerDrag.GetComponent<Card> ();
-		if (!canDrop (c))
+	    if (!canDrop (c))
 			return;
 		if (c is CardMonster && (c as CardMonster).hasPair())
 			setMultiCard(c as CardMonster, (c.CardInfo.AssoCardInfo.ContainsKey (CardRelation.PairL) ? -1 : 1));
@@ -81,15 +79,16 @@ public class Slot : MonoBehaviour, IDropHandler {
 
 	public void setCard(Card c) {
 		CurrentCard = c;
-		c.GetComponent<SpriteRenderer> ().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 2;
+	    if (CurrentCard == null) return;
+		c.GetComponent<Canvas> ().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 2;
 		c.changeReturnParent(transform);
-		c.State = Card.States.INPLAY;
+		c.ChangeState(Card.States.INPLAY);
 
 	    Client.Game.playCard (c, SlotID);
 
 	    // Adds the card to the field manager.  Multipart cards are handled separately to prevent them from
 	    // being added to the field manager twice.
-	    if (!(c is CardMultiPart)) Client.Game.FieldManager.AddCardToField(c);
+	    if (!(c is CardMultiPart)) FieldManager.AddCardToField(c);
 
 	    if (CurrentCard is CardAuxiliary)
 	    {
@@ -128,7 +127,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 			}
 			mpc.returnToParent();
 
-		    Client.Game.FieldManager.AddCardToField(mpc);
+		    FieldManager.AddCardToField(mpc);
 		    Client.Dragging = false;
 			
 			Destroy(c.PairCard.gameObject);

@@ -26,17 +26,17 @@ public class ClientGame : MonoBehaviour
 	public Card CardDragged;
 	public CardMonster CardAwakening;
 
-	public GameObject PlayerHandObj, EnemyHandObj, PlayerMonsters, EnemyMonsters, MonsterCardPrefab, AuxCardPrefab, MultiCardPrefab, CardMenu, CardMenuItem;
+	public GameObject PlayerHandObj, EnemyHandObj, PlayerMonsters, EnemyMonsters, MonsterCardPrefab, AuxCardPrefab,
+	    UniqueCardPrefab, MultiCardPrefab, CardMenu, CardMenuItem;
 
     [UsedImplicitly]
-    private void Start () {
-
-		Application.runInBackground = true;
+    private void Start ()
+    {
+        Application.runInBackground = true;
 		CardPool.associateCards ();
 
 	    Game = new SceneManager {
-	        AppId = "d5b703ed-840c-4cc1-8771-ffa8f9a6b49c",
-	        FieldManager = FindObjectOfType<FieldManager>()
+	        AppId = "d5b703ed-840c-4cc1-8771-ffa8f9a6b49c"
 	    };
         Game.OnStateChangeAction += OnStateChanged;
 		Game.ConnectToRegionMaster ("us");
@@ -54,6 +54,7 @@ public class ClientGame : MonoBehaviour
 		if (Awakening && Input.GetKeyDown (KeyCode.Escape))
 			closeAwakenCardMenu ();
 
+	    if (Dragging && CardDragged == null) Dragging = false;
 	}
 	
 	public void OnGUI() {
@@ -263,13 +264,13 @@ public class ClientGame : MonoBehaviour
                             mpc.changeCard((c.CardInfo as MonsterInfo) + (ecmPair.CardInfo as MonsterInfo));
                             mpc.createUID(uid);
                             mpc.GetComponent<SpriteRenderer> ().sortingOrder += pdsm.GetComponent<SpriteRenderer> ().sortingOrder;
-                            mpc.State = Card.States.INPLAY;
+                            mpc.ChangeState(Card.States.INPLAY);
                             mpc.changeReturnParent(pdsm.transform);
                             mpc.returnToParent();
 
                             slot.CurrentCard = pdsm.CurrentCard = mpc;
 
-                            FindObjectOfType<FieldManager>().AddCardToField(mpc);
+                            FieldManager.AddCardToField(mpc);
 
                             Destroy(c.gameObject);
                             Destroy(ecmPair.gameObject);
@@ -283,9 +284,9 @@ public class ClientGame : MonoBehaviour
 			            break;
 			    }
 
-			    FindObjectOfType<FieldManager>().AddCardToField(c);
-			    c.GetComponent<SpriteRenderer> ().sortingOrder += slot.GetComponent<SpriteRenderer> ().sortingOrder;
-			    c.State = Card.States.INPLAY;
+			    FieldManager.AddCardToField(c);
+			    c.GetComponent<Canvas> ().sortingOrder += slot.GetComponent<SpriteRenderer> ().sortingOrder;
+			    c.ChangeState(Card.States.INPLAY);
 			    slot.CurrentCard = c;
 			    c.changeReturnParent(slot.transform);
 			    c.returnToParent();
@@ -294,7 +295,19 @@ public class ClientGame : MonoBehaviour
 		}
 	}
 
-	/// <summary>
+    public void playEnemyCardWithTarget(int uid, int targetUid)
+    {
+        CardUnique cardUnique = getCard<Card>(uid) as CardUnique;
+        Card target = getCard<Card>(targetUid);
+        if (cardUnique == null || target == null) return;
+
+        cardUnique.OnPlay(target);
+
+        FieldManager.AddCardToField(cardUnique);
+        cardUnique.ChangeState(Card.States.INPLAY);
+    }
+
+    /// <summary>
 	/// Provides a unique CurrentCard ID for updates the current room UID to ensure no duplicates.
 	/// </summary>
 	/// <returns>The unique CurrentCard ID.</returns>
@@ -355,7 +368,7 @@ public class ClientGame : MonoBehaviour
 
 				Game.SendCardToGraveyard(c);
 			}
-			CardAwakening.awakenCard();
+			CardAwakening.SetAwake(true);
 			closeAwakenCardMenu();
 			return true;
 		}
@@ -371,24 +384,30 @@ public class ClientGame : MonoBehaviour
 
 		Card cardDealt = null;
 		switch (cInfo.GetCardType()) {
-		
-		case (CardInfo.CardType.Monster):
-			GameObject m = Instantiate(MonsterCardPrefab);
-			m.transform.SetParent(PlayerHandObj.transform);
-			cardDealt = m.GetComponent<CardMonster>();
-			(cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
-			break;
-		case (CardInfo.CardType.Auxiliary):
-			GameObject a = Instantiate(AuxCardPrefab);
-			a.transform.SetParent(PlayerHandObj.transform);
-			cardDealt = a.GetComponent<CardAuxiliary>();
-			(cardDealt as CardAuxiliary).changeCard(cInfo as AuxiliaryInfo);
-			break;
+
+            case (CardInfo.CardType.Monster):
+                GameObject m = Instantiate(MonsterCardPrefab);
+                m.transform.SetParent(PlayerHandObj.transform);
+                cardDealt = m.GetComponent<CardMonster>();
+                (cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
+                break;
+            case (CardInfo.CardType.Auxiliary):
+                GameObject a = Instantiate(AuxCardPrefab);
+                a.transform.SetParent(PlayerHandObj.transform);
+                cardDealt = a.GetComponent<CardAuxiliary>();
+                (cardDealt as CardAuxiliary).changeCard(cInfo as AuxiliaryInfo);
+                break;
+            case CardInfo.CardType.Unique:
+                GameObject u = Instantiate(UniqueCardPrefab);
+                u.transform.SetParent(PlayerHandObj.transform);
+                cardDealt = u.GetComponent<CardUnique>();
+                (cardDealt as CardUnique).changeCard(cInfo as SpecialInfo);
+                break;
 		}
 
 		if (cardDealt != null) {
 			cardDealt.changeReturnParent (PlayerHandObj.transform);
-			cardDealt.State = Card.States.INHAND;
+			cardDealt.ChangeState(Card.States.INHAND);
 			cardDealt.createUID (getUID());
 		}
 
@@ -421,11 +440,19 @@ public class ClientGame : MonoBehaviour
                 (cardDealt as CardAuxiliary).IsEnemyCard = true;
                 (cardDealt as CardAuxiliary).setCardFOW(true);
                 break;
+		    case CardInfo.CardType.Unique:
+		        GameObject u = Instantiate(UniqueCardPrefab);
+		        u.transform.SetParent(EnemyHandObj.transform);
+		        cardDealt = u.GetComponent<CardUnique>();
+		        (cardDealt as CardUnique).changeCard(cInfo as SpecialInfo);
+		        (cardDealt as CardUnique).IsEnemyCard = true;
+		        (cardDealt as CardUnique).setCardFOW(true);
+		        break;
 		}
 		
 		if (cardDealt != null) {
 			cardDealt.changeReturnParent (EnemyHandObj.transform);
-			cardDealt.State = Card.States.DISABLED;
+			cardDealt.ChangeState(Card.States.DISABLED);
 			cardDealt.createUID (uid);
 		}
 	}
@@ -468,7 +495,7 @@ public class ClientGame : MonoBehaviour
 		foreach (CardMonster c in PlayerMonsters.GetComponentsInChildren<CardMonster>()) {
 			if (c.Target != null)
 			{
-			    CardMonster actualTarget = (CardMonster) c.Target;
+			    CardMonster actualTarget = c.Target;
 			    float confusionChance = 0.0f;
 			    foreach (var statusEffect in c.StatusEffects)
 			    {
@@ -481,12 +508,22 @@ public class ClientGame : MonoBehaviour
 			    if (confusionChance > 0.0f && Random.value <= confusionChance)
 			    {
 			        //Debug.LogError("Attacked different target.");
-			        ArrayList allMonsterCards = Game.FieldManager.GetOnFieldCards(CardInfo.CardType.Monster, null);
+			        ArrayList allMonsterCards = FieldManager.GetOnFieldCards(CardInfo.CardType.Monster, null);
 			        actualTarget = (CardMonster) allMonsterCards[Random.Range(0, allMonsterCards.Count)];
 			    }
+
+			    if (actualTarget != c.Target)
+			    {
+			        c.Target.clearTarget();
+			        actualTarget.Target = c;
+			        foreach (var statusEffect in actualTarget.StatusEffects)
+			            if (statusEffect.AppliesAgainstCriteria != null) statusEffect.Apply();
+			    }
+
 			    Game.SendAttackEv(c.UID, actualTarget.UID, actualTarget.isDefending());
 				ActionQueue.calcAttack(c, actualTarget, actualTarget.isDefending());
 				c.clearTarget();
+			    actualTarget.clearTarget();
 			} else {
 				c.setDefending(true);
 				total += (c.CardInfo as MonsterInfo).Attack;
@@ -497,7 +534,7 @@ public class ClientGame : MonoBehaviour
 //			if (c.isDefending())
 //				total += (c.CardI as MonsterInfo).AttackMod;
 //		}
-	    //Debug.LogError(EnemyMonsters.GetComponentsInChildren<Card>().Length);
+	    //Debug.LogError(EnemyMonsters.GetComponentsInChildren<CardAppliedTo>().Length);
 		if (EnemyMonsters.GetComponentsInChildren<Card> ().Length < 1) return total;
 		return -1;
 	}

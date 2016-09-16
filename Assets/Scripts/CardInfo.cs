@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 
 public enum CardRelation {
 	PairL, PairR, Summon
@@ -10,7 +8,7 @@ public class CardInfo {
 	
 	public enum CardType
 	{
-		Monster, Auxiliary, Ruse, Unique
+		Monster, Auxiliary, Ruse, Unique, UniqueField
 	}	
 
 	public enum CardAffinity
@@ -23,6 +21,7 @@ public class CardInfo {
     private readonly CardType _cardType;
     private readonly CardAffinity _affinity;
 
+    public TargetCriteria TargetCriteria { get; set; }
     public Dictionary<CardRelation, CardInfo> AssoCardInfo { get; set; }
 	
 	public CardInfo(int idPar, string namePar, CardType cardTypePar, CardAffinity affinityPar, string descPar) {
@@ -33,6 +32,7 @@ public class CardInfo {
 	    _affinity = affinityPar;
 		_desc = descPar;
 
+	    TargetCriteria = new TargetCriteria();
 		AssoCardInfo = new Dictionary<CardRelation, CardInfo>();
 	}
 
@@ -80,6 +80,17 @@ public class MonsterInfo : CardInfo
 	    _level = levelPar;
 		Attack = attackPar;
 		Defense = defensePar;
+
+	    // Define default monster target conditions
+	    // Can only target enemy monster cards
+	    TargetCriteria = new TargetCriteria
+	    {
+	        CardTypes = new List<CardType>
+	        {
+	            CardType.Monster
+	        },
+	        EnemyOnly = true
+	    };
 	}
 
     public int GetLevel()
@@ -115,33 +126,54 @@ public class MonsterInfo : CardInfo
     }
 }
 
-public class AuxiliaryInfo : CardInfo {
+public class SpecialInfo : CardInfo {
 
-    public enum AuxiliaryType
-    {
-        StatChange
-    }
-
-    public ArrayList StatusEffects { get; private set; }
-    private readonly AuxiliaryType _auxiliaryType;
+    public List<StatusEffect> StatusEffects { get; private set; }
 	
-	public AuxiliaryInfo(int idPar, string namePar, CardAffinity affinityPar,  AuxiliaryType auxiliaryTypePar,
-	    string descPar): base(idPar, namePar, CardType.Auxiliary, affinityPar, descPar)
+	public SpecialInfo(int idPar, string namePar, CardType cardTypePar, CardAffinity affinityPar, string descPar)
+	    : base(idPar, namePar, cardTypePar, affinityPar, descPar)
 	{
 
-	    _auxiliaryType = auxiliaryTypePar;
-	    StatusEffects = new ArrayList();
+	    StatusEffects = new List<StatusEffect>();
+
+	    // Define default special target conditions
+	    // Can only target cards of the same affinity
+	    TargetCriteria = new TargetCriteria
+	    {
+	        Affinities = new List<CardAffinity>
+	        {
+	            affinityPar
+	        }
+	    };
 	}
 
-    public AuxiliaryType GetAuxiliaryType()
-    {
-        return _auxiliaryType;
-    }
-
-    public AuxiliaryInfo RegisterEffect(StatusEffect statusEffect)
+    public SpecialInfo RegisterEffect(StatusEffect statusEffect)
     {
         StatusEffects.Add(statusEffect);
         return this;
+    }
+}
+
+public class AuxiliaryInfo : SpecialInfo
+{
+
+    public AuxiliaryInfo(int idPar, string namePar, CardAffinity affinityPar, string descPar)
+        : base(idPar, namePar, CardType.Auxiliary, affinityPar, descPar)
+    {
+        // Define default auxiliary target conditions
+        // Can only target friendly monster cards of the same affinity
+        TargetCriteria = new TargetCriteria
+        {
+            Affinities = new List<CardAffinity>
+            {
+                affinityPar
+            },
+            CardTypes = new List<CardType>
+            {
+                CardType.Monster
+            },
+            AllyOnly = true
+        };
     }
 }
 
@@ -705,120 +737,206 @@ public static class CardPool {
 		new MonsterInfo(399, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, ""),
 		new MonsterInfo(400, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, ""),
 		new MonsterInfo(401, "Zniro", CardInfo.CardAffinity.Fire, 1, 9, 4, ""),
-	    new AuxiliaryInfo(402, "Rallying Heart", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	    new AuxiliaryInfo(402, "Rallying Heart", CardInfo.CardAffinity.All,
 	        "Increases a monster's ATTACK by 1.  LIGHT monsters gain 2 ATTACK.")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1})
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Light, AttackMod = 1}),
-        new AuxiliaryInfo(403, "Saving Herald", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        .RegisterEffect(new StatEffect {AttackMod = 1})
+	        .RegisterEffect(new StatEffect 
+            {
+                TargetCriteria =
+                {
+                    Affinities = {CardInfo.CardAffinity.Light}
+                }, 
+                AttackMod = 1
+            }),
+        new AuxiliaryInfo(403, "Saving Herald", CardInfo.CardAffinity.All,
             "Increases a monster's DEFENSE by 1.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, DefenseMod = 1 }),
+            .RegisterEffect(new StatEffect {DefenseMod = 1 }),
         null,
         null,
         null,
         null,
-        new AuxiliaryInfo(408, "Tera Plane", CardInfo.CardAffinity.Forest, AuxiliaryInfo.AuxiliaryType.StatChange,
+        new AuxiliaryInfo(408, "Tera Plane", CardInfo.CardAffinity.Forest,
             "Increases a FOREST monster's DEFENSE by 3.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Forest, DefenseMod = 3 }),
-        new AuxiliaryInfo(409, "Arkanion's Armor", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            .RegisterEffect(new StatEffect {DefenseMod = 3}),
+        new AuxiliaryInfo(409, "Arkanion's Armor", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK and DEFENSE by 1.  Each kill adds 10% CONFUSION to the monster, up to 100%.")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All,
-                AttackMod = 1, DefenseMod = 1, Trigger = Trigger.OnKill})
-	        .RegisterEffect(new ConfusionEffect {Affinity = CardInfo.CardAffinity.All,
-                ChanceMod = 0.1f, Trigger = Trigger.OnKill}),
-        new AuxiliaryInfo(410, "Purifying Light", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        .RegisterEffect(new StatEffect {AttackMod = 1, DefenseMod = 1, Trigger = Trigger.OnKill})
+	        .RegisterEffect(new ConfusionEffect {ChanceMod = 0.1f, Trigger = Trigger.OnKill}),
+        new AuxiliaryInfo(410, "Purifying Light", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 2.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 2 }),
-        new AuxiliaryInfo(411, "Arcane Spear", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            .RegisterEffect(new StatEffect {AttackMod = 2 }),
+        new AuxiliaryInfo(411, "Arcane Spear", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 1.  FIRE monsters gain 2 ATTACK")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1 })
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Fire, AttackMod = 1 }),
-        new AuxiliaryInfo(412, "Alcain's Staff", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            .RegisterEffect(new StatEffect {AttackMod = 1 })
+            .RegisterEffect(new StatEffect
+            {
+                TargetCriteria =
+                {
+                    Affinities = {CardInfo.CardAffinity.Fire}
+                },
+                AttackMod = 1
+            }),
+        new AuxiliaryInfo(412, "Alcain's Staff", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 1.  DARKNESS monsters gain 2 ATTACK")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1 })
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Darkness, AttackMod = 1 }),
-        new AuxiliaryInfo(413, "Narizite Blade", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            .RegisterEffect(new StatEffect {AttackMod = 1 })
+            .RegisterEffect(new StatEffect
+            {
+                TargetCriteria =
+                {
+                    Affinities = {CardInfo.CardAffinity.Darkness}
+                },
+                AttackMod = 1
+            }),
+        new AuxiliaryInfo(413, "Narizite Blade", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 1.  DEATH monsters gain 2 ATTACK.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1 })
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Death, AttackMod = 1 }),
+            .RegisterEffect(new StatEffect {AttackMod = 1})
+            .RegisterEffect(new StatEffect
+            {
+                TargetCriteria =
+                {
+                    Affinities = {CardInfo.CardAffinity.Death}
+                },
+                AttackMod = 1
+            }),
         null,
         null,
         null,
         null,
         null,
         null,
-        new AuxiliaryInfo(420, "Poseidon's Wrath", CardInfo.CardAffinity.Water, AuxiliaryInfo.AuxiliaryType.StatChange,
+        new AuxiliaryInfo(420, "Poseidon's Wrath", CardInfo.CardAffinity.Water,
             "Increases a WATER monster's ATTACK by 3.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Water, AttackMod = 3 }),
+            .RegisterEffect(new StatEffect {AttackMod = 3}),
+        null,
+        new SpecialInfo(422, "Ultimate Sacrifice", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+            "Sacrifice LP equal to a targeted monster's ATTACK in order to double their ATTACK for 3 turns.")
+            {
+                TargetCriteria =
+                {
+                    CardTypes = {CardInfo.CardType.Monster}
+                }
+            }
+            .RegisterEffect(new StatusEffect422())
+            .RegisterEffect(new StatEffect {Lifetime = 3, AttackMod = StatEffect.Double}),
+	    // Still buggy, setting stats to zero doesnt work too well
+        new SpecialInfo(423, "Price of Loyalty", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+            "Completely drain a friendly monster's ATTACK and DEFENSE and convert the sum to LP. " +
+            "[CURRENTLY BUGGED: DRAINING DOES NOT WORK RIGHT.]")
+            {
+                TargetCriteria =
+                {
+                    CardTypes = {CardInfo.CardType.Monster},
+                    AllyOnly = true
+                }
+            }
+            .RegisterEffect(new StatusEffect423())
+            .RegisterEffect(new StatEffect {AttackMod = StatEffect.Zero, DefenseMod = StatEffect.Zero}),
+        null,
+        null,
+        null,
+        null,
+        null,
+        new AuxiliaryInfo(429, "Fleeting Bloom", CardInfo.CardAffinity.Forest,
+            "Heals the player for 15 LP per turn.")
+            .RegisterEffect(new HealthEffect {HealthMod = 15, AffectPlayer = true, Trigger = Trigger.OnTurn}),
         null,
         null,
         null,
         null,
         null,
         null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null,
-        new AuxiliaryInfo(436, "Guardian Pixie", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+        new AuxiliaryInfo(436, "Guardian Pixie", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 1 and DEFENSE by 1.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1 })
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, DefenseMod = 1 }),
-        new AuxiliaryInfo(437, "Call to Arms", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            .RegisterEffect(new StatEffect {AttackMod = 1 })
+            .RegisterEffect(new StatEffect {DefenseMod = 1 }),
+        new AuxiliaryInfo(437, "Call to Arms", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 1.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1 }),
+            .RegisterEffect(new StatEffect {AttackMod = 1 }),
+        null,
+        null,
+        null,
+        new AuxiliaryInfo(441, "Valiant Rage", CardInfo.CardAffinity.All,
+            "Increases a monster's ATTACK by 1 for each fallen ally.")
+            .RegisterEffect(new StatEffect {AttackMod = 1, Trigger = Trigger.OnAllyKilled}),
         null,
         null,
         null,
         null,
         null,
-        null,
-        null,
-        null,
-        null,
-        new AuxiliaryInfo(448, "Daggerthorn", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	    new SpecialInfo(447, "March of Victory", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Damages the opponent player's LP equal to a targeted friendly monster's ATTACK.")
+            {
+                TargetCriteria =
+                {
+                    CardTypes = {CardInfo.CardType.Monster},
+                    AllyOnly = true
+                }
+            }
+	        .RegisterEffect(new StatusEffect447()),
+        new AuxiliaryInfo(448, "Daggerthorn", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 1.  FOREST monsters gain 2 ATTACK")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1 })
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Forest, AttackMod = 1 }),
-        new AuxiliaryInfo(449, "Viridian Vines", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            .RegisterEffect(new StatEffect {AttackMod = 1 })
+            .RegisterEffect(new StatEffect
+            {
+                TargetCriteria =
+                {
+                    Affinities = {CardInfo.CardAffinity.Forest}
+                },
+                AttackMod = 1
+            }),
+        new AuxiliaryInfo(449, "Viridian Vines", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 2.  FOREST monsters gain 3 ATTACK.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 2 })
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Forest, AttackMod = 1 }),
+            .RegisterEffect(new StatEffect {AttackMod = 2 })
+            .RegisterEffect(new StatEffect
+            {
+                TargetCriteria =
+                {
+                    Affinities = {CardInfo.CardAffinity.Forest}
+                },
+                AttackMod = 1
+            }),
         null,
         null,
         null,
         null,
-        new AuxiliaryInfo(454, "Roaring Lariat", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+        new AuxiliaryInfo(454, "Roaring Lariat", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 2.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 2 }),
-        new AuxiliaryInfo(455, "Whistling Edge", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+            .RegisterEffect(new StatEffect {AttackMod = 2 }),
+        new AuxiliaryInfo(455, "Whistling Edge", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 1.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1 }),
+            .RegisterEffect(new StatEffect {AttackMod = 1 }),
         null,
         null,
-        new AuxiliaryInfo(458, "Piercing Light", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+        new AuxiliaryInfo(458, "Piercing Light", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 2.")
-            .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 2 }),
+            .RegisterEffect(new StatEffect {AttackMod = 2 }),
         null,
         null,
         null,
         null,
-	    new AuxiliaryInfo(463, "Breath of Bone", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	    new AuxiliaryInfo(463, "Breath of Bone", CardInfo.CardAffinity.All,
 	            "Increases a monster's ATTACK by 1.  WIND monsters gain 2 ATTACK.")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1})
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Wind, AttackMod = 1}),
+	        .RegisterEffect(new StatEffect {AttackMod = 1})
+	        .RegisterEffect(new StatEffect
+	        {
+	            TargetCriteria =
+	            {
+	                Affinities = {CardInfo.CardAffinity.Wind}
+	            },
+	            AttackMod = 1
+	        }),
 	    null,
 	    null,
-	    new AuxiliaryInfo(466, "Seven Seas", CardInfo.CardAffinity.Water, AuxiliaryInfo.AuxiliaryType.StatChange,
+	    new AuxiliaryInfo(466, "Seven Seas", CardInfo.CardAffinity.Water,
             "Increases a WATER monster's ATTACK by 2.")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Water, AttackMod = 2}),
-	    new AuxiliaryInfo(467, "Envenomed Rains", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        .RegisterEffect(new StatEffect { AttackMod = 2}),
+	    new AuxiliaryInfo(467, "Envenomed Rains", CardInfo.CardAffinity.All,
             "Increases a monster's ATTACK by 1.")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1}),
+	        .RegisterEffect(new StatEffect {AttackMod = 1}),
+	    null,
+	    new AuxiliaryInfo(469, "Ancient Abjuration", CardInfo.CardAffinity.All,
+	        "Removes and prevents all status effects.")
+	        .RegisterEffect(new DissipateEffect()),
 	    null,
 	    null,
 	    null,
@@ -828,11 +946,32 @@ public static class CardPool {
 	    null,
 	    null,
 	    null,
-	    null,
-	    null,
-	    new AuxiliaryInfo(479, "Heaven's Might", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	    new AuxiliaryInfo(479, "Heaven's Might", CardInfo.CardAffinity.All,
 	        "Increases a monster's ATTACK by 1.")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 1}),
+	        .RegisterEffect(new StatEffect {AttackMod = 1}),
+	    null,
+	    null,
+	    null,
+	    new AuxiliaryInfo(483, "Kings Army", CardInfo.CardAffinity.Ice,
+	        "Increases Vylerion's [#374] ATK by 2 and DEF by 1 per friendly ice monster.")
+            {
+                TargetCriteria =
+                {
+                    CardIds = {374}
+                }
+            }
+	        .RegisterEffect(new StatEffect
+	        {
+	            Trigger = Trigger.OnFieldChange,
+	            AffectingCardCriteria = new TargetCriteria
+	            {
+	                Affinities = {CardInfo.CardAffinity.Ice},
+	                CardTypes = {CardInfo.CardType.Monster},
+	                AllyOnly = true
+	            },
+	            AttackMod = 2,
+	            DefenseMod = 1
+	        }),
 	    null,
 	    null,
 	    null,
@@ -853,6 +992,16 @@ public static class CardPool {
 	    null,
 	    null,
 	    null,
+	    new SpecialInfo(504, "Bifrucation", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Returns an OMEGA monster to the owner's hand.  The monster must be awoken again to be played.")
+	        {
+	            TargetCriteria =
+	            {
+	                CardTypes = {CardInfo.CardType.Monster},
+	                LevelMin = 5
+	            }
+	        }
+	        .RegisterEffect(new ReturnCardEffect {UnawakenMonster = true}),
 	    null,
 	    null,
 	    null,
@@ -866,17 +1015,29 @@ public static class CardPool {
 	    null,
 	    null,
 	    null,
-	    null,
-	    null,
-	    null,
-	    null,
-	    null,
-	    // #518 needs fixing
-	    new AuxiliaryInfo(518, "Draccon Guard", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	    new AuxiliaryInfo(518, "Draccon Guard", CardInfo.CardAffinity.All,
 	        "Increases a monster's DEFENSE by 2.  DRAGON monsters gain an additional 2 DEFENSE for every DRAGON " +
-	        "on the field.  (Currently not working: DRAGON types gain 4 DEFENSE instead)")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, DefenseMod = 2})
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Dragon, DefenseMod = 2}),
+	        "monster on the field.")
+	        .RegisterEffect(new StatEffect {DefenseMod = 2})
+	        .RegisterEffect(new StatEffect
+	        {
+	            TargetCriteria =
+	            {
+	                Affinities = {CardInfo.CardAffinity.Dragon}
+	            },
+	            Trigger = Trigger.OnFieldChange,
+	            AffectingCardCriteria =
+	            {
+	                Affinities = {CardInfo.CardAffinity.Dragon},
+	                CardTypes = {CardInfo.CardType.Monster}
+	            },
+	            DefenseMod = 2
+	        }),
+	    null,
+	    null,
+	    new AuxiliaryInfo(521, "Soul Consumption", CardInfo.CardAffinity.All,
+	        "Heals the player for 5 LP per kill")
+	        .RegisterEffect(new HealthEffect {Trigger = Trigger.OnKill, HealthMod = 5, AffectPlayer = true}),
 	    null,
 	    null,
 	    null,
@@ -886,37 +1047,99 @@ public static class CardPool {
 	    null,
 	    null,
 	    null,
+	    new AuxiliaryInfo(531, "Bump in the Dark", CardInfo.CardAffinity.All,
+	        "Increases a BASIC monster's DEFENSE by 3.")
+	        {
+                TargetCriteria =
+                {
+                    LevelMax = 4
+                }
+	        }
+	        .RegisterEffect(new StatEffect {DefenseMod = 3}),
+	    null,
+	    new AuxiliaryInfo(533, "The Hunter", CardInfo.CardAffinity.All,
+	        "Increases a monster's ATTACK by 3 when attacking FOREST monsters.")
+            {
+                TargetCriteria =
+                {
+                    AffinitiesBlacklist = {CardInfo.CardAffinity.Forest}
+                }
+            }
+	        .RegisterEffect(new StatEffect
+	        {
+	            AppliesAgainstCriteria = new TargetCriteria
+	            {
+	                Affinities = {CardInfo.CardAffinity.Forest},
+	                CardTypes = {CardInfo.CardType.Monster}
+	            },
+	            AttackMod = 3
+	        }),
+	    new AuxiliaryInfo(534, "Imbuing Might", CardInfo.CardAffinity.All,
+	        "Increases a monster's ATTACK and DEFENSE by 1 per friendly special card on the field.")
+	        .RegisterEffect(new StatEffect
+	        {
+	            Trigger = Trigger.OnFieldChange,
+	            AffectingCardCriteria =
+	            {
+	                CardTypes = {CardInfo.CardType.Auxiliary, CardInfo.CardType.Unique, CardInfo.CardType.Ruse},
+	                AllyOnly = true
+	            },
+	            AttackMod = 1,
+	            DefenseMod = 1
+	        }),
 	    null,
 	    null,
 	    null,
 	    null,
 	    null,
-	    null,
-	    null,
-	    null,
-	    null,
-	    null,
-	    null,
-	    null,
-	    new AuxiliaryInfo(540, "Chilling Force", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	    new AuxiliaryInfo(540, "Chilling Force", CardInfo.CardAffinity.All,
 	        "Increases a monster's ATTACK by 2.  ICE monsters gain 4 ATTACK")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = 2})
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Ice, AttackMod = 2}),
+	        .RegisterEffect(new StatEffect {AttackMod = 2})
+	        .RegisterEffect(new StatEffect
+	        {
+	            TargetCriteria =
+	            {
+	                Affinities = {CardInfo.CardAffinity.Ice}
+	            },
+	            AttackMod = 2
+	        }),
+	    new SpecialInfo(541, "Revokement", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Returns a special to the owner's hand.")
+            {
+                TargetCriteria =
+                {
+                    CardTypesBlacklist = {CardInfo.CardType.Monster}
+                }
+            }
+	        .RegisterEffect(new ReturnCardEffect()),
 	    null,
 	    null,
 	    null,
 	    null,
+	    new SpecialInfo(546, "Defy the Gods", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Increases S'gniwon's [#287] ATTACK by 10 for 1 turn.")
+            {
+                TargetCriteria =
+                {
+                    CardIds = {287},
+                    AllyOnly = true
+                }
+            }
+	        .RegisterEffect(new StatEffect
+	        {
+	            Lifetime = 1,
+	            AttackMod = 10
+	        }),
+	    new SpecialInfo(547, "Fallen Comrade", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Removes current status effects and prevents new ones from being applied to the target for 1 turn.")
+	        .RegisterEffect(new DissipateEffect {Lifetime = 0}),
 	    null,
-	    null,
-	    null,
-	    null,
-	    null,
-	    new AuxiliaryInfo(549, "Restricting Melody", CardInfo.CardAffinity.All, AuxiliaryInfo.AuxiliaryType.StatChange,
+	    new AuxiliaryInfo(549, "Restricting Melody", CardInfo.CardAffinity.All,
 	        "Increases a monster's DEFENSE by 2, but lowers its ATTACK by 1")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.All, AttackMod = -1, DefenseMod = 2}),
-	    new AuxiliaryInfo(550, "Subzero Barrage", CardInfo.CardAffinity.Ice, AuxiliaryInfo.AuxiliaryType.StatChange,
+	        .RegisterEffect(new StatEffect {AttackMod = -1, DefenseMod = 2}),
+	    new AuxiliaryInfo(550, "Subzero Barrage", CardInfo.CardAffinity.Ice,
 	        "Inncreases an ICE monster's ATTACK by 3.")
-	        .RegisterEffect(new StatEffect {Affinity = CardInfo.CardAffinity.Ice, AttackMod = 3})
+	        .RegisterEffect(new StatEffect {AttackMod = 3})
 	};
 
 	

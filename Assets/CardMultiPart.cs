@@ -7,11 +7,8 @@ public class CardMultiPart : CardMonster {
 	public override void Start () {
 		base.Start ();
 
-		awakenCard ();
+		SetAwake (true);
 		setFullInfoAnimation ();
-		float width = GetComponent<SpriteRenderer>().sprite.bounds.size.x;
-	    float height = GetComponent<SpriteRenderer>().sprite.bounds.size.y;
-	    transform.localScale = new Vector3(4.72f / width, 3.01f / height, 1);
 	}
 
 	private void setFullInfoAnimation() {
@@ -30,8 +27,16 @@ public class CardMultiPart : CardMonster {
 		CardInfo = mi as MonsterInfo;
 		if (CardInfo != null) {
 			Sprite s = Resources.Load ("Cards/MultiPart/"+CardInfo.GetId(), typeof(Sprite)) as Sprite;
-			if (s != null)
-				this.GetComponent<SpriteRenderer> ().sprite = s;
+		    if (s != null)
+		    {
+		        SpriteRenderer spriteRenderer = transform.Find("CardSprite").GetComponent<SpriteRenderer>();
+		        spriteRenderer.sprite = s;
+
+		        // Scale the sprite
+		        float width = spriteRenderer.sprite.bounds.size.x;
+		        float height = spriteRenderer.sprite.bounds.size.y;
+		        spriteRenderer.transform.localScale = new Vector3(4.72f / width, 3.01f / height, 1);
+		    }
 		}
 		
 		foreach (CardStatComponent csc in GetComponentsInChildren<CardStatComponent>(true))
@@ -56,7 +61,7 @@ public class CardMultiPart : CardMonster {
 			FullInfoCanvas.SetActive (true);
 			this.transform.localPosition = new Vector3(-3.5f, 0.0f, 0.0f);
 			StateToReturnTo = State;
-			State = States.INFO;
+			ChangeState(States.INFO);
 			
 			GameObject.FindGameObjectWithTag("blockRays").GetComponent<BoxCollider2D>().enabled = true;
 
