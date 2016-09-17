@@ -67,7 +67,7 @@ public class CardMonster : Card {
 		            image.sprite = s;
 		        }
 		    }
-		    if ((CardInfo as MonsterInfo).GetLevel() < 15) {
+		    if ((CardInfo as MonsterInfo).GetLevel() < 5 || IsEnemyCard) {
 				Locked.SetActive(false);
 				AwakenMenuItem.SetActive(false);
 			} else
@@ -235,4 +235,10 @@ public class CardMonster : Card {
 			break;
 		}
 	}
+
+    public override void OnPlay()
+    {
+        base.OnPlay();
+        if (IsEnemyCard) SetAwake(true);
+    }
 }

@@ -290,6 +290,7 @@ public class ClientGame : MonoBehaviour
 			    slot.CurrentCard = c;
 			    c.changeReturnParent(slot.transform);
 			    c.returnToParent();
+			    c.OnPlay();
 			    return;
 			}
 		}
