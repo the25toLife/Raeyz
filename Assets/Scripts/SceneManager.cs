@@ -432,17 +432,17 @@ public class SceneManager : LoadBalancingClient
 		_playerHand = new ArrayList ();
 		_playerActions = new ArrayList ();
 
-		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
+/*		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
 		while ((c as MonsterInfo).GetLevel() > 4)	//Guarentees a basic CurrentCard in the initial hand.
 			c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];
 		dealCardToPlayer (c);
 		for (int i = 0; i < 4; i++)
-			dealCardToPlayer ();
-/*		dealCardToPlayer (CardPool.Cards [421]);
-		dealCardToPlayer (CardPool.Cards [422]);
+			dealCardToPlayer ();*/
+		dealCardToPlayer (CardPool.Cards [509]);
+		dealCardToPlayer (CardPool.Cards [478]);
 		dealCardToPlayer (CardPool.Cards [392]);
 		dealCardToPlayer (CardPool.Cards [130]);
-		dealCardToPlayer (CardPool.Cards [4]);*/
+		dealCardToPlayer (CardPool.Cards [4]);
 
 		_stage = GameStage.PREP;
 	}

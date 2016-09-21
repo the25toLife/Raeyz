@@ -647,6 +647,28 @@ public class ReturnCardEffect : StatusEffect
     }
 }
 
+public class ExecuteEffect : StatusEffect
+{
+    public ExecuteEffect()
+    {
+        Lifetime = 0;
+    }
+
+    public override bool Apply()
+    {
+        if (!base.Apply()) return false;
+
+        CardAppliedTo.sendCardToGraveyard();
+
+        return true;
+    }
+
+    public override StatusEffect Clone()
+    {
+        return Clone(new ExecuteEffect());
+    }
+}
+
 /*public class TimeEffect : StatusEffect
 {
     public int LifetimeMod { get; set; }

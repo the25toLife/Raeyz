@@ -31,7 +31,7 @@ public class Slot : MonoBehaviour, IDropHandler {
 	                GetComponent<SpriteRenderer>().color = new Color(0.396f, 0.718f, 1.0f);
 	        }
 	    } else
-			this.GetComponent<SpriteRenderer>().color = Color.white;
+			GetComponent<SpriteRenderer>().color = Color.white;
 	}
 	
 	public bool canDrop(Card c) {

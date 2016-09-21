@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 public enum CardRelation {
@@ -1007,7 +1008,15 @@ public static class CardPool {
 	    null,
 	    null,
 	    null,
-	    null,
+	    new SpecialInfo(510, "Spell Keeper", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	        "Destroys a special card on the field.")
+            {
+                TargetCriteria =
+                {
+                    CardTypesBlacklist = {CardInfo.CardType.Monster}
+                }
+            }
+	        .RegisterEffect(new ExecuteEffect()),
 	    null,
 	    null,
 	    null,
@@ -1139,7 +1148,59 @@ public static class CardPool {
 	        .RegisterEffect(new StatEffect {AttackMod = -1, DefenseMod = 2}),
 	    new AuxiliaryInfo(550, "Subzero Barrage", CardInfo.CardAffinity.Ice,
 	        "Inncreases an ICE monster's ATTACK by 3.")
-	        .RegisterEffect(new StatEffect {AttackMod = 3})
+	        .RegisterEffect(new StatEffect {AttackMod = 3}),
+	    null,
+	    null,
+	    null,
+	    new AuxiliaryInfo(553, "The Last Stand", CardInfo.CardAffinity.All,
+	        "Increases a friendly monster card's DEFENSE by 2.")
+	        .RegisterEffect(new StatEffect {DefenseMod = 2}),
+	    null,
+	    null,
+	    new AuxiliaryInfo(556, "Kluh's Rage", CardInfo.CardAffinity.All,
+	        "Increases a monster card's DEFENSE by 4.  The monster gains 1 ATTACK and loses 1 DEFENSE per kill.")
+	        .RegisterEffect(new StatEffect {DefenseMod = 4})
+	        .RegisterEffect(new StatEffect {Trigger = Trigger.OnKill, AttackMod = 1, DefenseMod = -1}),
+	    new AuxiliaryInfo(557, "Embolden Gauntlet", CardInfo.CardAffinity.All,
+	        "Increases a monster card's ATTACK by 2.")
+	        .RegisterEffect(new StatEffect {AttackMod = 2}),
+	    null,
+	    new AuxiliaryInfo(559, "Seraph's Blade", CardInfo.CardAffinity.All,
+	        "Increases a monster card's ATTACK by 3 against DRAGON monsters.  Light monsters gain an additional " +
+	        "1 ATTACK.")
+	        {
+	            TargetCriteria =
+	            {
+	                AffinitiesBlacklist = {CardInfo.CardAffinity.Dragon}
+	            }
+	        }
+	        .RegisterEffect(new StatEffect
+	        {
+	            AppliesAgainstCriteria = new TargetCriteria
+	            {
+	                Affinities = {CardInfo.CardAffinity.Dragon},
+	                CardTypes = {CardInfo.CardType.Monster}
+	            },
+	            AttackMod = 3
+	        })
+            .RegisterEffect(new StatEffect
+            {
+                TargetCriteria =
+                {
+                    Affinities = {CardInfo.CardAffinity.Light}
+                },
+                AppliesAgainstCriteria = new TargetCriteria
+                {
+                    Affinities = {CardInfo.CardAffinity.Dragon},
+                    CardTypes = {CardInfo.CardType.Monster}
+                },
+                AttackMod = 1
+            }),
+	    null,
+	    null,
+	    null,
+	    null,
+
 	};
 
 	

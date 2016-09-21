@@ -38,7 +38,7 @@ public class StatusEffectInfoElement : MonoBehaviour
             _cardImage.sprite = s;
 
         string type = "";
-        if (_statusEffect is StatEffect) type = "Boost";
+        if (_statusEffect is StatEffect) type = "Stat";
         else if (_statusEffect is ConfusionEffect) type = "Confusion";
         else if (_statusEffect is HealthEffect) type = "Heal";
         else if (_statusEffect is DissipateEffect) type = "Immunity";
