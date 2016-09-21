@@ -1,0 +1,2 @@
+There should be 'Raeyz-development-build-0.0.62_Data'
+folder next to the executable

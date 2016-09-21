@@ -3,13 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f75c39c5-2de7-439b-ad5d-e2da7c90d9bd" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../Assets/Scripts/CardInfo.cs" afterPath="$PROJECT_DIR$/../../Assets/Scripts/CardInfo.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../Assets/Scripts/CardMonster.cs" afterPath="$PROJECT_DIR$/../../Assets/Scripts/CardMonster.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../Assets/Scripts/CustomStatusEffects.cs" afterPath="$PROJECT_DIR$/../../Assets/Scripts/CustomStatusEffects.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../Assets/Scripts/SceneManager.cs" afterPath="$PROJECT_DIR$/../../Assets/Scripts/SceneManager.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../Assets/Scripts/Slot.cs" afterPath="$PROJECT_DIR$/../../Assets/Scripts/Slot.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../Assets/Scripts/StatusEffect.cs" afterPath="$PROJECT_DIR$/../../Assets/Scripts/StatusEffect.cs" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../Assets/Scripts/StatusEffectInfoElement.cs" afterPath="$PROJECT_DIR$/../../Assets/Scripts/StatusEffectInfoElement.cs" />
     </list>
     <ignored path="Raeyz.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -199,8 +192,8 @@
       <file leaf-file-name="Slot.cs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/../../Assets/Scripts/Slot.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="43" column="43" selection-start-line="43" selection-start-column="43" selection-end-line="43" selection-end-column="43" />
+            <state relative-caret-position="68">
+              <caret line="4" column="49" selection-start-line="4" selection-start-column="49" selection-end-line="4" selection-end-column="49" />
               <folding>
                 <marker date="1474437939787" expanded="true" signature="6:76" ph="..." />
                 <marker date="1474437939787" expanded="true" signature="126:4746" ph="{...}" />
@@ -588,7 +581,7 @@
       <workItem from="1473885964631" duration="15153000" />
       <workItem from="1473919586686" duration="27862000" />
       <workItem from="1474078672609" duration="3104000" />
-      <workItem from="1474437010118" duration="1041000" />
+      <workItem from="1474437010118" duration="1200000" />
     </task>
     <task id="LOCAL-00001" summary="Merge branch 'auxtest' of https://github.com/the25toLife/Raeyz into auxtest&#10;&#10;# Conflicts:&#10;#&#9;Assets/Scripts/CardInfo.cs&#10;">
       <created>1473572687876</created>
@@ -639,11 +632,18 @@
       <option name="project" value="LOCAL" />
       <updated>1474004225309</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="changes">
+      <created>1474438066623</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1474438066623</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="214552000" />
+    <option name="totallyTimeSpent" value="214711000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -714,7 +714,8 @@
     <MESSAGE value="more bug fixes, scene tweaks&#10;added status effect info bar" />
     <MESSAGE value="lots of changes" />
     <MESSAGE value="fixed enemy omegas and leviathans being locked on play" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed enemy omegas and leviathans being locked on play" />
+    <MESSAGE value="changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="changes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1598,8 +1599,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../Assets/Scripts/Slot.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="43" column="43" selection-start-line="43" selection-start-column="43" selection-end-line="43" selection-end-column="43" />
+        <state relative-caret-position="68">
+          <caret line="4" column="49" selection-start-line="4" selection-start-column="49" selection-end-line="4" selection-end-column="49" />
           <folding>
             <marker date="1474437939787" expanded="true" signature="6:76" ph="..." />
             <marker date="1474437939787" expanded="true" signature="126:4746" ph="{...}" />
