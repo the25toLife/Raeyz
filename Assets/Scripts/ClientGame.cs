@@ -10,7 +10,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public enum MenuItem {
 	
-	Awaken, Discard, CardSelect, CardUnlock, Confirm
+	Activate, Awaken, Discard, CardSelect, CardUnlock, Confirm
 }
 
 public class ClientGame : MonoBehaviour
@@ -51,8 +51,8 @@ public class ClientGame : MonoBehaviour
 		if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) && Input.GetKeyDown(KeyCode.Q))
 			Application.Quit();
 
-		if (Awakening && Input.GetKeyDown (KeyCode.Escape))
-			closeAwakenCardMenu ();
+		/*if (Awakening && Input.GetKeyDown (KeyCode.Escape))
+			closeAwakenCardMenu ();*/
 
 	    if (Dragging && CardDragged == null) Dragging = false;
 	}
@@ -296,13 +296,16 @@ public class ClientGame : MonoBehaviour
 		}
 	}
 
-    public void playEnemyCardWithTarget(int uid, int targetUid)
+    public void PlayEnemyCardWithTargets(int uid, int[] targetUids)
     {
         CardUnique cardUnique = getCard<Card>(uid) as CardUnique;
-        Card target = getCard<Card>(targetUid);
-        if (cardUnique == null || target == null) return;
+        if (cardUnique == null) return;
 
-        cardUnique.OnPlay(target);
+        List<Card> targets = new List<Card>();
+        foreach (var targetUid in targetUids)
+            targets.Add(getCard<Card>(targetUid));
+
+        cardUnique.OnPlay(targets);
 
         FieldManager.AddCardToField(cardUnique);
         cardUnique.ChangeState(Card.States.INPLAY);
@@ -509,7 +512,7 @@ public class ClientGame : MonoBehaviour
 			    if (confusionChance > 0.0f && Random.value <= confusionChance)
 			    {
 			        //Debug.LogError("Attacked different target.");
-			        ArrayList allMonsterCards = FieldManager.GetOnFieldCards(CardInfo.CardType.Monster, null);
+			        ArrayList allMonsterCards = FieldManager.SearchOnFieldCards(CardInfo.CardType.Monster, null);
 			        actualTarget = (CardMonster) allMonsterCards[Random.Range(0, allMonsterCards.Count)];
 			    }
 

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -28,7 +30,19 @@ public class CardMonster : Card {
 		base.Update ();
 	}
 
-	public override bool canTarget(Card target) {
+    protected override void OnStatusEffectsChanged()
+    {
+        base.OnStatusEffectsChanged();
+        MonsterInfo newCardInfo = (MonsterInfo) CardPool.Cards[CardInfo.GetId()-1];
+        if (!StatusEffects.OfType<DissipateEffect>().Any())
+        {
+            foreach (var statEffect in StatusEffects.OfType<StatEffect>())
+                newCardInfo += statEffect;
+        }
+        if (newCardInfo != null) changeCard(newCardInfo);
+    }
+
+    public override bool canTarget(Card target) {
 		return CardInfo.TargetCriteria.Matches(target);
 	}
 
@@ -67,7 +81,7 @@ public class CardMonster : Card {
 		            image.sprite = s;
 		        }
 		    }
-		    if ((CardInfo as MonsterInfo).GetLevel() < 15) {
+		    if ((CardInfo as MonsterInfo).GetLevel() < 5) {
 				Locked.SetActive(false);
 				AwakenMenuItem.SetActive(false);
 			} else

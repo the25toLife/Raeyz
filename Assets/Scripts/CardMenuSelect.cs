@@ -7,20 +7,30 @@ public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 
 	public MenuItem ItemType;
 
+    public bool AllowMultipleSelections { get; set; }
+
 	private Card _representedCard;
-	private ClientGame _client;
+	private TargetCardMenu _targetCardMenu;
 
 	// Use this for initialization
-	void Start () {
+	void Awake ()
+	{
 
-		_client = GameObject.FindObjectOfType<ClientGame> ();
+	    _targetCardMenu = FindObjectOfType<TargetCardMenu>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		if (ItemType == MenuItem.CardUnlock) {
-			this.GetComponentInChildren<Image>().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", _client.getSacrPower()), typeof(Sprite)) as Sprite;
+		if (ItemType == MenuItem.CardUnlock)
+		{
+			this.GetComponentInChildren<Image>().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", _targetCardMenu.GetTotalLevels()), typeof(Sprite)) as Sprite;
+		}
+		else if (ItemType == MenuItem.CardSelect)
+		{
+		    GetComponent<Image>().color =
+		        _targetCardMenu.SelectedCards.Contains(_representedCard) ? new Color(0.7f, 0.16f, 0.16f, 0.46f) :
+		            GetComponent<Image>().color = new Color(0.06f, 0.06f, 0.06f, 0.46f);
 		}
 	}
 
@@ -43,17 +53,17 @@ public class CardMenuSelect : MonoBehaviour, IPointerDownHandler {
 			case (MenuItem.CardSelect):
 				if (!_representedCard)
 					return;
-				if (!_client.isCardSelected(_representedCard)) {
-					_client.selectCard(_representedCard);
-					this.GetComponent<Image>().color = new Color(0.7f, 0.16f, 0.16f, 0.46f);
+				if (!_targetCardMenu.SelectedCards.Contains(_representedCard)) {
+					//_targetCardMenu.selectCard(_representedCard, !AllowMultipleSelections);
+				    _targetCardMenu.SelectCard(_representedCard);
 				} else {
-					_client.deselectCard(_representedCard);
-					this.GetComponent<Image>().color = new Color(0.06f, 0.06f, 0.06f, 0.46f);
+					//_targetCardMenu.deselectCard(_representedCard);
+				    _targetCardMenu.DeselectCard(_representedCard);
 				}
 				break;
 			case (MenuItem.CardUnlock):
-				_client.awakenCard();
-				break;
+                FindObjectOfType<TargetCardMenu>().TakeAction();
+                break;
 			}
 			break;
 		}

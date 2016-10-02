@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using JetBrains.Annotations;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -33,7 +33,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	public int UID { get; set; }
 	public CardInfo CardInfo { get; set; }
 	public States State { get; private set; }
-    public List<StatusEffect> StatusEffects { get; set; }
+    public WatchableList<StatusEffect> StatusEffects { get; set; }
 
     //public delegate void StateChangedEventHandler(StateChangedEventArgs e);
 
@@ -43,7 +43,8 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 		Client = FindObjectOfType<ClientGame> ();
 
-        StatusEffects = new List<StatusEffect>();
+        StatusEffects = new WatchableList<StatusEffect>();
+        StatusEffects.CollectionChanged += OnStatusEffectsChanged;
 
         FullInfoCanvas.SetActive (false);
 
@@ -51,7 +52,12 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 			LcMenu.SetActive (false);
     }
 
-	public virtual void Update () {
+    protected virtual void OnStatusEffectsChanged()
+    {
+        //Debug.Log("Status effects changed");
+    }
+
+    public virtual void Update () {
 
 	    if (IsEnemyCard && (Client.Game.CurrentStage == GameStage.SETUP ||
 	                        (State != States.INPLAY && State != States.INFO)))

@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 public static class FieldManager {
 
@@ -36,6 +38,22 @@ public static class FieldManager {
         return count;
     }
 
+    public static List<Card> SearchOnFieldCards(TargetCriteria targetCriteria)
+    {
+        List<Card> cardsOnField = new List<Card>();
+        foreach (Card card in CardsOnField)
+            if (targetCriteria.Matches(card)) cardsOnField.Add(card);
+        return cardsOnField;
+    }
+
+    public static List<Card> SearchAllCards(TargetCriteria targetCriteria)
+    {
+        List<Card> cardsOnField = new List<Card>();
+        foreach (Card card in Object.FindObjectsOfType<Card>())
+            if (targetCriteria.Matches(card)) cardsOnField.Add(card);
+        return cardsOnField;
+    }
+
     public static int GetOnFieldCardCount(CardInfo.CardType? cardTypePar, CardInfo.CardAffinity? cardAffinityPar)
     {
         var count = 0;
@@ -48,7 +66,7 @@ public static class FieldManager {
         return count;
     }
 
-    public static ArrayList GetOnFieldCards(CardInfo.CardType? cardTypePar, CardInfo.CardAffinity? cardAffinityPar)
+    public static ArrayList SearchOnFieldCards(CardInfo.CardType? cardTypePar, CardInfo.CardAffinity? cardAffinityPar)
     {
         ArrayList cardsOnField = new ArrayList();
         foreach (Card c in CardsOnField)

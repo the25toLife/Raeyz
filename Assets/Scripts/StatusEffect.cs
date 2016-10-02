@@ -105,7 +105,6 @@ public abstract class StatusEffect
         CardAppliedBy.StateChangedEvent += OnCardStateChanged;
         CardAppliedTo.StateChangedEvent += OnCardStateChanged;
 
-        CardAppliedTo.StatusEffects.Add(this);
         switch (Trigger)
         {
             case Trigger.OnPlay:
@@ -141,15 +140,20 @@ public abstract class StatusEffect
                 FieldManager.OnFieldChanged += ApplyOnTrigger;
                 break;
         }
+
+        CardAppliedTo.StatusEffects.Add(this);
+
         if (Lifetime < 1)
         {
             if (Lifetime == 0) Remove(true);
-            return;
         }
-        if (CardAppliedTo.IsEnemyCard)
-            CardAppliedTo.Client.Game.EnemyTurnStart += OnTurn;
         else
-            CardAppliedTo.Client.Game.TurnStart += OnTurn;
+        {
+            if (CardAppliedTo.IsEnemyCard)
+                CardAppliedTo.Client.Game.EnemyTurnStart += OnTurn;
+            else
+                CardAppliedTo.Client.Game.TurnStart += OnTurn;
+        }
     }
 
     public virtual bool Apply()
@@ -243,6 +247,49 @@ public abstract class StatusEffect
         }
     }
 
+    public void Reset()
+    {
+        CardAppliedBy.StateChangedEvent -= OnCardStateChanged;
+        CardAppliedTo.StateChangedEvent -= OnCardStateChanged;
+        CardAppliedTo.StatusEffects.Remove(this);
+        switch (Trigger)
+        {
+            case Trigger.OnTurn:
+                if (CardAppliedTo.IsEnemyCard)
+                    CardAppliedTo.Client.Game.EnemyTurnStart -= ApplyOnTrigger;
+                else
+                    CardAppliedTo.Client.Game.TurnStart -= ApplyOnTrigger;
+                break;
+            case Trigger.OnAllyKilled:
+                Counter = ActionQueue.AlliesKilled;
+                if (CardAppliedTo.IsEnemyCard)
+                    ActionQueue.EnemyKilled -= ApplyOnTrigger;
+                else
+                    ActionQueue.AllyKilled -= ApplyOnTrigger;
+                break;
+            case Trigger.OnEnemyKilled:
+                Counter = ActionQueue.EnemiesKilled;
+                if (CardAppliedTo.IsEnemyCard)
+                    ActionQueue.AllyKilled -= ApplyOnTrigger;
+                else
+                    ActionQueue.EnemyKilled -= ApplyOnTrigger;
+                break;
+            case Trigger.OnFieldChange:
+                FieldManager.OnFieldChanged -= ApplyOnTrigger;
+                break;
+        }
+
+        if (Lifetime > 0)
+        {
+            if (CardAppliedTo.IsEnemyCard)
+                CardAppliedTo.Client.Game.EnemyTurnStart -= OnTurn;
+            else
+                CardAppliedTo.Client.Game.TurnStart -= OnTurn;
+        }
+
+        AddToCard(CardAppliedTo, CardAppliedBy);
+    }
+
     private void ApplyOnTrigger(object sender, EventArgs e)
     {
         Apply();
@@ -267,7 +314,13 @@ public abstract class StatusEffect
     private void OnTurn(object sender, EventArgs e)
     {
         if (Lifetime < 1)
+        {
+            if (CardAppliedTo.IsEnemyCard)
+                CardAppliedTo.Client.Game.EnemyTurnStart -= OnTurn;
+            else
+                CardAppliedTo.Client.Game.TurnStart -= OnTurn;
             Remove(true);
+        }
         else
             Lifetime--;
     }
@@ -329,7 +382,7 @@ public class StatEffect : StatusEffect
 
                 Attack = AttackMod * Multiplier;
                 Defense = DefenseMod * Multiplier;
-                cardMonster.changeCard(monsterInfo + this);
+                //cardMonster.changeCard(monsterInfo + this);
                 break;
             case CardInfo.CardType.Auxiliary:
                 break;
@@ -353,7 +406,7 @@ public class StatEffect : StatusEffect
             case CardInfo.CardType.Monster:
                 CardMonster cardMonster = (CardMonster) CardAppliedTo;
                 MonsterInfo monsterInfo = (MonsterInfo) cardMonster.CardInfo;
-                cardMonster.changeCard(monsterInfo - this);
+                //cardMonster.changeCard(monsterInfo - this);
                 break;
             case CardInfo.CardType.Auxiliary:
                 break;
@@ -576,14 +629,11 @@ public class DissipateEffect : StatusEffect
     {
         base.Remove(complete);
 
-        if (complete)
+        /* if (complete)
         {
             foreach (var statusEffect in CardAppliedTo.StatusEffects.ToArray())
-            {
-                statusEffect.Remove(true);
-                statusEffect.AddToCard(CardAppliedTo, statusEffect.CardAppliedBy);
-            }
-        }
+                statusEffect.Reset();
+        }*/
     }
 
     public override StatusEffect Clone()

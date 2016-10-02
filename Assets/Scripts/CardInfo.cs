@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public enum CardRelation {
 	PairL, PairR, Summon
@@ -112,7 +113,7 @@ public class MonsterInfo : CardInfo
 		foreach (var kvp in ci1.AssoCardInfo) {
 			toReturn.associateCardInfo(kvp.Value, kvp.Key);
 		}
-		return toReturn;
+	    return toReturn;
 	}
 
     public static MonsterInfo operator -(MonsterInfo ci1, StatEffect se)
@@ -1141,6 +1142,12 @@ public static class CardPool {
 	        }),
 	    new SpecialInfo(547, "Fallen Comrade", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
 	        "Removes current status effects and prevents new ones from being applied to the target for 1 turn.")
+	        {
+	            TargetCriteria =
+	            {
+	                CardTypes = {CardInfo.CardType.Monster}
+	            }
+	        }
 	        .RegisterEffect(new DissipateEffect {Lifetime = 0}),
 	    null,
 	    new AuxiliaryInfo(549, "Restricting Melody", CardInfo.CardAffinity.All,

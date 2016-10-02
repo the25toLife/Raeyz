@@ -1,49 +1,40 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.EventSystems;
 
 public class CardMenuElement : MonoBehaviour, IPointerDownHandler {
 	
 	public MenuItem itemType;
-	private GameObject lcMenu;
+	private GameObject _lcMenu;
 
 	// Use this for initialization
 	void Start () {
 
-		lcMenu = this.transform.parent.gameObject;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+		_lcMenu = this.transform.parent.gameObject;
 	}
 
 	public void OnPointerDown(PointerEventData eventData) {
 
-		switch (itemType) {
+		switch (itemType)
+		{
+            case MenuItem.Activate:
+                FindObjectOfType<TargetCardMenu>().OpenMenu(GetComponentInParent<Card>(), false);
+		        break;
+            case MenuItem.Awaken:
+		        FindObjectOfType<TargetCardMenu>().OpenMenu(GetComponentInParent<Card>(), true);
+                //FindObjectOfType<ClientGame>().openAwakenCardMenu(GetComponentInParent<CardMonster>());
+                _lcMenu.SetActive(false);
+                break;
+            case MenuItem.Discard:
+                foreach(CardMenuElement cme in _lcMenu.GetComponentsInChildren<CardMenuElement>(true)) {
 
-		case MenuItem.Awaken:
-//			foreach(CardMenuElement cme in lcMenu.GetComponentsInChildren<CardMenuElement>(true)) {
-//
-//				if (cme.itemType == MenuItem.CANCEL)
-//					cme.gameObject.SetActive(true);
-//				else
-//					cme.gameObject.SetActive(false);
-			//			}
-			GameObject.FindObjectOfType<ClientGame>().openAwakenCardMenu(this.GetComponentInParent<CardMonster>());
-			lcMenu.SetActive(false);
-			break;
-		case MenuItem.Discard:
-			foreach(CardMenuElement cme in lcMenu.GetComponentsInChildren<CardMenuElement>(true)) {
-
-				if (cme.itemType == MenuItem.Confirm)
-					cme.gameObject.SetActive(true);
-			}
-			this.gameObject.SetActive(false);
-			break;
-		case MenuItem.Confirm:
-			GameObject.FindObjectOfType<ClientGame>().Game.SendCardToGraveyard(this.GetComponentInParent<Card> ());
-			break;
+                    if (cme.itemType == MenuItem.Confirm)
+                        cme.gameObject.SetActive(true);
+                }
+                gameObject.SetActive(false);
+                break;
+            case MenuItem.Confirm:
+                FindObjectOfType<ClientGame>().Game.SendCardToGraveyard(GetComponentInParent<Card> ());
+                break;
 		}
 	}
 
@@ -51,7 +42,7 @@ public class CardMenuElement : MonoBehaviour, IPointerDownHandler {
 
 		if (itemType != MenuItem.Confirm)
 			return;
-		foreach(CardMenuElement cme in lcMenu.GetComponentsInChildren<CardMenuElement>(true)) {
+		foreach(CardMenuElement cme in _lcMenu.GetComponentsInChildren<CardMenuElement>(true)) {
 			
 			if (cme.itemType == MenuItem.Confirm)
 				cme.gameObject.SetActive(false);

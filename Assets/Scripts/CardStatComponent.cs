@@ -29,7 +29,8 @@ public class CardStatComponent : MonoBehaviour {
 			if (c is MonsterInfo) {
 
 				MonsterInfo m = (MonsterInfo)c;
-				this.GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", m.GetLevel()), typeof(Sprite)) as Sprite;
+			    GetComponent<Image>().enabled = true;
+				GetComponent<Image> ().sprite = Resources.Load (string.Format ("Cards/Stats/num_{0}", m.GetLevel()), typeof(Sprite)) as Sprite;
 			}
 			break;
 		case (StatType.ATTACK):

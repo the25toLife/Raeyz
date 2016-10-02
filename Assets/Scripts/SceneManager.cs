@@ -164,12 +164,12 @@ public class SceneManager : LoadBalancingClient
 		this.loadBalancingPeer.OpRaiseEvent(EvPlayCard, content, true, new RaiseEventOptions() { CachingOption = EventCaching.AddToRoomCache });
 	}
 
-    public void SendPlayCardWithTargetEv(int uid, int targetUid)
+    public void SendPlayCardWithTargetEv(int uid, int[] targetUids)
     {
 
         Hashtable content = new Hashtable();
         content[(byte) 1] = uid;
-        content[(byte) 2] = targetUid;
+        content[(byte) 2] = targetUids;
         this.loadBalancingPeer.OpRaiseEvent(EvPlayCardWithTarget, content, true,
             new RaiseEventOptions() {CachingOption = EventCaching.AddToRoomCache});
     }
@@ -309,10 +309,10 @@ public class SceneManager : LoadBalancingClient
 		        if (playWithTargetInfo != null)
 		        {
 		            int uid = (int) playWithTargetInfo[(byte) 1];
-		            int targetUid = (int) playWithTargetInfo[(byte) 2];
-		            _clientGame.playEnemyCardWithTarget(uid, targetUid);
+		            int[] targetUids = (int[]) playWithTargetInfo[(byte) 2];
+		            _clientGame.PlayEnemyCardWithTargets(uid, targetUids);
 
-		            Debug.Log(string.Format("Playing card with ID {0} targeting card with ID {1}", uid, targetUid));
+		            Debug.Log(string.Format("Playing card with ID {0} targeting card with ID {1}", uid, targetUids));
 		        }
 		        break;
 
@@ -438,10 +438,10 @@ public class SceneManager : LoadBalancingClient
 		dealCardToPlayer (c);
 		for (int i = 0; i < 4; i++)
 			dealCardToPlayer ();*/
-		dealCardToPlayer (CardPool.Cards [509]);
+		dealCardToPlayer (CardPool.Cards [546]);
 		dealCardToPlayer (CardPool.Cards [478]);
 		dealCardToPlayer (CardPool.Cards [392]);
-		dealCardToPlayer (CardPool.Cards [130]);
+		dealCardToPlayer (CardPool.Cards [224]);
 		dealCardToPlayer (CardPool.Cards [4]);
 
 		_stage = GameStage.PREP;

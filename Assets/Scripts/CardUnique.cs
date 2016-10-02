@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,15 +45,27 @@ public class CardUnique : Card
 
     public void OnPlay(Card target)
     {
+        List<Card> targetList = new List<Card> {target};
+        OnPlay(targetList);
+    }
+
+    public void OnPlay(List<Card> targets)
+    {
   /*      foreach (StatusEffect statusEffect in ((SpecialInfo) CardInfo).StatusEffects)
         {
             if (target == null && statusEffect.TargetCriteria.AffinitiesBlacklist.Contains(CardInfo.CardAffinity.All))
                 statusEffect.Clone().AddToCard(target, this);
         }*/
         OnPlay();
-        foreach (StatusEffect statusEffect in ((SpecialInfo) CardInfo).StatusEffects)
-            statusEffect.Clone().AddToCard(target, this);
-        Client.Game.SendPlayCardWithTargetEv(UID, target.UID);
+        int[] targetUIDs = new int[targets.Count];
+        for (int i = 0; i < targets.Count; i++)
+        {
+            if (targets[i] == null) continue;
+            foreach (StatusEffect statusEffect in ((SpecialInfo) CardInfo).StatusEffects)
+                statusEffect.Clone().AddToCard(targets[i], this);
+            targetUIDs[i] = targets[i].UID;
+        }
+        if (!IsEnemyCard) Client.Game.SendPlayCardWithTargetEv(UID, targetUIDs);
         sendCardToGraveyard();
     }
 }

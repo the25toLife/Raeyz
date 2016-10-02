@@ -93,7 +93,7 @@ GameObject:
   - 114: {fileID: 114000011578363940}
   - 114: {fileID: 114000012687532368}
   m_Layer: 5
-  m_Name: cancel
+  m_Name: Confirm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -718,7 +718,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e49ded5bcf136d459ca882f16349ab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemType: 1
+  itemType: 2
 --- !u!114 &114000011941636310
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -893,7 +893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e49ded5bcf136d459ca882f16349ab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemType: 4
+  itemType: 5
 --- !u!114 &114000012715802274
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1090,7 +1090,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013546628168}
-  serializedVersion: 2
+  serializedVersion: 4
   lengthInSec: 5
   startDelay:
     scalar: 0
@@ -1128,12 +1128,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  randomSeed: 0
   looping: 1
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 1
+  autoRandomSeed: 1
   scalingMode: 2
+  randomSeed: 0
   InitialModule:
     serializedVersion: 2
     enabled: 1
@@ -3360,6 +3361,6 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.1970835, y: -1.0579675}
+  m_AnchoredPosition: {x: -2.726603, y: 1.6323105}
   m_SizeDelta: {x: 2.22, y: 3.01}
   m_Pivot: {x: 0.5, y: 0.5}
