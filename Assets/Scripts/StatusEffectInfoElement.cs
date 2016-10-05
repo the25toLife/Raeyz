@@ -42,6 +42,7 @@ public class StatusEffectInfoElement : MonoBehaviour
         else if (_statusEffect is ConfusionEffect) type = "Confusion";
         else if (_statusEffect is HealthEffect) type = "Heal";
         else if (_statusEffect is DissipateEffect) type = "Immunity";
+        else if (_statusEffect is RevealEffect) type = "Reveal";
         s = Resources.Load("SpecialIcons/" + type, typeof(Sprite)) as Sprite;
         if (s != null)
             _icon.sprite = s;

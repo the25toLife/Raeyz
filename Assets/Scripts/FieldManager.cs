@@ -48,10 +48,10 @@ public static class FieldManager {
 
     public static List<Card> SearchAllCards(TargetCriteria targetCriteria)
     {
-        List<Card> cardsOnField = new List<Card>();
+        List<Card> cardsMatched = new List<Card>();
         foreach (Card card in Object.FindObjectsOfType<Card>())
-            if (targetCriteria.Matches(card)) cardsOnField.Add(card);
-        return cardsOnField;
+            if (targetCriteria.Matches(card)) cardsMatched.Add(card);
+        return cardsMatched;
     }
 
     public static int GetOnFieldCardCount(CardInfo.CardType? cardTypePar, CardInfo.CardAffinity? cardAffinityPar)

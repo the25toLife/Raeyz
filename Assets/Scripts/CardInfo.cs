@@ -131,12 +131,14 @@ public class MonsterInfo : CardInfo
 public class SpecialInfo : CardInfo {
 
     public List<StatusEffect> StatusEffects { get; private set; }
+    public bool Targetable { get; set; }
 	
 	public SpecialInfo(int idPar, string namePar, CardType cardTypePar, CardAffinity affinityPar, string descPar)
 	    : base(idPar, namePar, cardTypePar, affinityPar, descPar)
 	{
 
 	    StatusEffects = new List<StatusEffect>();
+	    Targetable = true;
 
 	    // Define default special target conditions
 	    // Can only target cards of the same affinity
@@ -819,7 +821,7 @@ public static class CardPool {
                 }
             }
             .RegisterEffect(new StatusEffect422())
-            .RegisterEffect(new StatEffect {Lifetime = 3, AttackMod = StatEffect.Double}),
+            .RegisterEffect(new StatEffect {InitialLifetime = 3, AttackMod = StatEffect.Double}),
 	    // Still buggy, setting stats to zero doesnt work too well
         new SpecialInfo(423, "Price of Loyalty", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
             "Completely drain a friendly monster's ATTACK and DEFENSE and convert the sum to LP. " +
@@ -835,7 +837,9 @@ public static class CardPool {
             .RegisterEffect(new StatEffect {AttackMod = StatEffect.Zero, DefenseMod = StatEffect.Zero}),
         null,
         null,
-        null,
+        new SpecialInfo(426, "Chronomancer", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+            "Extends the time limits of all status effects associated with the targeted card by 3 turns.")
+	        .RegisterEffect(new TimeEffect {LifetimeMod = 3}),
         null,
         null,
         new AuxiliaryInfo(429, "Fleeting Bloom", CardInfo.CardAffinity.Forest,
@@ -862,8 +866,10 @@ public static class CardPool {
             .RegisterEffect(new StatEffect {AttackMod = 1, Trigger = Trigger.OnAllyKilled}),
         null,
         null,
-        null,
-        null,
+	    new SpecialInfo(444, "With Time", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+            "Extends the time limits of all status effects associated with the targeted card by 1 turn.")
+	        .RegisterEffect(new TimeEffect {LifetimeMod = 1}),
+	    null,
         null,
 	    new SpecialInfo(447, "March of Victory", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
 	        "Damages the opponent player's LP equal to a targeted friendly monster's ATTACK.")
@@ -1137,7 +1143,7 @@ public static class CardPool {
             }
 	        .RegisterEffect(new StatEffect
 	        {
-	            Lifetime = 1,
+	            InitialLifetime = 1,
 	            AttackMod = 10
 	        }),
 	    new SpecialInfo(547, "Fallen Comrade", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
@@ -1148,7 +1154,7 @@ public static class CardPool {
 	                CardTypes = {CardInfo.CardType.Monster}
 	            }
 	        }
-	        .RegisterEffect(new DissipateEffect {Lifetime = 0}),
+	        .RegisterEffect(new DissipateEffect {InitialLifetime = 0}),
 	    null,
 	    new AuxiliaryInfo(549, "Restricting Melody", CardInfo.CardAffinity.All,
 	        "Increases a monster's DEFENSE by 2, but lowers its ATTACK by 1")
@@ -1156,7 +1162,6 @@ public static class CardPool {
 	    new AuxiliaryInfo(550, "Subzero Barrage", CardInfo.CardAffinity.Ice,
 	        "Inncreases an ICE monster's ATTACK by 3.")
 	        .RegisterEffect(new StatEffect {AttackMod = 3}),
-	    null,
 	    null,
 	    null,
 	    new AuxiliaryInfo(553, "The Last Stand", CardInfo.CardAffinity.All,
@@ -1207,7 +1212,87 @@ public static class CardPool {
 	    null,
 	    null,
 	    null,
-
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    new SpecialInfo(595, "Foreboding Storm", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+	    "Reveals the opponent's entire hand for the remainder of the player's turn.")
+	        {
+	            TargetCriteria =
+	            {
+	                States = new List<Card.States>(),
+	                Locked = true,
+	                EnemyOnly = true
+	            },
+	            Targetable = false
+	        }
+	    .RegisterEffect(new RevealEffect()),
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    null,
+	    new SpecialInfo(631, "Guiding Soul", CardInfo.CardType.Unique, CardInfo.CardAffinity.All,
+            "Extends the time limits of all status effects associated with the targeted card by 2 turns.")
+	        .RegisterEffect(new TimeEffect {LifetimeMod = 2})
 	};
 
 	

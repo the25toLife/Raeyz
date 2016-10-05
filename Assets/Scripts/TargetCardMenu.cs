@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,10 +48,27 @@ public class TargetCardMenu : MonoBehaviour
         _cardCanvas.transform.Find("ActivateTrigger").gameObject.SetActive(!isMonster);
 
         foreach (var statComponent in _menuObject.GetComponentsInChildren<CardStatComponent>())
-            statComponent.changeStat(card.CardInfo);
+            statComponent.changeStat(Card.CardInfo);
 
         GameObject.FindGameObjectWithTag("blockRays").GetComponent<BoxCollider2D>().enabled = true;
         _menuObject.SetActive(true);
+
+        GameObject defaultMenuItem = (GameObject) Instantiate(TargetCardMenuItem, _menuObject.transform);
+        //defaultMenuItem.GetComponent<CardMenuSelect>().enabled = false;
+
+        if (!isMonster && !((SpecialInfo) Card.CardInfo).Targetable)
+        {
+            defaultMenuItem.GetComponentInChildren<Text>().text = "targets may not be";
+            ((GameObject)Instantiate(TargetCardMenuItem, _menuObject.transform))
+                .GetComponentInChildren<Text>().text = "selected and all";
+            ((GameObject)Instantiate(TargetCardMenuItem, _menuObject.transform))
+                .GetComponentInChildren<Text>().text = "cards matching the";
+            ((GameObject)Instantiate(TargetCardMenuItem, _menuObject.transform))
+                .GetComponentInChildren<Text>().text = "criteria will be";
+            ((GameObject)Instantiate(TargetCardMenuItem, _menuObject.transform))
+                .GetComponentInChildren<Text>().text = "targeted";
+            return;
+        }
 
         TargetCriteria validTargetCriteria = new TargetCriteria
             {
@@ -62,7 +78,7 @@ public class TargetCardMenu : MonoBehaviour
             };
         if (isMonster)
         {
-            MonsterInfo monsterInfo = card.CardInfo as MonsterInfo;
+            MonsterInfo monsterInfo = Card.CardInfo as MonsterInfo;
             if (monsterInfo != null)
             {
                 if (monsterInfo.GetLevel() > 7) validTargetCriteria.LevelMin = 5;
@@ -70,7 +86,7 @@ public class TargetCardMenu : MonoBehaviour
         }
         else
         {
-            validTargetCriteria = card.CardInfo.TargetCriteria;
+            validTargetCriteria = Card.CardInfo.TargetCriteria;
         }
         foreach (var targetCard in FieldManager.SearchAllCards(validTargetCriteria))
         {
@@ -88,6 +104,7 @@ public class TargetCardMenu : MonoBehaviour
                 throw new Exception("No CardMenuSelect component found.");
             }
         }
+        if (_menuObject.GetComponentsInChildren<CardMenuSelect>().Length > 1) Destroy(defaultMenuItem);
     }
 
     private void CloseMenu()
@@ -136,7 +153,13 @@ public class TargetCardMenu : MonoBehaviour
 
     public void TakeAction()
     {
-        if (SelectedCards.Count < 1) return;
+        if (SelectedCards.Count < 1)
+        {
+            if (Card is CardMonster || ((SpecialInfo) Card.CardInfo).Targetable) return;
+            CardUnique cardUnique = Card as CardUnique;
+            if (cardUnique == null) return;
+            cardUnique.OnPlay(FieldManager.SearchAllCards(Card.CardInfo.TargetCriteria));
+        }
         bool isMonster = Card is CardMonster;
         if (isMonster)
         {

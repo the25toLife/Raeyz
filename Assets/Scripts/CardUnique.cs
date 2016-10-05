@@ -62,10 +62,10 @@ public class CardUnique : Card
         {
             if (targets[i] == null) continue;
             foreach (StatusEffect statusEffect in ((SpecialInfo) CardInfo).StatusEffects)
-                statusEffect.Clone().AddToCard(targets[i], this);
+                statusEffect.Clone().AddToCard(targets[i], this, IsEnemy);
             targetUIDs[i] = targets[i].UID;
         }
-        if (!IsEnemyCard) Client.Game.SendPlayCardWithTargetEv(UID, targetUIDs);
+        if (!IsEnemy) Client.Game.SendPlayCardWithTargetEv(UID, targetUIDs);
         sendCardToGraveyard();
     }
 }

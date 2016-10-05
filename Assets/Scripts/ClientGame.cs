@@ -36,7 +36,8 @@ public class ClientGame : MonoBehaviour
 		CardPool.associateCards ();
 
 	    Game = new SceneManager {
-	        AppId = "d5b703ed-840c-4cc1-8771-ffa8f9a6b49c"
+	        AppId = "d5b703ed-840c-4cc1-8771-ffa8f9a6b49c",
+	        PlayerHandObj = GameObject.Find("playerHand")
 	    };
         Game.OnStateChangeAction += OnStateChanged;
 		Game.ConnectToRegionMaster ("us");
@@ -217,7 +218,7 @@ public class ClientGame : MonoBehaviour
 		List<Card> cards = new List<Card>();
 		var allMonsterCards = getCardsByObjType<CardMonster>().ToList();
 	    foreach (var monsterCard in allMonsterCards)
-	        if (monsterCard.IsEnemyCard) cards.Add(monsterCard);
+	        if (monsterCard.IsEnemy) cards.Add(monsterCard);
 		return cards;
 	}
 
@@ -260,7 +261,7 @@ public class ClientGame : MonoBehaviour
                             GameObject o = GameObject.Instantiate(MultiCardPrefab);
 
                             CardMultiPart mpc = o.GetComponent<CardMultiPart>();
-                            mpc.IsEnemyCard = true;
+                            mpc.IsEnemy = true;
                             mpc.changeCard((c.CardInfo as MonsterInfo) + (ecmPair.CardInfo as MonsterInfo));
                             mpc.createUID(uid);
                             mpc.GetComponent<SpriteRenderer> ().sortingOrder += pdsm.GetComponent<SpriteRenderer> ().sortingOrder;
@@ -433,7 +434,7 @@ public class ClientGame : MonoBehaviour
                 m.transform.SetParent(EnemyHandObj.transform);
                 cardDealt = m.GetComponent<CardMonster>();
                 (cardDealt as CardMonster).changeCard(cInfo as MonsterInfo);
-                (cardDealt as CardMonster).IsEnemyCard = true;
+                (cardDealt as CardMonster).IsEnemy = true;
                 (cardDealt as CardMonster).setCardFOW(true);
                 break;
             case CardInfo.CardType.Auxiliary:
@@ -441,7 +442,7 @@ public class ClientGame : MonoBehaviour
                 a.transform.SetParent(EnemyHandObj.transform);
                 cardDealt = a.GetComponent<CardAuxiliary>();
                 (cardDealt as CardAuxiliary).changeCard(cInfo as AuxiliaryInfo);
-                (cardDealt as CardAuxiliary).IsEnemyCard = true;
+                (cardDealt as CardAuxiliary).IsEnemy = true;
                 (cardDealt as CardAuxiliary).setCardFOW(true);
                 break;
 		    case CardInfo.CardType.Unique:
@@ -449,7 +450,7 @@ public class ClientGame : MonoBehaviour
 		        u.transform.SetParent(EnemyHandObj.transform);
 		        cardDealt = u.GetComponent<CardUnique>();
 		        (cardDealt as CardUnique).changeCard(cInfo as SpecialInfo);
-		        (cardDealt as CardUnique).IsEnemyCard = true;
+		        (cardDealt as CardUnique).IsEnemy = true;
 		        (cardDealt as CardUnique).setCardFOW(true);
 		        break;
 		}

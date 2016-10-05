@@ -157,7 +157,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: apocalyptic librarian
+  m_Text: no valid target
 --- !u!114 &11475836
 MonoBehaviour:
   m_ObjectHideFlags: 1

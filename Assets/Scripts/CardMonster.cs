@@ -81,7 +81,7 @@ public class CardMonster : Card {
 		            image.sprite = s;
 		        }
 		    }
-		    if ((CardInfo as MonsterInfo).GetLevel() < 5) {
+		    if ((CardInfo as MonsterInfo).GetLevel() < 15) {
 				Locked.SetActive(false);
 				AwakenMenuItem.SetActive(false);
 			} else
@@ -119,7 +119,7 @@ public class CardMonster : Card {
 	public bool canSacrifice(bool leviathan)
 	{
 
-	    if (IsEnemyCard) return false;
+	    if (IsEnemy) return false;
 		if (leviathan && (CardInfo as MonsterInfo).GetLevel() < 5)
 			return false;
 		
@@ -137,7 +137,7 @@ public class CardMonster : Card {
 	public void setDefending(bool b) {
 		_defending = b;
 		Shield.SetActive (_defending);
-		if (!IsEnemyCard) Client.Game.SendDefenseToggleEv (this.UID, this.isDefending ());
+		if (!IsEnemy) Client.Game.SendDefenseToggleEv (this.UID, this.isDefending ());
 	}
 	
 	public bool SetAwake(bool awake) {
@@ -235,7 +235,7 @@ public class CardMonster : Card {
 			Shield.SetActive(false);
 			break;
 		case (PointerEventData.InputButton.Left):
-		        if (IsEnemyCard)
+		        if (IsEnemy)
 		        {
 		            if (State == States.INPLAY && Client.isACardSelected())
 		            {
@@ -253,6 +253,6 @@ public class CardMonster : Card {
     public override void OnPlay()
     {
         base.OnPlay();
-        if (IsEnemyCard) SetAwake(true);
+        if (IsEnemy) SetAwake(true);
     }
 }

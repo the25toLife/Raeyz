@@ -13,6 +13,7 @@ public class TargetCriteria
     public List<Card.States> States { get; set; }
     public bool AllyOnly { get; set; }
     public bool EnemyOnly { get; set; }
+    public bool Locked { get; set; }
 
     public TargetCriteria()
     {
@@ -24,7 +25,7 @@ public class TargetCriteria
         CardIds = new List<int>();
         CardIdsBlacklist = new List<int>();
         States = new List<Card.States> {Card.States.INPLAY};
-        AllyOnly = EnemyOnly = false;
+        AllyOnly = EnemyOnly = Locked = false;
     }
 
     public bool Matches(Card card)
@@ -61,8 +62,14 @@ public class TargetCriteria
         // If AllyOnly and EnemyOnly equal either player is assumed to be a valid target
         if (AllyOnly != EnemyOnly)
         {
-            if (AllyOnly && card.IsEnemyCard) return false;
-            if (EnemyOnly && !card.IsEnemyCard) return false;
+            if (AllyOnly && card.IsEnemy) return false;
+            if (EnemyOnly && !card.IsEnemy) return false;
+        }
+
+        if (!Locked)
+        {
+            CardMonster cardMonster = card as CardMonster;
+            if (cardMonster == null || cardMonster.isLocked()) return false;
         }
 
         return true;

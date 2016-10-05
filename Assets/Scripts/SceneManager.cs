@@ -27,7 +27,7 @@ public class SceneManager : LoadBalancingClient
 {
     private Deck _playerDeck, _playerGrave, _enemyDeck;
 	private ClientGame _clientGame;
-	private ArrayList _playerHand, _playerActions;
+	private ArrayList _playerActions;
 	private bool _running, _firstMove, _isTurn, _oppReady;
 	private GameStage _stage, _nextStage;
 	public GameStage CurrentStage { get { return _stage; } }
@@ -429,7 +429,6 @@ public class SceneManager : LoadBalancingClient
 		
 		_clientGame = GameObject.FindObjectOfType<ClientGame> ();
 		_playerDeck = createDeck ();
-		_playerHand = new ArrayList ();
 		_playerActions = new ArrayList ();
 
 /*		CardInfo c = CardPool.Cards [UnityEngine.Random.Range (0, 397)];	//assuming only monsters are assigned to first 398 IDs.
@@ -438,10 +437,10 @@ public class SceneManager : LoadBalancingClient
 		dealCardToPlayer (c);
 		for (int i = 0; i < 4; i++)
 			dealCardToPlayer ();*/
-		dealCardToPlayer (CardPool.Cards [546]);
-		dealCardToPlayer (CardPool.Cards [478]);
-		dealCardToPlayer (CardPool.Cards [392]);
-		dealCardToPlayer (CardPool.Cards [224]);
+		dealCardToPlayer (CardPool.Cards [286]);
+		dealCardToPlayer (CardPool.Cards [545]);
+		dealCardToPlayer (CardPool.Cards [425]);
+		dealCardToPlayer (CardPool.Cards [594]);
 		dealCardToPlayer (CardPool.Cards [4]);
 
 		_stage = GameStage.PREP;
@@ -470,14 +469,13 @@ public class SceneManager : LoadBalancingClient
 	/// <param name="c">The specific CurrentCard to deal to the player (optional).</param>
 	private void dealCardToPlayer(CardInfo c = null) {
 
-		if (_playerHand.Count > 4) return;
+		if (PlayerHandObj.transform.childCount > 4) return;
 
 		CardInfo cardInfo = _playerDeck.drawCard();
 		if (c != null)
 			cardInfo = c;
 
 		Card cardDrawn = _clientGame.dealCardToPlayer (cardInfo);
-		_playerHand.Add (cardDrawn);
 	    SendDealCardEv(cardDrawn);
 	}
 
@@ -486,7 +484,7 @@ public class SceneManager : LoadBalancingClient
 	/// </summary>
 	private void dealFullHandToPlayer() {
 
-		while (_playerHand.Count < 5) 
+		while (PlayerHandObj.transform.childCount < 5)
 			dealCardToPlayer();
 	}
 
@@ -499,8 +497,6 @@ public class SceneManager : LoadBalancingClient
 
 		if (!_firstMove)
 			_firstMove = true;
-		if (_playerHand.Contains(c))
-			_playerHand.Remove (c);
 	    SendPlayCardEv (c.UID, slot);
 	}
 
@@ -513,8 +509,6 @@ public class SceneManager : LoadBalancingClient
 
 		c.sendCardToGraveyard ();
 		SendGraveCardEv (c.UID);
-		if (_playerHand.Contains(c))
-			_playerHand.Remove (c);
 	}
 
 	//hahahahahahaha

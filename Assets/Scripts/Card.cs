@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -18,13 +19,14 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	}
 
     // Differentiates player and enemy cards
-    public bool IsEnemyCard { get; set; }
+    public bool IsEnemy { get; set; }
 
     // Determines whether or not the player can see the CurrentCard's information or only the CurrentCard's back
     public bool FowActive { get; private set; }
 
     protected Transform ParentToReturnTo;
-	protected States StateToReturnTo;
+    protected int IndexToReturnTo { get; set; }
+    protected States StateToReturnTo;
 
 	public GameObject FullInfoCanvas, StatOverlay, LcMenu, DeathHandler, SelectedIndicator;
 	public ClientGame Client;
@@ -59,11 +61,13 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public virtual void Update () {
 
-	    if (IsEnemyCard && (Client.Game.CurrentStage == GameStage.SETUP ||
-	                        (State != States.INPLAY && State != States.INFO)))
+	    if (IsEnemy && (Client.Game.CurrentStage == GameStage.SETUP ||
+                            (State != States.INPLAY && State != States.INFO)) &&
+	        !StatusEffects.OfType<RevealEffect>().Any())
 	        setCardFOW(true);
 	    else
 	        setCardFOW(false);
+
 
 	    if (Input.GetKeyDown (KeyCode.Escape)) {	//Handles closing menus
 
@@ -130,12 +134,13 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		if (LcMenu.activeSelf)
 			LcMenu.SetActive (false);
 
-	    if (IsEnemyCard && State != States.INHAND) transform.SetParent(null);
+	    if (IsEnemy && State != States.INHAND) transform.SetParent(null);
 	    DeathHandler.SetActive (true);
 	}
 
 	public void returnToParent() {
 	    this.transform.SetParent (ParentToReturnTo);
+	    transform.SetSiblingIndex(IndexToReturnTo);
 		this.transform.localPosition = Vector3.zero;
 	}
 
@@ -148,7 +153,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             transform.Find("Overlay").gameObject.SetActive(false);
             Image image = transform.Find("CardImage").GetComponent<Image>();
             image.sprite =
-                Resources.Load(IsEnemyCard ? "Cards/cardBackRed" : "Cards/cardBackBlue", typeof(Sprite)) as Sprite;
+                Resources.Load(IsEnemy ? "Cards/cardBackRed" : "Cards/cardBackBlue", typeof(Sprite)) as Sprite;
         }
         else
         {
@@ -168,15 +173,15 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (State == States.INHAND || State == States.EXPANDINHAND) return;
 
         ChangeState(States.INHAND);
-        ParentToReturnTo = GameObject.Find(IsEnemyCard ? "enemyHand" : "playerHand").transform;
-        if (IsEnemyCard) setCardFOW(true);
+        ParentToReturnTo = GameObject.Find(IsEnemy ? "enemyHand" : "playerHand").transform;
+        if (IsEnemy) setCardFOW(true);
         returnToParent();
     }
 
     public virtual bool dragPass()
 	{
 
-	    if (IsEnemyCard) return false;
+	    if (IsEnemy) return false;
 
 		if (!Client.Game.canTakeAction (Actions.PLAY) && GetComponent<GraphicRaycaster>().enabled)
 			return false;
@@ -200,6 +205,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		if (LcMenu.activeSelf)
 			LcMenu.SetActive (false);
 		ParentToReturnTo = this.transform.parent;
+	    IndexToReturnTo = transform.GetSiblingIndex();
 		this.transform.SetParent (null);
 		this.GetComponent<Canvas> ().sortingOrder += 100;
 		this.GetComponent<GraphicRaycaster> ().enabled = false;
@@ -209,6 +215,8 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		
 		Client.Dragging = false;
 		Client.CardDragged = null;
+
+
 
 	    this.returnToParent ();
 		if (State == States.EXPANDINHAND)
@@ -239,6 +247,24 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 		if (eventData.button != PointerEventData.InputButton.Left || !dragPass())
 			return;
+	    Vector3 worldPosition = Camera.main.ScreenToWorldPoint(eventData.position);
+	    if (worldPosition.y < -4.56f)
+	    {
+	        foreach (Card card in GameObject.Find("playerHand").transform.GetComponentsInChildren<Card>())
+	        {
+	            Transform cardTransform = card.transform;
+	            if (worldPosition.x < cardTransform.position.x
+	                && cardTransform.GetSiblingIndex() < IndexToReturnTo)
+	            {
+	                IndexToReturnTo = cardTransform.GetSiblingIndex();
+	            }
+	            if (worldPosition.x > cardTransform.position.x
+	                && cardTransform.GetSiblingIndex() + 1 > IndexToReturnTo)
+	            {
+	                IndexToReturnTo = cardTransform.GetSiblingIndex() + 1;
+	            }
+	        }
+	    }
 		endDrag ();
 	}
 
@@ -285,7 +311,7 @@ public abstract class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 			break;
 		case PointerEventData.InputButton.Left:
 
-		        if (IsEnemyCard) break;
+		        if (IsEnemy) break;
 
 			if (!Client.Game.canTakeAction(Actions.MENU))
 				break;

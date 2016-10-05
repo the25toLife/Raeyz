@@ -18,11 +18,11 @@ public class ActionQueue
 	    if (attackerStat > targetStat)
 	    {
 	        (mi1 as CardMonster).Kills++;
-	        foreach (StatusEffect statusEffect in mi1.StatusEffects)
+	        foreach (StatusEffect statusEffect in mi1.StatusEffects.ToArray())
 	        {
 	            if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply();
 	        }
-	        if (mi2.IsEnemyCard)
+	        if (mi2.IsEnemy)
 	            OnEnemyKilled();
 	        else
 	            OnAllyKilled();
@@ -31,11 +31,11 @@ public class ActionQueue
 		else if (attackerStat < targetStat)
 	    {
 	        (mi2 as CardMonster).Kills++;
-	        foreach (StatusEffect statusEffect in mi1.StatusEffects)
+	        foreach (StatusEffect statusEffect in mi1.StatusEffects.ToArray())
 	        {
 	            if (statusEffect.Trigger == Trigger.OnKill) statusEffect.Apply();
 	        }
-	        if (mi1.IsEnemyCard)
+	        if (mi1.IsEnemy)
 	            OnEnemyKilled();
 	        else
 	            OnAllyKilled();
@@ -53,13 +53,13 @@ public class ActionQueue
 	        }
 	        else
 	        {
-	            if (mi2.IsEnemyCard)
+	            if (mi2.IsEnemy)
 	                OnEnemyKilled();
 	            else
 	                OnAllyKilled();
 	            mi2.sendCardToGraveyard();
 	        }
-	        if (mi1.IsEnemyCard)
+	        if (mi1.IsEnemy)
 	            OnEnemyKilled();
 	        else
 	            OnAllyKilled();

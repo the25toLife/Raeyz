@@ -15,7 +15,7 @@
 
     public StatusEffect422()
     {
-        Lifetime = 0;
+        InitialLifetime = 0;
         AffectPlayer = true;
     }
 
@@ -48,7 +48,7 @@ public class StatusEffect423 : HealthEffect
 
    public StatusEffect423()
    {
-       Lifetime = 0;
+       InitialLifetime = 0;
        AffectPlayer = true;
    }
 
@@ -81,7 +81,7 @@ public class StatusEffect447 : HealthEffect
 
     public StatusEffect447()
     {
-        Lifetime = 0;
+        InitialLifetime = 0;
         AffectEnemy = true;
     }
 

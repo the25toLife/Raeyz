@@ -19,7 +19,7 @@ public class CardAuxiliary : Card
         if (_cardMonster == null) return;
         foreach (StatusEffect statusEffect in _cardMonster.StatusEffects.ToArray())
         {
-            if (statusEffect.CardAppliedBy != null && statusEffect.CardAppliedBy.UID == UID) statusEffect.Remove(true);
+            if (statusEffect.CardAppliedBy != null && statusEffect.CardAppliedBy.UID == UID) statusEffect.Remove();
         }
     }
 
@@ -58,6 +58,6 @@ public class CardAuxiliary : Card
         OnPlay();
         _cardMonster = target;
         foreach (StatusEffect statusEffect in ((AuxiliaryInfo) CardInfo).StatusEffects)
-            statusEffect.Clone().AddToCard(_cardMonster, this);
+            statusEffect.Clone().AddToCard(_cardMonster, this, IsEnemy);
     }
 }
